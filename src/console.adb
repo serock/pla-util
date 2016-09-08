@@ -75,9 +75,6 @@ package body Console is
 
    procedure Process_Command_Line is
 
---        Command_Name : constant String := To_Command_Name(Source => Ada.Command_Line.Argument(Number => 2));
---        Device_Name  : constant String := Ada.Command_Line.Argument(Number => 1);
-
       Command : Commands.Command_Type;
 
    begin
