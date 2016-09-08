@@ -1,8 +1,6 @@
-# Object file
-*.o
-
-# Ada Library Information
-*.ali
-
 # Object directory
 obj/**
+
+# Executable
+pla-util
+
