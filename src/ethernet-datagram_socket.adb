@@ -216,7 +216,7 @@ package body Ethernet.Datagram_Socket is
 
       if Return_Value = -1 then
 
-         raise Socket_Exception with Error_Message(Error_Number => Errno);
+         raise Socket_Error with Error_Message(Error_Number => Errno);
 
       end if;
 
@@ -240,7 +240,7 @@ package body Ethernet.Datagram_Socket is
 
       if Return_Value = -1 then
 
-         raise Socket_Exception with Error_Message(Error_Number => Errno);
+         raise Socket_Error with Error_Message(Error_Number => Errno);
 
       end if;
 
@@ -268,7 +268,7 @@ package body Ethernet.Datagram_Socket is
 
       if Return_Value = -1 then
 
-         raise Socket_Exception with Error_Message(Error_Number => Errno);
+         raise Socket_Error with Error_Message(Error_Number => Errno);
 
       end if;
 
@@ -315,7 +315,7 @@ package body Ethernet.Datagram_Socket is
 
          if Return_Value = -1 then
 
-            raise Socket_Exception with Error_Message(Error_Number => Errno);
+            raise Socket_Error with Error_Message(Error_Number => Errno);
 
          end if;
 
@@ -335,7 +335,7 @@ package body Ethernet.Datagram_Socket is
 
       if File_Descriptor = -1 then
 
-         raise Socket_Exception with Error_Message(Error_Number => Errno);
+         raise Socket_Error with Error_Message(Error_Number => Errno);
 
       end if;
 
@@ -357,7 +357,7 @@ package body Ethernet.Datagram_Socket is
 
       if Socket.File_Descriptor /= -1 then
 
-         raise Socket_Exception with "Socket is already open";
+         raise Socket_Error with "Socket is already open";
 
       end if;
 
@@ -386,7 +386,7 @@ package body Ethernet.Datagram_Socket is
 
    exception
 
-      when Socket_Exception =>
+      when Socket_Error =>
 
          if File_Descriptor /= -1 then
 
@@ -435,7 +435,7 @@ package body Ethernet.Datagram_Socket is
 
          else
 
-            raise Socket_Exception with Error_Message(Error_Number => Errno);
+            raise Socket_Error with Error_Message(Error_Number => Errno);
 
          end if;
 
@@ -465,7 +465,7 @@ package body Ethernet.Datagram_Socket is
 
       if Payload'Length < Minimum_Payload_Size then
 
-         raise Socket_Exception with "Payload size is less than" & Positive'Image(Minimum_Payload_Size) & " bytes";
+         raise Socket_Error with "Payload size is less than" & Positive'Image(Minimum_Payload_Size) & " bytes";
 
       end if;
 
@@ -485,7 +485,7 @@ package body Ethernet.Datagram_Socket is
 
       if Return_Value = -1 then
 
-         raise Socket_Exception with Error_Message(Error_Number => Errno);
+         raise Socket_Error with Error_Message(Error_Number => Errno);
 
       end if;
 

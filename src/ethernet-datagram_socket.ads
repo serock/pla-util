@@ -52,7 +52,7 @@ package Ethernet.Datagram_Socket is
 
    function To_HFID_String(Payload : Payload_Type) return HFID_String.Bounded_String;
 
-   Socket_Exception : exception;
+   Socket_Error : exception;
 
 private
 

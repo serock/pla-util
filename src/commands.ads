@@ -26,7 +26,7 @@ package Commands is
    type HFID_Level_Type is (Manufacturer,
                             User);
 
-   Command_Exception : exception;
+   Command_Error : exception;
 
    function Discover_Adapters(Device_Name : in String) return Power_Line_Adapter_Sets.Set;
 

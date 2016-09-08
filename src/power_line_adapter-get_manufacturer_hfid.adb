@@ -48,7 +48,7 @@ begin
 
    if Response_Length = 0 then
 
-      raise Ethernet.Datagram_Socket.Socket_Exception with Ethernet.Datagram_Socket.Message_No_Response;
+      raise Ethernet.Datagram_Socket.Socket_Error with Ethernet.Datagram_Socket.Message_No_Response;
 
    elsif Response(Expected_Response'Range(1)) = Expected_Response then
 
@@ -56,7 +56,7 @@ begin
 
    else
 
-      raise Ethernet.Datagram_Socket.Socket_Exception with Ethernet.Datagram_Socket.Message_Unexpected_Response;
+      raise Ethernet.Datagram_Socket.Socket_Error with Ethernet.Datagram_Socket.Message_Unexpected_Response;
 
    end if;
 

@@ -68,7 +68,7 @@ package body Power_Line_Adapter.Network is
 
          else
 
-            raise Ethernet.Datagram_Socket.Socket_Exception with Ethernet.Datagram_Socket.Message_Unexpected_Response;
+            raise Ethernet.Datagram_Socket.Socket_Error with Ethernet.Datagram_Socket.Message_Unexpected_Response;
 
          end if;
 

@@ -42,7 +42,7 @@ begin
 
    if Adapters.Length = 0 then
 
-      raise Command_Exception with "No adapters were discovered";
+      raise Command_Error with "No adapters were discovered";
 
    end if;
 
