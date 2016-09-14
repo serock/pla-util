@@ -20,6 +20,8 @@ with Ethernet.Datagram_Socket;
 with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
 
+use type Ada.Containers.Count_Type;
+
 separate (Commands)
 
 function Get_HFID(Device_Name : in String;
@@ -28,8 +30,6 @@ function Get_HFID(Device_Name : in String;
    Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
    HFID     : HFID_String.Bounded_String;
    Socket   : Ethernet.Datagram_Socket.Socket_Type;
-
-   use type Ada.Containers.Count_Type;
 
 begin
 
@@ -42,7 +42,7 @@ begin
 
    if Adapters.Length = 0 then
 
-      raise Command_Error with "No adapters were discovered";
+      raise Command_Error with Message_No_Adapters;
 
    end if;
 

@@ -15,9 +15,11 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-package body Ethernet is
+with Interfaces;
 
-   use type Interfaces.Unsigned_8;
+use type Interfaces.Unsigned_8;
+
+package body Ethernet is
 
    Hex_Characters : constant array (Interfaces.Unsigned_8 range 0 .. 15) of Character :=
      ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');

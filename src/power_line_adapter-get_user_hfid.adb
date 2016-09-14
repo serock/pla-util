@@ -16,13 +16,14 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Strings;
+with Ethernet.Datagram_Socket;
+
+use type Ethernet.Datagram_Socket.Payload_Type;
 
 separate (Power_Line_Adapter)
 
 function Get_User_HFID(Adapter : in Adapter_Type;
                        Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is
-
-   use type Ethernet.Datagram_Socket.Payload_Type;
 
    Expected_Response : constant Ethernet.Datagram_Socket.Payload_Type :=
      (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#40#, 16#00#);

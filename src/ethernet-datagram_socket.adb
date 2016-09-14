@@ -17,12 +17,14 @@
 ------------------------------------------------------------------------
 with Ada.Characters.Latin_1;
 with Ada.Strings;
+with Interfaces.C;
+
+use type Interfaces.Unsigned_8;
+use type Interfaces.C.int;
+use type Interfaces.C.long;
+use type Interfaces.C.unsigned;
 
 package body Ethernet.Datagram_Socket is
-   use type Interfaces.Unsigned_8;
-   use type Interfaces.C.int;
-   use type Interfaces.C.long;
-   use type Interfaces.C.unsigned;
 
    package C_Binding is
       -- bits/socket.h

@@ -15,22 +15,24 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
+with Ethernet.Datagram_Socket;
+
+use type Ethernet.Datagram_Socket.Payload_Type;
+
 package body Power_Line_Adapter.Network is
 
    function Discover_Adapters(Socket : in Ethernet.Datagram_Socket.Socket_Type) return Power_Line_Adapter_Sets.Set is
 
-      use type Ethernet.Datagram_Socket.Payload_Type;
-
       Expected_Response : constant Ethernet.Datagram_Socket.Payload_Type :=
         (16#02#, 16#71#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
 
-      Adapter           : Adapter_Type;
-      Adapter_Number    : Positive;
-      Adapters          : Power_Line_Adapter_Sets.Set(Capacity => Max_Adapters);
-      MAC_Address       : Ethernet.MAC_Address_Type;
-      Request           : Ethernet.Datagram_Socket.Payload_Type(1 .. Ethernet.Datagram_Socket.Minimum_Payload_Size);
-      Response          : Ethernet.Datagram_Socket.Payload_Type(1 .. 128);
-      Response_Length   : Natural;
+      Adapter         : Adapter_Type;
+      Adapter_Number  : Positive;
+      Adapters        : Power_Line_Adapter_Sets.Set(Capacity => Max_Adapters);
+      MAC_Address     : Ethernet.MAC_Address_Type;
+      Request         : Ethernet.Datagram_Socket.Payload_Type(1 .. Ethernet.Datagram_Socket.Minimum_Payload_Size);
+      Response        : Ethernet.Datagram_Socket.Payload_Type(1 .. 128);
+      Response_Length : Natural;
 
    begin
 
