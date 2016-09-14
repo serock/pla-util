@@ -25,13 +25,19 @@ package Power_Line_Adapter is
 
    Max_Adapters : constant := 16;
 
+   Input_Error : exception;
+
    function "<"(Left  : in Adapter_Type;
                 Right : in Adapter_Type) return Boolean;
 
    function "="(Left  : in Adapter_Type;
                 Right : in Adapter_Type) return Boolean;
 
-   function Get_MAC_Address(Adapter : Adapter_Type) return Ethernet.MAC_Address_Type;
+   function Check_NMK(Adapter     : in Adapter_Type;
+                      Pass_Phrase : in String;
+                      Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean;
+
+   function Get_MAC_Address(Adapter : in Adapter_Type) return Ethernet.MAC_Address_Type;
 
    function Get_Manufacturer_HFID(Adapter: in Adapter_Type;
                                   Socket : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String;

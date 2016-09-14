@@ -20,13 +20,17 @@ with Power_Line_Adapter_Sets;
 
 package Commands is
 
-   type Command_Type is (Discover_Adapters,
+   type Command_Type is (Check_NMK,
+                         Discover_Adapters,
                          Get_HFID);
 
    type HFID_Level_Type is (Manufacturer,
                             User);
 
    Command_Error : exception;
+
+   function Check_NMK(Device_Name : in String;
+                      Pass_Phrase : in String) return Boolean;
 
    function Discover_Adapters(Device_Name : in String) return Power_Line_Adapter_Sets.Set;
 

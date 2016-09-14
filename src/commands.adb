@@ -17,8 +17,12 @@
 ------------------------------------------------------------------------
 package body Commands is
 
-   Default_Receive_Timeout : constant := 250;
-   Default_Send_Timeout    : constant := 250;
+   Message_No_Adapters     : constant String := "No adapters were discovered";
+   Default_Receive_Timeout : constant        := 250;
+   Default_Send_Timeout    : constant        := 250;
+
+   function Check_NMK(Device_Name : in String;
+                      Pass_Phrase : in String) return Boolean is separate;
 
    function Discover_Adapters(Device_Name : in String) return Power_Line_Adapter_Sets.Set is separate;
 
