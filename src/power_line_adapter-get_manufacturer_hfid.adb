@@ -52,7 +52,7 @@ begin
 
       raise Ethernet.Datagram_Socket.Socket_Error with Ethernet.Datagram_Socket.Message_No_Response;
 
-   elsif Response(Expected_Response'Range(1)) = Expected_Response then
+   elsif Response(Expected_Response'Range) = Expected_Response then
 
       return Ethernet.Datagram_Socket.To_HFID_String(Payload => Response(13 .. Response_Length));
 

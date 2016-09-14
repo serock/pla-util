@@ -58,7 +58,7 @@ package body Power_Line_Adapter.Network is
 
          end if;
 
-         if Response(Expected_Response'Range(1)) = Expected_Response then
+         if Response(Expected_Response'Range) = Expected_Response then
 
             Adapter_Number := Positive(Response(10));
 
