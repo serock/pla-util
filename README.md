@@ -43,6 +43,7 @@ To run the program, use one of the following commands:
 ./pla-util <nic> discover-adapters
 ./pla-util <nic> get-hfid user
 ./pla-util <nic> get-hfid manufacturer
+./pla-util <nic> check-dak <plc-pass-phrase>
 ./pla-util <nic> check-nmk <pass-phrase>
 ```
 
@@ -54,7 +55,7 @@ This program is licensed under the GNU General Public License Version 3.
 
 ## To Do List
 * [X] Implement command to check network membership key
-* [ ] Implement command to check device access key
+* [X] Implement command to check device access key
 * [ ] Implement command to set network membership key
-* [ ] Create wiki
+* [X] Create wiki
 

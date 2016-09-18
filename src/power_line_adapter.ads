@@ -33,6 +33,10 @@ package Power_Line_Adapter is
    function "="(Left  : in Adapter_Type;
                 Right : in Adapter_Type) return Boolean;
 
+   function Check_DAK(Adapter     : in Adapter_Type;
+                      Pass_Phrase : in String;
+                      Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean;
+
    function Check_NMK(Adapter     : in Adapter_Type;
                       Pass_Phrase : in String;
                       Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean;

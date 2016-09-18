@@ -21,6 +21,9 @@ package body Commands is
    Default_Receive_Timeout : constant        := 250;
    Default_Send_Timeout    : constant        := 250;
 
+   function Check_DAK(Device_Name : in String;
+                      Pass_Phrase : in String) return Boolean is separate;
+
    function Check_NMK(Device_Name : in String;
                       Pass_Phrase : in String) return Boolean is separate;
 

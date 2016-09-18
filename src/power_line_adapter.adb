@@ -26,7 +26,7 @@ use type Ethernet.MAC_Address_Type;
 
 package body Power_Line_Adapter is
 
-   type Network_Membership_Key_Type is array (Positive range 1 .. 16) of Interfaces.Unsigned_8;
+   type Key_Type is array (Positive range 1 .. 16) of Interfaces.Unsigned_8;
 
    function "<"(Left  : in Adapter_Type;
                 Right : in Adapter_Type) return Boolean is
@@ -50,11 +50,10 @@ package body Power_Line_Adapter is
       return Left.Adapter_Number = Right.Adapter_Number and Left.MAC_Address = Right.MAC_Address;
    end "=";
 
-   function Generate_NMK(Pass_Phrase : in String) return Network_Membership_Key_Type is
+   function Generate_Key(Pass_Phrase : in String;
+                         Salt        : in Ada.Streams.Stream_Element_Array) return Key_Type is
 
-      Salt : constant Ada.Streams.Stream_Element_Array(1 .. 8) := (16#08#, 16#85#, 16#6d#, 16#af#, 16#7c#, 16#f5#, 16#81#, 16#86#);
-
-      NMK    : Network_Membership_Key_Type;
+      Key    : Key_Type;
       J      : Ada.Streams.Stream_Element_Offset;
       Digest : GNAT.SHA256.Binary_Message_Digest;
       PS     : Ada.Streams.Stream_Element_Array(1 .. Pass_Phrase'Length + Salt'Length);
@@ -87,22 +86,43 @@ package body Power_Line_Adapter is
 
       J := 1;
 
-      for I in Network_Membership_Key_Type'Range loop
+      for I in Key_Type'Range loop
 
-         NMK(I) := Interfaces.Unsigned_8(Digest(J));
+         Key(I) := Interfaces.Unsigned_8(Digest(J));
          J      := J + 1;
 
       end loop;
 
-      return NMK;
+      return Key;
+
+   end Generate_Key;
+
+   function Generate_DAK(Pass_Phrase : in String) return Key_Type is
+
+      Salt : constant Ada.Streams.Stream_Element_Array(1 .. 8) := (16#08#, 16#85#, 16#6d#, 16#af#, 16#7c#, 16#f5#, 16#81#, 16#85#);
+
+   begin
+
+      return Generate_Key(Pass_Phrase => Pass_Phrase,
+                          Salt        => Salt);
+
+   end Generate_DAK;
+
+   function Generate_NMK(Pass_Phrase : in String) return Key_Type is
+
+      Salt : constant Ada.Streams.Stream_Element_Array(1 .. 8) := (16#08#, 16#85#, 16#6d#, 16#af#, 16#7c#, 16#f5#, 16#81#, 16#86#);
+
+   begin
+
+      return Generate_Key(Pass_Phrase => Pass_Phrase,
+                          Salt        => Salt);
 
    end Generate_NMK;
 
-   procedure Validate_Pass_Phrase(Pass_Phrase      : in String;
-                                  Check_Min_Length : in Boolean := True) is
-
-      Max_Pass_Phrase_Length : constant := 64;
-      Min_Pass_Phrase_Length : constant := 24;
+   procedure Validate_Pass_Phrase(Pass_Phrase            : in String;
+                                  Min_Pass_Phrase_Length : in Positive;
+                                  Max_Pass_Phrase_Length : in Positive;
+                                  Check_Min_Length       : in Boolean := True) is
 
    begin
 
@@ -131,9 +151,35 @@ package body Power_Line_Adapter is
 
    end Validate_Pass_Phrase;
 
-   function Check_NMK(Adapter     : in Adapter_Type;
-                      Pass_Phrase : in String;
-                      Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean is separate;
+   procedure Validate_DAK_Pass_Phrase(Pass_Phrase      : in String;
+                                      Check_Min_Length : in Boolean := True) is
+
+      Max_Pass_Phrase_Length : constant := 19;
+      Min_Pass_Phrase_Length : constant := 19;
+
+   begin
+
+      Validate_Pass_Phrase(Pass_Phrase            => Pass_Phrase,
+                           Min_Pass_Phrase_Length => Min_Pass_Phrase_Length,
+                           Max_Pass_Phrase_Length => Max_Pass_Phrase_Length,
+                           Check_Min_Length       => Check_Min_Length);
+
+   end Validate_DAK_Pass_Phrase;
+
+   procedure Validate_NMK_Pass_Phrase(Pass_Phrase      : in String;
+                                      Check_Min_Length : in Boolean := True) is
+
+      Max_Pass_Phrase_Length : constant := 64;
+      Min_Pass_Phrase_Length : constant := 24;
+
+   begin
+
+      Validate_Pass_Phrase(Pass_Phrase            => Pass_Phrase,
+                           Min_Pass_Phrase_Length => Min_Pass_Phrase_Length,
+                           Max_Pass_Phrase_Length => Max_Pass_Phrase_Length,
+                           Check_Min_Length       => Check_Min_Length);
+
+   end Validate_NMK_Pass_Phrase;
 
    procedure Create(Adapter        : in out Adapter_Type;
                     Adapter_Number : in     Positive;
@@ -155,6 +201,38 @@ package body Power_Line_Adapter is
       return Adapter.MAC_Address;
 
    end Get_MAC_Address;
+
+   procedure Process(Adapter          : in     Adapter_Type;
+                     Request          : in     Ethernet.Datagram_Socket.Payload_Type;
+                     Socket           : in     Ethernet.Datagram_Socket.Socket_Type;
+                     Response         :    out Ethernet.Datagram_Socket.Payload_Type;
+                     Response_Length  :    out Natural;
+                     From_MAC_Address :    out Ethernet.MAC_Address_Type) is
+
+   begin
+
+      Socket.Send(Payload => Request,
+                  To      => Adapter.Get_MAC_Address);
+
+      Socket.Receive(Payload        => Response,
+                     Payload_Length => Response_Length,
+                     From           => From_MAC_Address);
+
+      if Response_Length = 0 then
+
+         raise Ethernet.Datagram_Socket.Socket_Error with Ethernet.Datagram_Socket.Message_No_Response;
+
+      end if;
+
+   end Process;
+
+   function Check_DAK(Adapter     : in Adapter_Type;
+                      Pass_Phrase : in String;
+                      Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean is separate;
+
+   function Check_NMK(Adapter     : in Adapter_Type;
+                      Pass_Phrase : in String;
+                      Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean is separate;
 
    function Get_Manufacturer_HFID(Adapter : in Adapter_Type;
                                   Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is separate;

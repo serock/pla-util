@@ -20,7 +20,8 @@ with Power_Line_Adapter_Sets;
 
 package Commands is
 
-   type Command_Type is (Check_NMK,
+   type Command_Type is (Check_DAK,
+                         Check_NMK,
                          Discover_Adapters,
                          Get_HFID);
 
@@ -28,6 +29,9 @@ package Commands is
                             User);
 
    Command_Error : exception;
+
+   function Check_DAK(Device_Name : in String;
+                      Pass_Phrase : in String) return Boolean;
 
    function Check_NMK(Device_Name : in String;
                       Pass_Phrase : in String) return Boolean;

@@ -82,6 +82,33 @@ package body Console is
 
    end Get_HFID;
 
+   procedure Check_DAK(Device_Name : in String) is
+
+      Is_Match : Boolean;
+
+   begin
+
+      if Ada.Command_Line.Argument_Count < 3 then
+
+         raise Syntax_Error with Message_Too_Few_Arguments;
+
+      end if;
+
+      Is_Match := Commands.Check_DAK(Device_Name => Device_Name,
+                                     Pass_Phrase => Ada.Command_Line.Argument(Number => 3));
+
+      if Is_Match then
+
+         Ada.Text_IO.Put_Line(Item => "Device Access Key matches");
+
+      else
+
+         Ada.Text_IO.Put_Line(Item => "Device Access Key does not match");
+
+      end if;
+
+   end Check_DAK;
+
    procedure Check_NMK(Device_Name : in String) is
 
       Is_Match : Boolean;
@@ -151,6 +178,10 @@ package body Console is
 
          case Command is
 
+            when Commands.Check_DAK =>
+
+               Check_DAK(Device_Name => Device_Name);
+
             when Commands.Check_NMK =>
 
                Check_NMK(Device_Name => Device_Name);
@@ -178,6 +209,7 @@ package body Console is
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> discover-adapters");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid manufacturer");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid user");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-nmk <pass-phrase>");
          Ada.Text_IO.New_Line(Spacing => 1);
          Ada.Text_IO.Put_Line(Item => "where <NIC> is the name of an ethernet network device");
