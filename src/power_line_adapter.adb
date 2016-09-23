@@ -237,6 +237,9 @@ package body Power_Line_Adapter is
    function Get_Manufacturer_HFID(Adapter : in Adapter_Type;
                                   Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is separate;
 
+   function Get_Network_Info(Adapter : in Adapter_Type;
+                             Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
+
    function Get_User_HFID(Adapter : in Adapter_Type;
                           Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is separate;
 

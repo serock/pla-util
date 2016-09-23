@@ -16,6 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with HFID_String;
+with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
 
 package Commands is
@@ -23,7 +24,8 @@ package Commands is
    type Command_Type is (Check_DAK,
                          Check_NMK,
                          Discover_Adapters,
-                         Get_HFID);
+                         Get_HFID,
+                         Get_Network_Info);
 
    type HFID_Level_Type is (Manufacturer,
                             User);
@@ -40,5 +42,7 @@ package Commands is
 
    function Get_HFID(Device_Name : in String;
                      HFID_Level  : in HFID_Level_Type) return HFID_String.Bounded_String;
+
+   function Get_Network_Info(Device_Name : in String) return Power_Line_Adapter.Network_Info_List_Type;
 
 end Commands;

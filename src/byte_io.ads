@@ -15,23 +15,13 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-package body Commands is
+with Interfaces;
 
-   Message_No_Adapters     : constant String := "No adapters were discovered";
-   Default_Receive_Timeout : constant        := 250;
-   Default_Send_Timeout    : constant        := 250;
+package Byte_IO is
 
-   function Check_DAK(Device_Name : in String;
-                      Pass_Phrase : in String) return Boolean is separate;
+   function To_String(Item : in Interfaces.Unsigned_8) return String;
 
-   function Check_NMK(Device_Name : in String;
-                      Pass_Phrase : in String) return Boolean is separate;
+   procedure Put(Item : in Interfaces.Unsigned_8);
 
-   function Discover_Adapters(Device_Name : in String) return Power_Line_Adapter_Sets.Set is separate;
+end Byte_IO;
 
-   function Get_HFID(Device_Name : in String;
-                     HFID_Level  : in HFID_Level_Type) return HFID_String.Bounded_String is separate;
-
-   function Get_Network_Info(Device_Name : in String) return Power_Line_Adapter.Network_Info_List_Type is separate;
-
-end Commands;

@@ -19,6 +19,7 @@ with Ada.Command_Line;
 with Ada.Exceptions;
 with Ada.Strings;
 with Ada.Text_IO;
+with Byte_IO;
 with Commands;
 with HFID_String;
 with Power_Line_Adapter;
@@ -29,58 +30,6 @@ package body Console is
    Message_Too_Few_Arguments : constant String := "Too few arguments";
 
    Syntax_Error : exception;
-
-   procedure Discover_Adapters(Device_Name : in String) is
-
-      Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
-
-   begin
-
-      Adapters := Commands.Discover_Adapters(Device_Name => Device_Name);
-
-      for Adapter of Adapters loop
-
-         Ada.Text_IO.Put_Line(Item => Adapter.To_String);
-
-      end loop;
-
-   end Discover_Adapters;
-
-   procedure Get_HFID(Device_Name : in String) is
-
-      HFID       : HFID_String.Bounded_String;
-      HFID_Level : Commands.HFID_Level_Type;
-
-   begin
-
-      if Ada.Command_Line.Argument_Count < 3 then
-
-         raise Syntax_Error with Message_Too_Few_Arguments;
-
-      end if;
-
-      declare
-
-         HFID_Level_Arg : String := Ada.Command_Line.Argument(Number => 3);
-
-      begin
-
-         HFID_Level := Commands.HFID_Level_Type'Value(HFID_Level_Arg);
-
-      exception
-
-         when Constraint_Error =>
-
-            raise Syntax_Error with "Invalid HFID level """ & HFID_Level_Arg & '"';
-
-      end;
-
-      HFID := Commands.Get_HFID(Device_Name => Device_Name,
-                                HFID_Level  => HFID_Level);
-
-      Ada.Text_IO.Put_Line(Item => HFID_String.To_String(Source => HFID));
-
-   end Get_HFID;
 
    procedure Check_DAK(Device_Name : in String) is
 
@@ -135,6 +84,96 @@ package body Console is
       end if;
 
    end Check_NMK;
+
+   procedure Discover_Adapters(Device_Name : in String) is
+
+      Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
+
+   begin
+
+      Adapters := Commands.Discover_Adapters(Device_Name => Device_Name);
+
+      for Adapter of Adapters loop
+
+         Ada.Text_IO.Put_Line(Item => Adapter.To_String);
+
+      end loop;
+
+   end Discover_Adapters;
+
+   procedure Get_HFID(Device_Name : in String) is
+
+      HFID       : HFID_String.Bounded_String;
+      HFID_Level : Commands.HFID_Level_Type;
+
+   begin
+
+      if Ada.Command_Line.Argument_Count < 3 then
+
+         raise Syntax_Error with Message_Too_Few_Arguments;
+
+      end if;
+
+      declare
+
+         HFID_Level_Arg : String := Ada.Command_Line.Argument(Number => 3);
+
+      begin
+
+         HFID_Level := Commands.HFID_Level_Type'Value(HFID_Level_Arg);
+
+      exception
+
+         when Constraint_Error =>
+
+            raise Syntax_Error with "Invalid HFID level """ & HFID_Level_Arg & '"';
+
+      end;
+
+      HFID := Commands.Get_HFID(Device_Name => Device_Name,
+                                HFID_Level  => HFID_Level);
+
+      Ada.Text_IO.Put_Line(Item => HFID_String.To_String(Source => HFID));
+
+   end Get_HFID;
+
+   procedure Get_Network_Info(Device_Name : in String) is
+
+      Network_Info_List : Power_Line_Adapter.Network_Info_List_Type := Commands.Get_Network_Info(Device_Name => Device_Name);
+
+   begin
+
+      if Network_Info_List'Length = 0 then
+
+         Ada.Text_IO.Put_Line(Item => "Adapter is not a member of any network");
+
+      else
+
+         Ada.Text_IO.Put(Item => "NID:  ");
+
+         for I in Network_Info_List(1).NID'Range loop
+
+            Byte_IO.Put(Item  => Network_Info_List(1).NID(I));
+
+         end loop;
+
+         Ada.Text_IO.New_Line(Spacing => 1);
+
+         Ada.Text_IO.Put(Item => "SNID: ");
+
+         Byte_IO.Put(Item  => Network_Info_List(1).SNID);
+
+         Ada.Text_IO.New_Line(Spacing => 1);
+
+         Ada.Text_IO.Put(Item => "TEI:  ");
+
+         Byte_IO.Put(Item  => Network_Info_List(1).TEI);
+
+         Ada.Text_IO.New_Line(Spacing => 1);
+
+      end if;
+
+   end Get_Network_Info;
 
    function To_Command_Name(Source : in String) return String is
 
@@ -194,6 +233,10 @@ package body Console is
 
                Get_HFID(Device_Name => Device_Name);
 
+            when Commands.Get_Network_Info =>
+
+               Get_Network_Info(Device_Name => Device_Name);
+
          end case;
 
       end;
@@ -211,6 +254,7 @@ package body Console is
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid user");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-nmk <pass-phrase>");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info");
          Ada.Text_IO.New_Line(Spacing => 1);
          Ada.Text_IO.Put_Line(Item => "where <NIC> is the name of an ethernet network device");
 

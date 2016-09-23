@@ -18,10 +18,22 @@
 with Ada.Containers.Bounded_Ordered_Sets;
 with Ethernet.Datagram_Socket;
 with HFID_String;
+with Interfaces;
 
 package Power_Line_Adapter is
 
    type Adapter_Type is tagged private;
+
+   type NID_Type is array (1 .. 7) of Interfaces.Unsigned_8;
+
+   type Network_Info_Type is
+      record
+         NID  : NID_Type;
+         SNID : Interfaces.Unsigned_8;
+         TEI  : Interfaces.Unsigned_8;
+      end record;
+
+   type Network_Info_List_Type is array (Positive range <>) of Network_Info_Type;
 
    Max_Adapters : constant := 16;
 
@@ -45,6 +57,9 @@ package Power_Line_Adapter is
 
    function Get_Manufacturer_HFID(Adapter: in Adapter_Type;
                                   Socket : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String;
+
+   function Get_Network_Info(Adapter : in Adapter_Type;
+                             Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type;
 
    function Get_User_HFID(Adapter : in Adapter_Type;
                           Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String;

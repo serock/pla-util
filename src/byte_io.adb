@@ -15,49 +15,40 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Byte_IO;
+with Ada.Text_IO;
 with Interfaces;
 
 use type Interfaces.Unsigned_8;
 
-package body Ethernet is
+package body Byte_IO is
 
-   function To_String(MAC_Address : in MAC_Address_Type;
-                      Separator   : in Character := ':') return String is
+   Hex_Characters : constant array (Interfaces.Unsigned_8 range 0 .. 15) of Character :=
+     ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
 
-      S : String(1 .. 17);
+   function To_String(Item : in Interfaces.Unsigned_8) return String is
+
+      S : String(1 .. 2);
 
    begin
 
-      S :=
-        Byte_IO.To_String(Item => MAC_Address.Octets(1)) & Separator &
-        Byte_IO.To_String(Item => MAC_Address.Octets(2)) & Separator &
-        Byte_IO.To_String(Item => MAC_Address.Octets(3)) & Separator &
-        Byte_IO.To_String(Item => MAC_Address.Octets(4)) & Separator &
-        Byte_IO.To_String(Item => MAC_Address.Octets(5)) & Separator &
-        Byte_IO.To_String(Item => MAC_Address.Octets(6));
+      S(1) := Hex_Characters(Interfaces.Shift_Right(Value  => Item,
+                                                    Amount => 4));
+
+      S(2) := Hex_Characters(Item and 16#0f#);
 
       return S;
 
    end To_String;
 
-   function "<"(Left  : in MAC_Address_Type;
-                Right : in MAC_Address_Type) return Boolean is
+   procedure Put(Item : in Interfaces.Unsigned_8) is
+
+      S : String(1 .. 2) := To_String(Item => Item);
 
    begin
 
-      for I in 1 .. 6 loop
+      Ada.Text_IO.Put(Item => S);
 
-         if Left.Octets(I) /= Right.Octets(I) then
+   end Put;
 
-            return Left.Octets(I) < Right.Octets(I);
+end Byte_IO;
 
-         end if;
-
-      end loop;
-
-      return False;
-
-   end "<";
-
-end Ethernet;
