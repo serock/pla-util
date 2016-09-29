@@ -24,6 +24,13 @@ package Ethernet is
    Broadcast_Address : constant MAC_Address_Type;
    Null_Address      : constant MAC_Address_Type;
 
+   function Create_MAC_Address(Octet_1 : in Interfaces.Unsigned_8;
+                               Octet_2 : in Interfaces.Unsigned_8;
+                               Octet_3 : in Interfaces.Unsigned_8;
+                               Octet_4 : in Interfaces.Unsigned_8;
+                               Octet_5 : in Interfaces.Unsigned_8;
+                               Octet_6 : in Interfaces.Unsigned_8) return MAC_Address_Type;
+
    function To_String(MAC_Address : in MAC_Address_Type;
                       Separator   : in Character := ':') return String;
 

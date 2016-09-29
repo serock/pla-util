@@ -20,7 +20,9 @@ with Ada.Exceptions;
 with Ada.Strings;
 with Ada.Text_IO;
 with Byte_IO;
+with Byte_Text_IO;
 with Commands;
+with Ethernet;
 with HFID_String;
 with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
@@ -139,39 +141,93 @@ package body Console is
 
    procedure Get_Network_Info(Device_Name : in String) is
 
+      Column_2 : constant := 36;
+
       Network_Info_List : Power_Line_Adapter.Network_Info_List_Type := Commands.Get_Network_Info(Device_Name => Device_Name);
 
    begin
 
-      if Network_Info_List'Length = 0 then
+      Ada.Text_IO.Put_Line(Item => "Number of networks:" & Integer'Image(Network_Info_List'Length));
 
-         Ada.Text_IO.Put_Line(Item => "Adapter is not a member of any network");
+      for I in 1 .. Network_Info_List'Length loop
 
-      else
+         Ada.Text_IO.Put_Line(Item => "Network" & Integer'Image(I) & ":");
 
-         Ada.Text_IO.Put(Item => "NID:  ");
+         Ada.Text_IO.Put(Item => "  NID:");
 
-         for I in Network_Info_List(1).NID'Range loop
+         Ada.Text_IO.Set_Col(To => Column_2);
 
-            Byte_IO.Put(Item  => Network_Info_List(1).NID(I));
+         for J in Network_Info_List(I).NID'Range loop
+
+            Byte_IO.Put_Hex(Item => Network_Info_List(I).NID(J));
 
          end loop;
 
          Ada.Text_IO.New_Line(Spacing => 1);
 
-         Ada.Text_IO.Put(Item => "SNID: ");
+         Ada.Text_IO.Put(Item => "  SNID:");
 
-         Byte_IO.Put(Item  => Network_Info_List(1).SNID);
+         Ada.Text_IO.Set_Col(To => Column_2);
 
-         Ada.Text_IO.New_Line(Spacing => 1);
-
-         Ada.Text_IO.Put(Item => "TEI:  ");
-
-         Byte_IO.Put(Item  => Network_Info_List(1).TEI);
+         Byte_Text_IO.Put(Item  => Network_Info_List(I).SNID,
+                          Width => 1,
+                          Base  => 10);
 
          Ada.Text_IO.New_Line(Spacing => 1);
 
-      end if;
+         Ada.Text_IO.Put(Item => "  TEI:");
+
+         Ada.Text_IO.Set_Col(To => Column_2);
+
+         Byte_Text_IO.Put(Item  => Network_Info_List(I).TEI,
+                          Width => 1,
+                          Base  => 10);
+
+         Ada.Text_IO.New_Line(Spacing => 1);
+
+         Ada.Text_IO.Put(Item => "  CCo MAC Address:");
+
+         Ada.Text_IO.Set_Col(To => Column_2);
+
+         Ada.Text_IO.Put_Line(Item => Ethernet.To_String(MAC_Address => Network_Info_List(I).CCo_MAC_Address));
+
+         Ada.Text_IO.Put(Item => "  Backup CCo MAC Address:");
+
+         Ada.Text_IO.Set_Col(To => Column_2);
+
+         Ada.Text_IO.Put_Line(Item => Ethernet.To_String(MAC_Address => Network_Info_List(I).BCCo_MAC_Address));
+
+         Ada.Text_IO.Put(Item => "  Number of Coordinating Networks:");
+
+         Ada.Text_IO.Set_Col(To => Column_2);
+
+         Byte_Text_IO.Put(Item  => Network_Info_List(I).Num_Coord_Networks,
+                          Width => 1,
+                          Base  => 10);
+
+         Ada.Text_IO.New_Line(Spacing => 1);
+
+         Ada.Text_IO.Put(Item => "  Station Role:");
+
+         Ada.Text_IO.Set_Col(To => Column_2);
+
+         Ada.Text_IO.Put_Line(Item => Power_Line_Adapter.Station_Role_Type'Image(Network_Info_List(I).Station_Role));
+
+         Ada.Text_IO.Put(Item => "  Network Kind:");
+
+         Ada.Text_IO.Set_Col(To => Column_2);
+
+         Ada.Text_IO.Put_Line(Item => Power_Line_Adapter.Network_Kind_Type'Image(Network_Info_List(I).Network_Kind));
+
+         Ada.Text_IO.Put(Item => "  Status:");
+
+         Ada.Text_IO.Set_Col(To => Column_2);
+
+         Ada.Text_IO.Put_Line(Item => Power_Line_Adapter.Status_Type'Image(Network_Info_List(I).Status));
+
+         Ada.Text_IO.New_Line(Spacing => 1);
+
+      end loop;
 
    end Get_Network_Info;
 

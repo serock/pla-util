@@ -29,7 +29,7 @@ function Get_Network_Info(Adapter : in Adapter_Type;
    No_Network         : Network_Info_List_Type (1 .. 0);
    Number_Of_Networks : Natural;
    Request            : Ethernet.Datagram_Socket.Payload_Type(1 .. Ethernet.Datagram_Socket.Minimum_Payload_Size);
-   Response           : Ethernet.Datagram_Socket.Payload_Type(1 .. 46); -- TODO RESIZE FOR MULTIPLE NETWORKS
+   Response           : Ethernet.Datagram_Socket.Payload_Type(1 .. 385);
    Response_Length    : Natural;
 
 begin
@@ -60,21 +60,54 @@ begin
 
    declare
 
---        TODO ADD SUPPORT FOR MULTIPLE NETWORKS
---        Network_Info : Network_Info_List_Type (1 .. Number_Of_Networks);
-
-      Network_Info : Network_Info_List_Type (1 .. 1);
+      Network_Info : Network_Info_List_Type (1 .. Number_Of_Networks);
+      X            : Positive;
 
    begin
 
-      for I in Network_Info(1).NID'Range loop
+      X := 11;
 
-         Network_Info(1).NID(I) := Response(I + 10);
+      for I in 1 .. Number_of_Networks loop
+
+         for J in Network_Info(I).NID'Range loop
+
+            Network_Info(I).NID(J) := Response(X);
+
+            X := X + 1;
+
+         end loop;
+
+         Network_Info(I).SNID         := Response(X);                        X := X + 1;
+         Network_Info(I).TEI          := Response(X);                        X := X + 1;
+         Network_Info(I).Station_Role := Station_Role_Type'Val(Response(X)); X := X + 1;
+
+         Network_Info(I).CCo_MAC_Address := Ethernet.Create_MAC_Address(Octet_1 => Response(X),
+                                                                        Octet_2 => Response(X + 1),
+                                                                        Octet_3 => Response(X + 2),
+                                                                        Octet_4 => Response(X + 3),
+                                                                        Octet_5 => Response(X + 4),
+                                                                        Octet_6 => Response(X + 5));
+
+         X := X + 6;
+
+         Network_Info(I).Network_Kind       := Network_Kind_Type'Val(Response(X)); X := X + 1;
+         Network_Info(I).Num_Coord_Networks := Response(X);                        X := X + 1;
+         Network_Info(I).Status             := Status_Type'Val(Response(X));       X := X + 1;
 
       end loop;
 
-      Network_Info(1).SNID := Response(18);
-      Network_Info(1).TEI  := Response(19);
+      for I in 1 .. Number_of_Networks loop
+
+         Network_Info(I).BCCo_MAC_Address := Ethernet.Create_MAC_Address(Octet_1 => Response(X),
+                                                                         Octet_2 => Response(X + 1),
+                                                                         Octet_3 => Response(X + 2),
+                                                                         Octet_4 => Response(X + 3),
+                                                                         Octet_5 => Response(X + 4),
+                                                                         Octet_6 => Response(X + 5));
+
+         X := X + 6;
+
+      end loop;
 
       return Network_Info;
 

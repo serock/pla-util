@@ -22,6 +22,23 @@ use type Interfaces.Unsigned_8;
 
 package body Ethernet is
 
+   function Create_MAC_Address(Octet_1 : in Interfaces.Unsigned_8;
+                               Octet_2 : in Interfaces.Unsigned_8;
+                               Octet_3 : in Interfaces.Unsigned_8;
+                               Octet_4 : in Interfaces.Unsigned_8;
+                               Octet_5 : in Interfaces.Unsigned_8;
+                               Octet_6 : in Interfaces.Unsigned_8) return MAC_Address_Type is
+
+      MAC_Address : MAC_Address_Type;
+
+   begin
+
+      MAC_Address.Octets := (Octet_1, Octet_2, Octet_3, Octet_4, Octet_5, Octet_6, 0, 0);
+
+      return MAC_Address;
+
+   end Create_MAC_Address;
+
    function To_String(MAC_Address : in MAC_Address_Type;
                       Separator   : in Character := ':') return String is
 
@@ -30,12 +47,12 @@ package body Ethernet is
    begin
 
       S :=
-        Byte_IO.To_String(Item => MAC_Address.Octets(1)) & Separator &
-        Byte_IO.To_String(Item => MAC_Address.Octets(2)) & Separator &
-        Byte_IO.To_String(Item => MAC_Address.Octets(3)) & Separator &
-        Byte_IO.To_String(Item => MAC_Address.Octets(4)) & Separator &
-        Byte_IO.To_String(Item => MAC_Address.Octets(5)) & Separator &
-        Byte_IO.To_String(Item => MAC_Address.Octets(6));
+        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(1)) & Separator &
+        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(2)) & Separator &
+        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(3)) & Separator &
+        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(4)) & Separator &
+        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(5)) & Separator &
+        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(6));
 
       return S;
 

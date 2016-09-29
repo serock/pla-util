@@ -15,15 +15,7 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
+with Ada.Text_IO;
 with Interfaces;
 
-package Byte_IO is
-
-   procedure Put_Hex(Item : in Interfaces.Unsigned_8);
-
-   procedure Put_Hex_Line(Item : in Interfaces.Unsigned_8);
-
-   function To_Hex_String(Item : in Interfaces.Unsigned_8) return String;
-
-end Byte_IO;
-
+package Byte_Text_IO is new Ada.Text_IO.Modular_IO(Num => Interfaces.Unsigned_8);

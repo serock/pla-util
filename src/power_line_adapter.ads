@@ -26,11 +26,23 @@ package Power_Line_Adapter is
 
    type NID_Type is array (1 .. 7) of Interfaces.Unsigned_8;
 
+   type Network_Kind_Type is (IN_HOME_NETWORK, ACCESS_NETWORK);
+
+   type Station_Role_Type is (UNASSOC_STA, UNASSOC_CCO, STA, CCO, BACKUP_CCO);
+
+   type Status_Type is (JOINED, NOT_JOINED_HAVE_NMK, NOT_JOINED_NO_NMK);
+
    type Network_Info_Type is
       record
-         NID  : NID_Type;
-         SNID : Interfaces.Unsigned_8;
-         TEI  : Interfaces.Unsigned_8;
+         NID                : NID_Type;
+         SNID               : Interfaces.Unsigned_8;
+         TEI                : Interfaces.Unsigned_8;
+         CCo_MAC_Address    : Ethernet.MAC_Address_Type;
+         BCCo_MAC_Address   : Ethernet.MAC_Address_Type;
+         Num_Coord_Networks : Interfaces.Unsigned_8;
+         Station_Role       : Station_Role_Type;
+         Network_Kind       : Network_Kind_Type;
+         Status             : Status_Type;
       end record;
 
    type Network_Info_List_Type is array (Positive range <>) of Network_Info_Type;

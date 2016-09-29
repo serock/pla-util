@@ -25,7 +25,27 @@ package body Byte_IO is
    Hex_Characters : constant array (Interfaces.Unsigned_8 range 0 .. 15) of Character :=
      ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
 
-   function To_String(Item : in Interfaces.Unsigned_8) return String is
+   procedure Put_Hex(Item : in Interfaces.Unsigned_8) is
+
+      S : String(1 .. 2) := To_Hex_String(Item => Item);
+
+   begin
+
+      Ada.Text_IO.Put(Item => S);
+
+   end Put_Hex;
+
+   procedure Put_Hex_Line(Item : in Interfaces.Unsigned_8) is
+
+   begin
+
+      Put_Hex(Item => Item);
+
+      Ada.Text_IO.New_Line(Spacing => 1);
+
+   end Put_Hex_Line;
+
+   function To_Hex_String(Item : in Interfaces.Unsigned_8) return String is
 
       S : String(1 .. 2);
 
@@ -38,17 +58,7 @@ package body Byte_IO is
 
       return S;
 
-   end To_String;
-
-   procedure Put(Item : in Interfaces.Unsigned_8) is
-
-      S : String(1 .. 2) := To_String(Item => Item);
-
-   begin
-
-      Ada.Text_IO.Put(Item => S);
-
-   end Put;
+   end To_Hex_String;
 
 end Byte_IO;
 
