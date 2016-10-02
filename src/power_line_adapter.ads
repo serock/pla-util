@@ -19,12 +19,13 @@ with Ada.Containers.Bounded_Ordered_Sets;
 with Ethernet.Datagram_Socket;
 with HFID_String;
 with Interfaces;
+with Simple;
 
 package Power_Line_Adapter is
 
-   type Adapter_Type is tagged private;
+   subtype NID_Type is Simple.Bytes_Type(1 .. 7);
 
-   type NID_Type is array (1 .. 7) of Interfaces.Unsigned_8;
+   type Adapter_Type is tagged private;
 
    type Network_Kind_Type is (IN_HOME_NETWORK, ACCESS_NETWORK);
 

@@ -22,18 +22,13 @@ use type Interfaces.Unsigned_8;
 
 package body Ethernet is
 
-   function Create_MAC_Address(Octet_1 : in Interfaces.Unsigned_8;
-                               Octet_2 : in Interfaces.Unsigned_8;
-                               Octet_3 : in Interfaces.Unsigned_8;
-                               Octet_4 : in Interfaces.Unsigned_8;
-                               Octet_5 : in Interfaces.Unsigned_8;
-                               Octet_6 : in Interfaces.Unsigned_8) return MAC_Address_Type is
+   function Create_MAC_Address(Bytes : in MAC_48_Bytes) return MAC_Address_Type is
 
       MAC_Address : MAC_Address_Type;
 
    begin
 
-      MAC_Address.Octets := (Octet_1, Octet_2, Octet_3, Octet_4, Octet_5, Octet_6, 0, 0);
+      MAC_Address.Bytes := (Bytes(1), Bytes(2), Bytes(3), Bytes(4), Bytes(5), Bytes(6), others => 0);
 
       return MAC_Address;
 
@@ -47,12 +42,12 @@ package body Ethernet is
    begin
 
       S :=
-        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(1)) & Separator &
-        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(2)) & Separator &
-        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(3)) & Separator &
-        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(4)) & Separator &
-        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(5)) & Separator &
-        Byte_IO.To_Hex_String(Item => MAC_Address.Octets(6));
+        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(1)) & Separator &
+        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(2)) & Separator &
+        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(3)) & Separator &
+        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(4)) & Separator &
+        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(5)) & Separator &
+        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(6));
 
       return S;
 
@@ -65,9 +60,9 @@ package body Ethernet is
 
       for I in 1 .. 6 loop
 
-         if Left.Octets(I) /= Right.Octets(I) then
+         if Left.Bytes(I) /= Right.Bytes(I) then
 
-            return Left.Octets(I) < Right.Octets(I);
+            return Left.Bytes(I) < Right.Bytes(I);
 
          end if;
 

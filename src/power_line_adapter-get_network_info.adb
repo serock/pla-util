@@ -69,24 +69,15 @@ begin
 
       for I in 1 .. Number_of_Networks loop
 
-         for J in Network_Info(I).NID'Range loop
+         Network_Info(I).NID := Response(X .. X + NID_Type'Length - 1);
 
-            Network_Info(I).NID(J) := Response(X);
-
-            X := X + 1;
-
-         end loop;
+         X := X + NID_Type'Length;
 
          Network_Info(I).SNID         := Response(X);                        X := X + 1;
          Network_Info(I).TEI          := Response(X);                        X := X + 1;
          Network_Info(I).Station_Role := Station_Role_Type'Val(Response(X)); X := X + 1;
 
-         Network_Info(I).CCo_MAC_Address := Ethernet.Create_MAC_Address(Octet_1 => Response(X),
-                                                                        Octet_2 => Response(X + 1),
-                                                                        Octet_3 => Response(X + 2),
-                                                                        Octet_4 => Response(X + 3),
-                                                                        Octet_5 => Response(X + 4),
-                                                                        Octet_6 => Response(X + 5));
+         Network_Info(I).CCo_MAC_Address := Ethernet.Create_MAC_Address(Bytes => Response(X .. X + 5));
 
          X := X + 6;
 
@@ -98,12 +89,7 @@ begin
 
       for I in 1 .. Number_of_Networks loop
 
-         Network_Info(I).BCCo_MAC_Address := Ethernet.Create_MAC_Address(Octet_1 => Response(X),
-                                                                         Octet_2 => Response(X + 1),
-                                                                         Octet_3 => Response(X + 2),
-                                                                         Octet_4 => Response(X + 3),
-                                                                         Octet_5 => Response(X + 4),
-                                                                         Octet_6 => Response(X + 5));
+         Network_Info(I).BCCo_MAC_Address := Ethernet.Create_MAC_Address(Bytes => Response(X .. X + 5));
 
          X := X + 6;
 

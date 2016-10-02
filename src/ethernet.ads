@@ -16,20 +16,18 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Interfaces;
+with Simple;
 
 package Ethernet is
+
+   subtype MAC_48_Bytes is Simple.Bytes_Type(1 .. 6);
 
    type MAC_Address_Type is tagged private;
 
    Broadcast_Address : constant MAC_Address_Type;
    Null_Address      : constant MAC_Address_Type;
 
-   function Create_MAC_Address(Octet_1 : in Interfaces.Unsigned_8;
-                               Octet_2 : in Interfaces.Unsigned_8;
-                               Octet_3 : in Interfaces.Unsigned_8;
-                               Octet_4 : in Interfaces.Unsigned_8;
-                               Octet_5 : in Interfaces.Unsigned_8;
-                               Octet_6 : in Interfaces.Unsigned_8) return MAC_Address_Type;
+   function Create_MAC_Address(Bytes : in MAC_48_Bytes) return MAC_Address_Type;
 
    function To_String(MAC_Address : in MAC_Address_Type;
                       Separator   : in Character := ':') return String;
@@ -39,14 +37,14 @@ package Ethernet is
 
 private
 
-   type Octets_Type is array (1 .. 8) of Interfaces.Unsigned_8;
+   subtype Bytes_Type is Simple.Bytes_Type(1 .. 8);
 
    type MAC_Address_Type is tagged
       record
-         Octets : Octets_Type;
+         Bytes : Bytes_Type;
       end record;
 
-   Broadcast_Address : constant MAC_Address_Type := MAC_Address_Type'(Octets => (1 .. 6 => 16#ff#, others => 16#00#));
-   Null_Address      : constant MAC_Address_Type := MAC_Address_Type'(Octets => (others => 16#00#));
+   Broadcast_Address : constant MAC_Address_Type := MAC_Address_Type'(Bytes => (1 .. 6 => 16#ff#, others => 16#00#));
+   Null_Address      : constant MAC_Address_Type := MAC_Address_Type'(Bytes => (others => 16#00#));
 
 end Ethernet;

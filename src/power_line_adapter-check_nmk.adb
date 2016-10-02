@@ -29,7 +29,7 @@ function Check_NMK(Adapter     : in Adapter_Type;
 
    Expected_Response : Ethernet.Datagram_Socket.Payload_Type(1 .. 12);
    Generated_NMK     : Key_Type;
-   J                 : Positive := 13;
+   I                 : Positive := 13;
    MAC_Address       : Ethernet.MAC_Address_Type;
    NMK               : Key_Type;
    Request           : Ethernet.Datagram_Socket.Payload_Type(1 .. Ethernet.Datagram_Socket.Minimum_Payload_Size);
@@ -57,12 +57,7 @@ begin
 
    end if;
 
-   for I in NMK'Range loop
-
-      NMK(I) := Response(J);
-      J      := J + 1;
-
-   end loop;
+   NMK := Response(I .. I + Key_Type'Length - 1);
 
    Generated_NMK := Generate_NMK(Pass_Phrase => Pass_Phrase);
 

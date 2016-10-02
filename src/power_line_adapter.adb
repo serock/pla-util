@@ -26,7 +26,7 @@ use type Ethernet.MAC_Address_Type;
 
 package body Power_Line_Adapter is
 
-   type Key_Type is array (Positive range 1 .. 16) of Interfaces.Unsigned_8;
+   subtype Key_Type is Simple.Bytes_Type(1 .. 16);
 
    function "<"(Left  : in Adapter_Type;
                 Right : in Adapter_Type) return Boolean is

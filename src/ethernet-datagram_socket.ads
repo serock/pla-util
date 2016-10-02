@@ -18,14 +18,15 @@
 with HFID_String;
 with Interfaces;
 limited private with Interfaces.C;
+with Simple;
 
 package Ethernet.Datagram_Socket is
 
-   type Payload_Type  is array (Positive range <>) of Interfaces.Unsigned_8;
+   subtype Milliseconds_Type is Natural;
+   subtype Payload_Type      is Simple.Bytes_Type;
+
    type Protocol_Type is private;
    type Socket_Type   is tagged limited private;
-
-   subtype Milliseconds_Type is Natural;
 
    Message_No_Response         : constant String := "No response received from adapter";
    Message_Unexpected_Response : constant String := "Unexpected response received from adapter";

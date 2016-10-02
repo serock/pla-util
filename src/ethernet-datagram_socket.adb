@@ -71,7 +71,7 @@ package body Ethernet.Datagram_Socket is
             sll_hatype   : Interfaces.C.unsigned_short;
             sll_pkttype  : Interfaces.C.unsigned_char;
             sll_halen    : Interfaces.C.unsigned_char;
-            sll_addr     : Octets_Type;
+            sll_addr     : Bytes_Type;
          end record
         with Convention => C;
 
@@ -444,7 +444,7 @@ package body Ethernet.Datagram_Socket is
       else
 
          Payload_Length := Natural(Return_Value);
-         From           := MAC_Address_Type'(Octets => Source.sll_addr);
+         From           := MAC_Address_Type'(Bytes => Source.sll_addr);
 
       end if;
 
@@ -477,7 +477,7 @@ package body Ethernet.Datagram_Socket is
                       sll_hatype   => 0,
                       sll_pkttype  => 0,
                       sll_halen    => C_ETH_ALEN,
-                      sll_addr     => To.Octets);
+                      sll_addr     => To.Bytes);
 
       Return_Value := C_Sendto(Fd       => Socket.File_Descriptor,
                                Buf      => Payload,
