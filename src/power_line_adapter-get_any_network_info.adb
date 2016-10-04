@@ -21,13 +21,13 @@ use type Ethernet.Datagram_Socket.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Get_User_HFID(Adapter : in Adapter_Type;
-                       Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is
+function Get_Any_Network_Info(Adapter : in Adapter_Type;
+                              Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is
 
 begin
 
-   return Get_HFID(Arg     => 16#25#,
-                   Adapter => Adapter,
-                   Socket  => Socket);
+   return Get_Network_Info(Arg     => 16#01#,
+                           Adapter => Adapter,
+                           Socket  => Socket);
 
-end Get_User_HFID;
+end Get_Any_Network_Info;

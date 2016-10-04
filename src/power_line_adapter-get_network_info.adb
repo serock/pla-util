@@ -21,7 +21,8 @@ use type Ethernet.Datagram_Socket.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Get_Network_Info(Adapter : in Adapter_Type;
+function Get_Network_Info(Arg     : in Interfaces.Unsigned_8;
+                          Adapter : in Adapter_Type;
                           Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is
 
    Expected_Response  : Ethernet.Datagram_Socket.Payload_Type(1 .. 9);
@@ -34,7 +35,7 @@ function Get_Network_Info(Adapter : in Adapter_Type;
 
 begin
 
-   Request := (16#02#, 16#28#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, others => 16#00#);
+   Request := (16#02#, 16#28#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#, Arg, others => 16#00#);
 
    Adapter.Process(Request          => Request,
                    Socket           => Socket,

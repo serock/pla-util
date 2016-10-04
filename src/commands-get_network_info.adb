@@ -24,7 +24,8 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-function Get_Network_Info(Device_Name : in String) return Power_Line_Adapter.Network_Info_List_Type is
+function Get_Network_Info(Device_Name   : in String;
+                          Network_Scope : in Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is
 
    Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
    Socket   : Ethernet.Datagram_Socket.Socket_Type;
@@ -44,17 +45,37 @@ begin
 
    end if;
 
-   declare
+   case Network_Scope is
 
-      Network_Info_List : Power_Line_Adapter.Network_Info_List_Type := Adapters.First_Element.Get_Network_Info(Socket  => Socket);
+      when Member =>
 
-   begin
+         declare
 
-      Socket.Close;
+            Network_Info_List : Power_Line_Adapter.Network_Info_List_Type := Adapters.First_Element.Get_Member_Network_Info(Socket => Socket);
 
-      return Network_Info_List;
+         begin
 
-   end;
+            Socket.Close;
+
+            return Network_Info_List;
+
+         end;
+
+      when Any =>
+
+         declare
+
+            Network_Info_List : Power_Line_Adapter.Network_Info_List_Type := Adapters.First_Element.Get_Any_Network_Info(Socket => Socket);
+
+         begin
+
+            Socket.Close;
+
+            return Network_Info_List;
+
+         end;
+
+   end case;
 
 exception
 

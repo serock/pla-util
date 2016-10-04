@@ -30,6 +30,9 @@ package Commands is
    type HFID_Level_Type is (Manufacturer,
                             User);
 
+   type Network_Scope_Type is (Member,
+                               Any);
+
    Command_Error : exception;
 
    function Check_DAK(Device_Name : in String;
@@ -43,6 +46,7 @@ package Commands is
    function Get_HFID(Device_Name : in String;
                      HFID_Level  : in HFID_Level_Type) return HFID_String.Bounded_String;
 
-   function Get_Network_Info(Device_Name : in String) return Power_Line_Adapter.Network_Info_List_Type;
+   function Get_Network_Info(Device_Name   : in String;
+                             Network_Scope : in Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type;
 
 end Commands;

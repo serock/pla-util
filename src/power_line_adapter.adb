@@ -234,14 +234,25 @@ package body Power_Line_Adapter is
                       Pass_Phrase : in String;
                       Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean is separate;
 
+   function Get_HFID(Arg     : in Interfaces.Unsigned_8;
+                     Adapter : in Adapter_Type;
+                     Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is separate;
+
    function Get_Manufacturer_HFID(Adapter : in Adapter_Type;
                                   Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is separate;
 
-   function Get_Network_Info(Adapter : in Adapter_Type;
-                             Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
-
    function Get_User_HFID(Adapter : in Adapter_Type;
                           Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is separate;
+
+   function Get_Network_Info(Arg     : in Interfaces.Unsigned_8;
+                             Adapter : in Adapter_Type;
+                             Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
+
+   function Get_Any_Network_Info(Adapter : in Adapter_Type;
+                                 Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
+
+   function Get_Member_Network_Info(Adapter : in Adapter_Type;
+                                    Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
 
    function To_String(Adapter : in Adapter_Type) return String is
 

@@ -39,12 +39,6 @@ package body Console is
 
    begin
 
-      if Ada.Command_Line.Argument_Count < 3 then
-
-         raise Syntax_Error with Message_Too_Few_Arguments;
-
-      end if;
-
       Is_Match := Commands.Check_DAK(Device_Name => Device_Name,
                                      Pass_Phrase => Ada.Command_Line.Argument(Number => 3));
 
@@ -65,12 +59,6 @@ package body Console is
       Is_Match : Boolean;
 
    begin
-
-      if Ada.Command_Line.Argument_Count < 3 then
-
-         raise Syntax_Error with Message_Too_Few_Arguments;
-
-      end if;
 
       Is_Match := Commands.Check_NMK(Device_Name => Device_Name,
                                      Pass_Phrase => Ada.Command_Line.Argument(Number => 3));
@@ -103,34 +91,28 @@ package body Console is
 
    end Discover_Adapters;
 
-   procedure Get_HFID(Device_Name : in String) is
+   function Get_HFID_Level return Commands.HFID_Level_Type is
 
-      HFID       : HFID_String.Bounded_String;
-      HFID_Level : Commands.HFID_Level_Type;
+      HFID_Level_Arg : String := Ada.Command_Line.Argument(Number => 3);
 
    begin
 
-      if Ada.Command_Line.Argument_Count < 3 then
+      return Commands.HFID_Level_Type'Value(HFID_Level_Arg);
 
-         raise Syntax_Error with Message_Too_Few_Arguments;
+   exception
 
-      end if;
+      when Constraint_Error =>
 
-      declare
+         raise Syntax_Error with "Invalid HFID level """ & HFID_Level_Arg & '"';
 
-         HFID_Level_Arg : String := Ada.Command_Line.Argument(Number => 3);
+   end Get_HFID_Level;
 
-      begin
+   procedure Get_HFID(Device_Name : in String) is
 
-         HFID_Level := Commands.HFID_Level_Type'Value(HFID_Level_Arg);
+      HFID       : HFID_String.Bounded_String;
+      HFID_Level : Commands.HFID_Level_Type := Get_HFID_Level;
 
-      exception
-
-         when Constraint_Error =>
-
-            raise Syntax_Error with "Invalid HFID level """ & HFID_Level_Arg & '"';
-
-      end;
+   begin
 
       HFID := Commands.Get_HFID(Device_Name => Device_Name,
                                 HFID_Level  => HFID_Level);
@@ -139,11 +121,29 @@ package body Console is
 
    end Get_HFID;
 
+   function Get_Network_Scope return Commands.Network_Scope_Type is
+
+      Network_Scope_Arg : String := Ada.Command_Line.Argument(Number => 3);
+
+   begin
+
+      return Commands.Network_Scope_Type'Value(Network_Scope_Arg);
+
+   exception
+
+      when Constraint_Error =>
+
+         raise Syntax_Error with "Invalid network scope """ & Network_Scope_Arg & '"';
+
+   end Get_Network_Scope;
+
    procedure Get_Network_Info(Device_Name : in String) is
 
       Column_2 : constant := 36;
 
-      Network_Info_List : Power_Line_Adapter.Network_Info_List_Type := Commands.Get_Network_Info(Device_Name => Device_Name);
+      Network_Scope     : Commands.Network_Scope_Type               := Get_Network_Scope;
+      Network_Info_List : Power_Line_Adapter.Network_Info_List_Type := Commands.Get_Network_Info(Device_Name   => Device_Name,
+                                                                                                 Network_Scope => Network_Scope);
 
    begin
 
@@ -275,9 +275,21 @@ package body Console is
 
             when Commands.Check_DAK =>
 
+               if Ada.Command_Line.Argument_Count < 3 then
+
+                  raise Syntax_Error with Message_Too_Few_Arguments;
+
+               end if;
+
                Check_DAK(Device_Name => Device_Name);
 
             when Commands.Check_NMK =>
+
+               if Ada.Command_Line.Argument_Count < 3 then
+
+                  raise Syntax_Error with Message_Too_Few_Arguments;
+
+               end if;
 
                Check_NMK(Device_Name => Device_Name);
 
@@ -287,9 +299,21 @@ package body Console is
 
             when Commands.Get_HFID =>
 
+               if Ada.Command_Line.Argument_Count < 3 then
+
+                  raise Syntax_Error with Message_Too_Few_Arguments;
+
+               end if;
+
                Get_HFID(Device_Name => Device_Name);
 
             when Commands.Get_Network_Info =>
+
+               if Ada.Command_Line.Argument_Count < 3 then
+
+                  raise Syntax_Error with Message_Too_Few_Arguments;
+
+               end if;
 
                Get_Network_Info(Device_Name => Device_Name);
 
@@ -310,7 +334,8 @@ package body Console is
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid user");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-nmk <pass-phrase>");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info member");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info any");
          Ada.Text_IO.New_Line(Spacing => 1);
          Ada.Text_IO.Put_Line(Item => "where <NIC> is the name of an ethernet network device");
 
