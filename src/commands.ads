@@ -25,7 +25,8 @@ package Commands is
                          Check_NMK,
                          Discover_Adapters,
                          Get_HFID,
-                         Get_Network_Info);
+                         Get_Network_Info,
+                         Set_NMK);
 
    type HFID_Level_Type is (Manufacturer,
                             User);
@@ -48,5 +49,8 @@ package Commands is
 
    function Get_Network_Info(Device_Name   : in String;
                              Network_Scope : in Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type;
+
+   procedure Set_NMK(Device_Name : in String;
+                     Pass_Phrase : in String);
 
 end Commands;

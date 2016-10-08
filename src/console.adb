@@ -231,6 +231,17 @@ package body Console is
 
    end Get_Network_Info;
 
+   procedure Set_NMK(Device_Name : in String) is
+
+   begin
+
+      Commands.Set_NMK(Device_Name => Device_Name,
+                       Pass_Phrase => Ada.Command_Line.Argument(Number => 3));
+
+      Ada.Text_IO.Put_Line(Item => "Network Membership Key set");
+
+   end Set_NMK;
+
    function To_Command_Name(Source : in String) return String is
 
       Command_Name : String(Source'Range) := Source;
@@ -317,6 +328,16 @@ package body Console is
 
                Get_Network_Info(Device_Name => Device_Name);
 
+            when Commands.Set_NMK =>
+
+               if Ada.Command_Line.Argument_Count < 3 then
+
+                  raise Syntax_Error with Message_Too_Few_Arguments;
+
+               end if;
+
+               Set_NMK(Device_Name => Device_Name);
+
          end case;
 
       end;
@@ -332,10 +353,11 @@ package body Console is
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> discover-adapters");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid manufacturer");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid user");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-nmk <pass-phrase>");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info member");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info any");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> set-nmk <pass-phrase>");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-nmk <pass-phrase>");
          Ada.Text_IO.New_Line(Spacing => 1);
          Ada.Text_IO.Put_Line(Item => "where <NIC> is the name of an ethernet network device");
 

@@ -254,6 +254,10 @@ package body Power_Line_Adapter is
    function Get_Member_Network_Info(Adapter : in Adapter_Type;
                                     Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
 
+   procedure Set_NMK(Adapter     : in Adapter_Type;
+                     Pass_Phrase : in String;
+                     Socket      : in Ethernet.Datagram_Socket.Socket_Type) is separate;
+
    function To_String(Adapter : in Adapter_Type) return String is
 
    begin

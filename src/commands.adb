@@ -35,4 +35,7 @@ package body Commands is
    function Get_Network_Info(Device_Name   : in String;
                              Network_Scope : in Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
 
+   procedure Set_NMK(Device_Name : in String;
+                     Pass_Phrase : in String) is separate;
+
 end Commands;
