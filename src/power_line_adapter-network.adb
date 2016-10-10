@@ -24,10 +24,10 @@ package body Power_Line_Adapter.Network is
    function Discover_Adapters(Socket : in Ethernet.Datagram_Socket.Socket_Type) return Power_Line_Adapter_Sets.Set is
 
       Adapter           : Adapter_Type;
-      Adapter_Number    : Positive;
       Adapters          : Power_Line_Adapter_Sets.Set(Capacity => Max_Adapters);
       Expected_Response : Ethernet.Datagram_Socket.Payload_Type(1 .. 9);
       MAC_Address       : Ethernet.MAC_Address_Type;
+      Network_Interface : Positive;
       Request           : Ethernet.Datagram_Socket.Payload_Type(1 .. Ethernet.Datagram_Socket.Minimum_Payload_Size);
       Response          : Ethernet.Datagram_Socket.Payload_Type(1 .. 75);
       Response_Length   : Natural;
@@ -60,11 +60,11 @@ package body Power_Line_Adapter.Network is
 
          end if;
 
-         Adapter_Number := Positive(Response(10));
+         Network_Interface := Positive(Response(10));
 
-         Adapter.Create(Adapter_Number => Adapter_Number,
-                        MAC_Address    => MAC_Address,
-                        HFID           => Ethernet.Datagram_Socket.To_HFID_String(Payload => Response(12 .. Response_Length)));
+         Adapter.Create(Network_Interface => Network_Interface,
+                        MAC_Address       => MAC_Address,
+                        HFID              => Ethernet.Datagram_Socket.To_HFID_String(Payload => Response(12 .. Response_Length)));
 
          Adapters.Include(New_Item => Adapter);
 

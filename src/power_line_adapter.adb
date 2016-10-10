@@ -32,13 +32,13 @@ package body Power_Line_Adapter is
                 Right : in Adapter_Type) return Boolean is
    begin
 
-      if Left.Adapter_Number = Right.Adapter_Number then
+      if Left.Network_Interface = Right.Network_Interface then
 
          return Left.MAC_Address < Right.MAC_Address;
 
       else
 
-         return Left.Adapter_Number < Right.Adapter_Number;
+         return Left.Network_Interface < Right.Network_Interface;
 
       end if;
 
@@ -47,7 +47,7 @@ package body Power_Line_Adapter is
    function "="(Left  : in Adapter_Type;
                 Right : in Adapter_Type) return Boolean is
    begin
-      return Left.Adapter_Number = Right.Adapter_Number and Left.MAC_Address = Right.MAC_Address;
+      return Left.Network_Interface = Right.Network_Interface and Left.MAC_Address = Right.MAC_Address;
    end "=";
 
    function Generate_Key(Pass_Phrase : in String;
@@ -181,16 +181,16 @@ package body Power_Line_Adapter is
 
    end Validate_NMK_Pass_Phrase;
 
-   procedure Create(Adapter        : in out Adapter_Type;
-                    Adapter_Number : in     Positive;
-                    MAC_Address    : in     Ethernet.MAC_Address_Type;
-                    HFID           : in     HFID_String.Bounded_String) is
+   procedure Create(Adapter           : in out Adapter_Type;
+                    Network_Interface : in     Positive;
+                    MAC_Address       : in     Ethernet.MAC_Address_Type;
+                    HFID              : in     HFID_String.Bounded_String) is
 
    begin
 
-      Adapter.Adapter_Number := Adapter_Number;
-      Adapter.MAC_Address    := MAC_Address;
-      Adapter.HFID           := HFID;
+      Adapter.Network_Interface := Network_Interface;
+      Adapter.MAC_Address       := MAC_Address;
+      Adapter.HFID              := HFID;
 
    end Create;
 

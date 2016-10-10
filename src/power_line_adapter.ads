@@ -90,14 +90,14 @@ private
 
    type Adapter_Type is tagged
       record
-         Adapter_Number : Positive;
-         MAC_Address    : Ethernet.MAC_Address_Type;
-         HFID           : HFID_String.Bounded_String;
+         Network_Interface : Positive;
+         MAC_Address       : Ethernet.MAC_Address_Type;
+         HFID              : HFID_String.Bounded_String;
       end record;
 
-   procedure Create(Adapter        : in out Adapter_Type;
-                    Adapter_Number : in     Positive;
-                    MAC_Address    : in     Ethernet.MAC_Address_Type;
-                    HFID           : in     HFID_String.Bounded_String);
+   procedure Create(Adapter           : in out Adapter_Type;
+                    Network_Interface : in     Positive;
+                    MAC_Address       : in     Ethernet.MAC_Address_Type;
+                    HFID              : in     HFID_String.Bounded_String);
 
 end Power_Line_Adapter;
