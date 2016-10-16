@@ -45,9 +45,10 @@ To run the program, use one of the following commands:
 ./pla-util <nic> get-hfid manufacturer
 ./pla-util <nic> get-network-info member
 ./pla-util <nic> get-network-info any
+./pla-util <nic> set-hfid <id>
+./pla-util <nic> set-nmk <pass-phrase>
 ./pla-util <nic> check-dak <plc-pass-phrase>
 ./pla-util <nic> check-nmk <pass-phrase>
-./pla-util <nic> set-nmk <pass-phrase>
 ```
 
 where `<nic>` is the name of an ethernet network device (e.g., `eth0` or `enp0s25`)
@@ -57,7 +58,6 @@ connected to a DHP-700AV adapter.
 This program is licensed under the GNU General Public License Version 3.
 
 ## To Do List
-* [ ] Implement command to perform factory reset (0.8)
-* [ ] Implement command to set user HFID (0.9)
-* [ ] Implement command to display adapter info (1.0)
+* [ ] Implement command to perform factory reset (0.8.0)
+* [ ] Implement command to display adapter info (0.9.0)
 

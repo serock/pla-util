@@ -23,25 +23,23 @@ use type Interfaces.Unsigned_8;
 
 separate (Power_Line_Adapter)
 
-procedure Set_NMK(Adapter     : in Adapter_Type;
-                  Pass_Phrase : in String;
-                  Socket      : in Ethernet.Datagram_Socket.Socket_Type) is
+procedure Set_HFID(Adapter : in Adapter_Type;
+                   HFID    : in HFID_String.Bounded_String;
+                   Socket  : in Ethernet.Datagram_Socket.Socket_Type) is
 
    Expected_Response : Ethernet.Datagram_Socket.Payload_Type(1 .. 10);
    MAC_Address       : Ethernet.MAC_Address_Type;
-   Request           : Ethernet.Datagram_Socket.Payload_Type(1 .. Ethernet.Datagram_Socket.Minimum_Payload_Size);
+   Request           : Ethernet.Datagram_Socket.Payload_Type(1 .. 78);
    Response          : Ethernet.Datagram_Socket.Payload_Type(1 .. Ethernet.Datagram_Socket.Minimum_Payload_Size);
    Response_Length   : Natural;
 
 begin
 
-   Validate_NMK_Pass_Phrase(Pass_Phrase      => Pass_Phrase,
-                            Check_Min_Length => True);
+   Validate_HFID(HFID => HFID);
 
-   Request := (16#02#, 16#18#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, others => 16#00#);
+   Request := (16#02#, 16#58#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#25#, 16#00#, 16#01#, 16#40#, 16#00#, others => 16#00#);
 
-   Request(10 .. 25) := Generate_NMK(Pass_Phrase => Pass_Phrase);
-   Request(27)       := 16#01#;
+   Request(15 .. Request'Last) := Get_Bytes(HFID => HFID);
 
    Adapter.Process(Request          => Request,
                    Socket           => Socket,
@@ -49,7 +47,7 @@ begin
                    Response_Length  => Response_Length,
                    From_MAC_Address => MAC_Address);
 
-   Expected_Response := (16#02#, 16#19#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
+   Expected_Response := (16#02#, 16#59#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#00#);
 
    if Response(Expected_Response'Range) /= Expected_Response then
 
@@ -57,4 +55,4 @@ begin
 
    end if;
 
-end Set_NMK;
+end Set_HFID;

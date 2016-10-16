@@ -26,7 +26,8 @@ use type Ethernet.MAC_Address_Type;
 
 package body Power_Line_Adapter is
 
-   subtype Key_Type is Simple.Bytes_Type(1 .. 16);
+   subtype HFID_Bytes_Type is Simple.Bytes_Type(1 .. 64);
+   subtype Key_Type        is Simple.Bytes_Type(1 .. 16);
 
    function "<"(Left  : in Adapter_Type;
                 Right : in Adapter_Type) return Boolean is
@@ -119,6 +120,55 @@ package body Power_Line_Adapter is
 
    end Generate_NMK;
 
+   function Get_Bytes(HFID : in HFID_String.Bounded_String) return HFID_Bytes_Type is
+
+      Length : constant HFID_String.Length_Range := HFID_String.Length(Source => HFID);
+
+      Bytes : HFID_Bytes_Type := (others => 16#00#);
+
+   begin
+
+      for I in 1 .. Length loop
+
+         Bytes(I) := Character'Pos(HFID_String.Element(Source => HFID,
+                                                       Index  => I));
+
+      end loop;
+
+      return Bytes;
+
+   end Get_Bytes;
+
+   procedure Validate_HFID(HFID            : in HFID_String.Bounded_String;
+                           Min_HFID_Length : in Positive := 1) is
+
+      Length : constant HFID_String.Length_Range := HFID_String.Length(HFID);
+
+      C : Character;
+
+   begin
+
+      if Length < Min_HFID_Length then
+
+         raise Input_Error with "HFID has fewer than" & Integer'Image(Min_HFID_Length) & " characters";
+
+      end if;
+
+      for I in 1 .. Length loop
+
+         C := HFID_String.Element(Source => HFID,
+                                  Index  => I);
+
+         if C < ' ' or else C > Ada.Characters.Latin_1.DEL then
+
+            raise Input_Error with "HFID contains one or more illegal characters";
+
+         end if;
+
+      end loop;
+
+   end Validate_HFID;
+
    procedure Validate_Pass_Phrase(Pass_Phrase            : in String;
                                   Min_Pass_Phrase_Length : in Positive;
                                   Max_Pass_Phrase_Length : in Positive;
@@ -131,7 +181,6 @@ package body Power_Line_Adapter is
          raise Input_Error with "Pass phrase has more than" & Integer'Image(Max_Pass_Phrase_Length) & " characters";
 
       end if;
-
 
       if Check_Min_Length and then Pass_Phrase'Length < Min_Pass_Phrase_Length then
 
@@ -253,6 +302,10 @@ package body Power_Line_Adapter is
 
    function Get_Member_Network_Info(Adapter : in Adapter_Type;
                                     Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
+
+   procedure Set_HFID(Adapter : in Adapter_Type;
+                      HFID    : in HFID_String.Bounded_String;
+                      Socket  : in Ethernet.Datagram_Socket.Socket_Type) is separate;
 
    procedure Set_NMK(Adapter     : in Adapter_Type;
                      Pass_Phrase : in String;

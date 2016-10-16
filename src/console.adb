@@ -231,6 +231,20 @@ package body Console is
 
    end Get_Network_Info;
 
+   procedure Set_HFID(Device_Name : in String) is
+
+      HFID : HFID_String.Bounded_String := HFID_String.To_Bounded_String(Source => Ada.Command_Line.Argument(Number => 3),
+                                                                         Drop   => Ada.Strings.Error);
+
+   begin
+
+      Commands.Set_HFID(Device_Name => Device_Name,
+                        HFID        => HFID);
+
+      Ada.Text_IO.Put_Line(Item => "User HFID set");
+
+   end Set_HFID;
+
    procedure Set_NMK(Device_Name : in String) is
 
    begin
@@ -328,6 +342,16 @@ package body Console is
 
                Get_Network_Info(Device_Name => Device_Name);
 
+            when Commands.Set_HFID =>
+
+               if Ada.Command_Line.Argument_Count < 3 then
+
+                  raise Syntax_Error with Message_Too_Few_Arguments;
+
+               end if;
+
+               Set_HFID(Device_Name => Device_Name);
+
             when Commands.Set_NMK =>
 
                if Ada.Command_Line.Argument_Count < 3 then
@@ -355,6 +379,7 @@ package body Console is
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid user");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info member");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info any");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> set-hfid <id>");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> set-nmk <pass-phrase>");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-nmk <pass-phrase>");
