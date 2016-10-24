@@ -20,6 +20,6 @@ with Power_Line_Adapter_Sets;
 
 package Power_Line_Adapter.Network is
 
-   function Discover_Adapters(Socket : in Ethernet.Datagram_Socket.Socket_Type) return Power_Line_Adapter_Sets.Set;
+   function Discover(Socket : in Ethernet.Datagram_Socket.Socket_Type) return Power_Line_Adapter_Sets.Set;
 
 end Power_Line_Adapter.Network;

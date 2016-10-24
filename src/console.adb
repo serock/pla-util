@@ -75,13 +75,13 @@ package body Console is
 
    end Check_NMK;
 
-   procedure Discover_Adapters(Device_Name : in String) is
+   procedure Discover(Device_Name : in String) is
 
       Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
 
    begin
 
-      Adapters := Commands.Discover_Adapters(Device_Name => Device_Name);
+      Adapters := Commands.Discover(Device_Name => Device_Name);
 
       for Adapter of Adapters loop
 
@@ -89,7 +89,7 @@ package body Console is
 
       end loop;
 
-   end Discover_Adapters;
+   end Discover;
 
    function Get_HFID_Level return Commands.HFID_Level_Type is
 
@@ -318,9 +318,9 @@ package body Console is
 
                Check_NMK(Device_Name => Device_Name);
 
-            when Commands.Discover_Adapters =>
+            when Commands.Discover =>
 
-               Discover_Adapters(Device_Name => Device_Name);
+               Discover(Device_Name => Device_Name);
 
             when Commands.Get_HFID =>
 
@@ -374,7 +374,7 @@ package body Console is
          Ada.Text_IO.New_Line(Spacing => 1);
          Ada.Text_IO.Put_Line(Item => "Try one of the following commands:");
          Ada.Text_IO.New_Line(Spacing => 1);
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> discover-adapters");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> discover");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid manufacturer");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid user");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info member");

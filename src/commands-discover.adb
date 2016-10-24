@@ -21,7 +21,7 @@ with Power_Line_Adapter_Sets;
 
 separate (Commands)
 
-function Discover_Adapters(Device_Name : in String) return Power_Line_Adapter_Sets.Set is
+function Discover(Device_Name : in String) return Power_Line_Adapter_Sets.Set is
 
    Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
    Socket   : Ethernet.Datagram_Socket.Socket_Type;
@@ -33,7 +33,7 @@ begin
                Receive_Timeout => Default_Receive_Timeout,
                Send_Timeout    => Default_Send_Timeout);
 
-   Adapters := Power_Line_Adapter.Network.Discover_Adapters(Socket => Socket);
+   Adapters := Power_Line_Adapter.Network.Discover(Socket => Socket);
 
    Socket.Close;
 
@@ -47,4 +47,4 @@ exception
 
       raise;
 
-end Discover_Adapters;
+end Discover;

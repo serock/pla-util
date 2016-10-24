@@ -23,7 +23,7 @@ package Commands is
 
    type Command_Type is (Check_DAK,
                          Check_NMK,
-                         Discover_Adapters,
+                         Discover,
                          Get_HFID,
                          Get_Network_Info,
                          Set_HFID,
@@ -43,7 +43,7 @@ package Commands is
    function Check_NMK(Device_Name : in String;
                       Pass_Phrase : in String) return Boolean;
 
-   function Discover_Adapters(Device_Name : in String) return Power_Line_Adapter_Sets.Set;
+   function Discover(Device_Name : in String) return Power_Line_Adapter_Sets.Set;
 
    function Get_HFID(Device_Name : in String;
                      HFID_Level  : in HFID_Level_Type) return HFID_String.Bounded_String;

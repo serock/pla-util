@@ -21,7 +21,7 @@ use type Ethernet.Datagram_Socket.Payload_Type;
 
 package body Power_Line_Adapter.Network is
 
-   function Discover_Adapters(Socket : in Ethernet.Datagram_Socket.Socket_Type) return Power_Line_Adapter_Sets.Set is
+   function Discover(Socket : in Ethernet.Datagram_Socket.Socket_Type) return Power_Line_Adapter_Sets.Set is
 
       Adapter           : Adapter_Type;
       Adapters          : Power_Line_Adapter_Sets.Set(Capacity => Max_Adapters);
@@ -72,6 +72,6 @@ package body Power_Line_Adapter.Network is
 
       return Adapters;
 
-   end Discover_Adapters;
+   end Discover;
 
 end Power_Line_Adapter.Network;

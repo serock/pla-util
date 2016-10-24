@@ -40,7 +40,7 @@ sudo setcap cap_net_raw+ep pla-util
 To run the program, use one of the following commands:
 
 ```
-./pla-util <nic> discover-adapters
+./pla-util <nic> discover
 ./pla-util <nic> get-hfid user
 ./pla-util <nic> get-hfid manufacturer
 ./pla-util <nic> get-network-info member

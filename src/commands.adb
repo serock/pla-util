@@ -27,7 +27,7 @@ package body Commands is
    function Check_NMK(Device_Name : in String;
                       Pass_Phrase : in String) return Boolean is separate;
 
-   function Discover_Adapters(Device_Name : in String) return Power_Line_Adapter_Sets.Set is separate;
+   function Discover(Device_Name : in String) return Power_Line_Adapter_Sets.Set is separate;
 
    function Get_HFID(Device_Name : in String;
                      HFID_Level  : in HFID_Level_Type) return HFID_String.Bounded_String is separate;

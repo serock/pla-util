@@ -39,7 +39,7 @@ begin
                Receive_Timeout => Default_Receive_Timeout,
                Send_Timeout    => Default_Send_Timeout);
 
-   Adapters := Power_Line_Adapter.Network.Discover_Adapters(Socket => Socket);
+   Adapters := Power_Line_Adapter.Network.Discover(Socket => Socket);
 
    if Adapters.Length = 0 then
 
