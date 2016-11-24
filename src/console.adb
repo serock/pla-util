@@ -231,6 +231,16 @@ package body Console is
 
    end Get_Network_Info;
 
+   procedure Reset(Device_Name : in String) is
+
+   begin
+
+      Commands.Reset(Device_Name => Device_Name);
+
+      Ada.Text_IO.Put_Line(Item => "Device was reset to factory defaults");
+
+   end Reset;
+
    procedure Set_HFID(Device_Name : in String) is
 
       HFID : HFID_String.Bounded_String := HFID_String.To_Bounded_String(Source => Ada.Command_Line.Argument(Number => 3),
@@ -342,6 +352,10 @@ package body Console is
 
                Get_Network_Info(Device_Name => Device_Name);
 
+            when Commands.Reset =>
+
+               Reset(Device_Name => Device_Name);
+
             when Commands.Set_HFID =>
 
                if Ada.Command_Line.Argument_Count < 3 then
@@ -375,6 +389,7 @@ package body Console is
          Ada.Text_IO.Put_Line(Item => "Try one of the following commands:");
          Ada.Text_IO.New_Line(Spacing => 1);
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> discover");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> reset");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid manufacturer");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid user");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info member");

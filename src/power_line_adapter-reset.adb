@@ -21,9 +21,8 @@ use type Ethernet.Datagram_Socket.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-procedure Set_NMK(Adapter     : in Adapter_Type;
-                  Pass_Phrase : in String;
-                  Socket      : in Ethernet.Datagram_Socket.Socket_Type) is
+procedure Reset(Adapter : in Adapter_Type;
+                Socket  : in Ethernet.Datagram_Socket.Socket_Type) is
 
    Expected_Response : Ethernet.Datagram_Socket.Payload_Type(1 .. 10);
    MAC_Address       : Ethernet.MAC_Address_Type;
@@ -33,13 +32,7 @@ procedure Set_NMK(Adapter     : in Adapter_Type;
 
 begin
 
-   Validate_NMK_Pass_Phrase(Pass_Phrase      => Pass_Phrase,
-                            Check_Min_Length => True);
-
-   Request := (16#02#, 16#18#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, others => 16#00#);
-
-   Request(10 .. 25) := Generate_NMK(Pass_Phrase => Pass_Phrase);
-   Request(27)       := 16#01#;
+   Request := (16#02#, 16#54#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#01#, others => 16#00#);
 
    Adapter.Process(Request          => Request,
                    Socket           => Socket,
@@ -47,7 +40,7 @@ begin
                    Response_Length  => Response_Length,
                    From_MAC_Address => MAC_Address);
 
-   Expected_Response := (16#02#, 16#19#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
+   Expected_Response := (16#02#, 16#55#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
 
    if Response(Expected_Response'Range) /= Expected_Response then
 
@@ -55,4 +48,4 @@ begin
 
    end if;
 
-end Set_NMK;
+end Reset;

@@ -26,6 +26,7 @@ package Commands is
                          Discover,
                          Get_HFID,
                          Get_Network_Info,
+                         Reset,
                          Set_HFID,
                          Set_NMK);
 
@@ -50,6 +51,8 @@ package Commands is
 
    function Get_Network_Info(Device_Name   : in String;
                              Network_Scope : in Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type;
+
+   procedure Reset(Device_Name : in String);
 
    procedure Set_HFID(Device_Name : in String;
                       HFID        : in HFID_String.Bounded_String);

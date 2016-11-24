@@ -303,6 +303,9 @@ package body Power_Line_Adapter is
    function Get_Member_Network_Info(Adapter : in Adapter_Type;
                                     Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
 
+   procedure Reset(Adapter : in Adapter_Type;
+                   Socket  : in Ethernet.Datagram_Socket.Socket_Type) is separate;
+
    procedure Set_HFID(Adapter : in Adapter_Type;
                       HFID    : in HFID_String.Bounded_String;
                       Socket  : in Ethernet.Datagram_Socket.Socket_Type) is separate;

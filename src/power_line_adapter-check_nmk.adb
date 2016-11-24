@@ -16,10 +16,8 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ethernet.Datagram_Socket;
-with Interfaces;
 
 use type Ethernet.Datagram_Socket.Payload_Type;
-use type Interfaces.Unsigned_8;
 
 separate (Power_Line_Adapter)
 
