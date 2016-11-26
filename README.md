@@ -9,9 +9,9 @@ DHP-700AV adapters use the BCM60500 chip.
 ## Development Environment
 This program is being developed using:
 
-* [openSUSE Leap 42.1](https://www.opensuse.org/)
+* [openSUSE Leap 42.2](https://www.opensuse.org/)
 * [GNAT GPL Edition](http://libre.adacore.com/) / GNAT Ada 2016, which includes GNAT Programming Studio
-* Git 2.6.6
+* Git 2.10.0
 
 ## How to Build the Program with GNAT Programming Studio (GPS)
 1. Use git to clone this repository.
@@ -41,8 +41,9 @@ To run the program, use one of the following commands:
 
 ```
 ./pla-util <nic> discover
-./pla-util <nic> get-hfid user
+./pla-util <nic> reset
 ./pla-util <nic> get-hfid manufacturer
+./pla-util <nic> get-hfid user
 ./pla-util <nic> get-network-info member
 ./pla-util <nic> get-network-info any
 ./pla-util <nic> set-hfid <id>
@@ -58,6 +59,5 @@ connected to a DHP-700AV adapter.
 This program is licensed under the GNU General Public License Version 3.
 
 ## To Do List
-* [ ] Implement command to perform factory reset (0.8.0)
-* [ ] Implement command to display adapter info (0.9.0)
+* [ ] Implement command to display adapter info (0.9.1)
 
