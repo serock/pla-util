@@ -4,7 +4,13 @@ A power line adapter utility
 ## Overview
 The purpose of this program is to allow users to manage DHP-700AV power line adapters from x86-64 Linux.
 Two of these adapters are included in the DHP-701AV PowerLine AV2 2000 Gigabit Starter Kit.
-DHP-700AV adapters use the BCM60500 chip.
+DHP-700AV adapters use the Broadcom BCM60500 chip.
+
+### Supported Power Line Adapters
+This program may work with other power line adapters that comply with the HomePlug AV2 specification and are based on Broadcom chips. The following power line adapters are supported:
+
+* D-Link DHP-700AV
+* Tenda PH3
 
 ## Development Environment
 This program is being developed using:
