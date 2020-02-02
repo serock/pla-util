@@ -1,13 +1,13 @@
 # pla-util
-A power line adapter utility
+A powerline adapter utility
 
 ## Overview
-The purpose of this program is to allow users to manage DHP-700AV power line adapters from x86-64 Linux.
+The purpose of this program is to allow users to manage DHP-700AV powerline adapters from x86-64 Linux.
 Two of these adapters are included in the DHP-701AV PowerLine AV2 2000 Gigabit Starter Kit.
 DHP-700AV adapters use the Broadcom BCM60500 chip.
 
-### Supported Power Line Adapters
-This program may work with other power line adapters that comply with the HomePlug AV2 specification and are based on Broadcom chips. The following power line adapters are supported:
+### Supported Powerline Adapters
+This program may work with other powerline adapters that comply with the HomePlug AV2 specification and are based on Broadcom chips. The following powerline adapters are supported:
 
 * D-Link DHP-700AV
 * Tenda PH3
@@ -15,9 +15,9 @@ This program may work with other power line adapters that comply with the HomePl
 ## Development Environment
 This program is being developed using:
 
-* [openSUSE Leap 42.2](https://www.opensuse.org/)
-* [GNAT GPL Edition](http://libre.adacore.com/) / GNAT Ada 2016, which includes GNAT Programming Studio
-* Git 2.10.0
+* [openSUSE Leap 15.1](https://www.opensuse.org/)
+* [GNAT Community Edition 2019](https://www.adacore.com/download), which includes the GNAT Programming Studio IDE
+* Git 2.16.4
 
 ## How to Build the Program with GNAT Programming Studio (GPS)
 1. Use git to clone this repository.
@@ -48,6 +48,7 @@ To run the program, use one of the following commands:
 ```
 ./pla-util <nic> discover
 ./pla-util <nic> reset
+./pla-util <nic> restart
 ./pla-util <nic> get-hfid manufacturer
 ./pla-util <nic> get-hfid user
 ./pla-util <nic> get-network-info member
@@ -59,7 +60,7 @@ To run the program, use one of the following commands:
 ```
 
 where `<nic>` is the name of an ethernet network device (e.g., `eth0` or `enp0s25`)
-connected to a DHP-700AV adapter.
+connected to a powerline adapter.
 
 ## License
 This program is licensed under the GNU General Public License Version 3.
