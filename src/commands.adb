@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A power line adapter utility
---  Copyright (C) 2016 John Serock
+--  Copyright (C) 2016-2020 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@ package body Commands is
                              Network_Scope : in Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
 
    procedure Reset(Device_Name : in String) is separate;
+
+   procedure Restart(Device_Name : in String) is separate;
 
    procedure Set_HFID(Device_Name : in String;
                       HFID        : in HFID_String.Bounded_String) is separate;

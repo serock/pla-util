@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A power line adapter utility
---  Copyright (C) 2016 John Serock
+--  Copyright (C) 2016-2020 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -241,6 +241,16 @@ package body Console is
 
    end Reset;
 
+   procedure Restart(Device_Name : in String) is
+
+   begin
+
+      Commands.Restart(Device_Name => Device_Name);
+
+      Ada.Text_IO.Put_Line(Item => "Device was restarted");
+
+   end Restart;
+
    procedure Set_HFID(Device_Name : in String) is
 
       HFID : HFID_String.Bounded_String := HFID_String.To_Bounded_String(Source => Ada.Command_Line.Argument(Number => 3),
@@ -356,6 +366,10 @@ package body Console is
 
                Reset(Device_Name => Device_Name);
 
+            when Commands.Restart =>
+
+               Restart(Device_Name => Device_Name);
+
             when Commands.Set_HFID =>
 
                if Ada.Command_Line.Argument_Count < 3 then
@@ -390,6 +404,7 @@ package body Console is
          Ada.Text_IO.New_Line(Spacing => 1);
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> discover");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> reset");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> restart");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid manufacturer");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid user");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info member");

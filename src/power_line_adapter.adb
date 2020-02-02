@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A power line adapter utility
---  Copyright (C) 2016 John Serock
+--  Copyright (C) 2016-2020 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -305,6 +305,9 @@ package body Power_Line_Adapter is
 
    procedure Reset(Adapter : in Adapter_Type;
                    Socket  : in Ethernet.Datagram_Socket.Socket_Type) is separate;
+
+   procedure Restart(Adapter : in Adapter_Type;
+                     Socket  : in Ethernet.Datagram_Socket.Socket_Type) is separate;
 
    procedure Set_HFID(Adapter : in Adapter_Type;
                       HFID    : in HFID_String.Bounded_String;
