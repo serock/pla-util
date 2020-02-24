@@ -231,11 +231,24 @@ package body Console is
 
    end Get_Network_Info;
 
-   procedure Reset(Device_Name : in String) is
+   function Get_PLA_MAC_Address return String is
+
+      PLA_MAC_Address_Arg : String := Ada.Command_Line.Argument(Number => 3);
 
    begin
 
-      Commands.Reset(Device_Name => Device_Name);
+      return PLA_MAC_Address_Arg;
+
+   end Get_PLA_MAC_Address;
+
+   procedure Reset(Device_Name : in String) is
+
+      PLA_MAC_Address : String := Get_PLA_MAC_Address;
+
+   begin
+
+      Commands.Reset(Device_Name     => Device_Name,
+                     PLA_MAC_Address => PLA_MAC_Address);
 
       Ada.Text_IO.Put_Line(Item => "Device was reset to factory defaults");
 
@@ -243,9 +256,12 @@ package body Console is
 
    procedure Restart(Device_Name : in String) is
 
+      PLA_MAC_Address : String := Get_PLA_MAC_Address;
+
    begin
 
-      Commands.Restart(Device_Name => Device_Name);
+      Commands.Restart(Device_Name     => Device_Name,
+                       PLA_MAC_Address => PLA_MAC_Address);
 
       Ada.Text_IO.Put_Line(Item => "Device was restarted");
 
@@ -364,9 +380,21 @@ package body Console is
 
             when Commands.Reset =>
 
+               if Ada.Command_Line.Argument_Count < 3 then
+
+                  raise Syntax_Error with Message_Too_Few_Arguments;
+
+               end if;
+
                Reset(Device_Name => Device_Name);
 
             when Commands.Restart =>
+
+               if Ada.Command_Line.Argument_Count < 3 then
+
+                  raise Syntax_Error with Message_Too_Few_Arguments;
+
+               end if;
 
                Restart(Device_Name => Device_Name);
 
@@ -403,8 +431,8 @@ package body Console is
          Ada.Text_IO.Put_Line(Item => "Try one of the following commands:");
          Ada.Text_IO.New_Line(Spacing => 1);
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> discover");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> reset");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> restart");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> reset <pla-mac-address>");
+         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> restart <pla-mac-address>");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid manufacturer");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid user");
          Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info member");

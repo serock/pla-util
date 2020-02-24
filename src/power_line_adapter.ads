@@ -68,6 +68,9 @@ package Power_Line_Adapter is
 
    function Get_MAC_Address(Adapter : in Adapter_Type) return Ethernet.MAC_Address_Type;
 
+   function Has_MAC_Address(Adapter     : in Adapter_Type;
+                            MAC_Address : in String) return Boolean;
+
    function Get_Manufacturer_HFID(Adapter: in Adapter_Type;
                                   Socket : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String;
 

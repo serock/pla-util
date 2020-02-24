@@ -18,6 +18,7 @@
 package body Commands is
 
    Message_No_Adapters     : constant String := "No adapters were discovered";
+   Message_Not_Found       : constant String := "Failed to find adapter with matching MAC address";
    Default_Receive_Timeout : constant        := 250;
    Default_Send_Timeout    : constant        := 250;
 
@@ -35,9 +36,11 @@ package body Commands is
    function Get_Network_Info(Device_Name   : in String;
                              Network_Scope : in Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
 
-   procedure Reset(Device_Name : in String) is separate;
+   procedure Reset(Device_Name     : in String;
+                   PLA_MAC_Address : in String) is separate;
 
-   procedure Restart(Device_Name : in String) is separate;
+   procedure Restart(Device_Name     : in String;
+                     PLA_MAC_Address : in String) is separate;
 
    procedure Set_HFID(Device_Name : in String;
                       HFID        : in HFID_String.Bounded_String) is separate;

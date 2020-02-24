@@ -24,10 +24,12 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-procedure Reset(Device_Name : in String) is
+procedure Reset(Device_Name     : in String;
+                PLA_MAC_Address : in String) is
 
    Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
    Socket   : Ethernet.Datagram_Socket.Socket_Type;
+   Found    : Boolean := False;
 
 begin
 
@@ -44,7 +46,23 @@ begin
 
    end if;
 
-   Adapters.First_Element.Reset(Socket => Socket);
+   for E of Adapters loop
+
+      if Power_Line_Adapter.Has_MAC_Address(Adapter => E, MAC_Address => PLA_MAC_Address) then
+
+         E.Reset(Socket => Socket);
+         Found := True;
+         exit;
+
+      end if;
+
+   end loop;
+
+   if not Found then
+
+      raise Command_Error with Message_Not_Found;
+
+   end if;
 
    Socket.Close;
 

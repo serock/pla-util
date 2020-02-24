@@ -251,6 +251,14 @@ package body Power_Line_Adapter is
 
    end Get_MAC_Address;
 
+   function Has_MAC_Address(Adapter     : in Adapter_Type;
+                            MAC_Address : in String) return Boolean is
+   begin
+
+      return Adapter.MAC_Address.To_String = MAC_Address;
+
+   end Has_MAC_Address;
+
    procedure Process(Adapter          : in     Adapter_Type;
                      Request          : in     Ethernet.Datagram_Socket.Payload_Type;
                      Socket           : in     Ethernet.Datagram_Socket.Socket_Type;
