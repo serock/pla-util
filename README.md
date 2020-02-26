@@ -47,8 +47,8 @@ To run the program, use one of the following commands:
 
 ```
 ./pla-util <nic> discover
-./pla-util <nic> reset
-./pla-util <nic> restart
+./pla-util <nic> reset <pla-mac-address>
+./pla-util <nic> restart <pla-mac-address>
 ./pla-util <nic> get-hfid manufacturer
 ./pla-util <nic> get-hfid user
 ./pla-util <nic> get-network-info member
@@ -59,8 +59,10 @@ To run the program, use one of the following commands:
 ./pla-util <nic> check-nmk <pass-phrase>
 ```
 
-where `<nic>` is the name of an ethernet network device (e.g., `eth0` or `enp0s25`)
+where
+`<nic>` is the name of an ethernet network device (e.g., `eth0` or `enp0s25`)
 connected to a powerline adapter.
+`<pla-mac-address>` is the MAC address of a powerline adapter as reported by the `discover` command.
 
 ## License
 This program is licensed under the GNU General Public License Version 3.
