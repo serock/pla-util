@@ -11,6 +11,7 @@ This program may work with other powerline adapters that comply with the HomePlu
 
 * D-Link DHP-700AV
 * Tenda PH3
+* Netgear PLP1000 (uses BCM60333)
 
 ## Development Environment
 This program is being developed using:
