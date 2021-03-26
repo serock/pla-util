@@ -16,14 +16,22 @@ This program may work with other powerline adapters that comply with the HomePlu
 ## Development Environment
 This program is being developed using:
 
-* [openSUSE Leap 15.1](https://www.opensuse.org/)
-* [GNAT Community Edition 2019](https://www.adacore.com/download), which includes the GNAT Programming Studio IDE
-* Git 2.16.4
+* [openSUSE Leap 15.2](https://www.opensuse.org/)
+* [GNAT Community Edition 2020](https://www.adacore.com/download), which includes the GNAT Studio IDE and the GPRbuild tool
+* Git 2.26.2
 
-## How to Build the Program with GNAT Programming Studio (GPS)
+## How to Build the Program with GNAT Studio
 1. Use git to clone this repository.
-2. Launch GPS, select **Open existing project**, and browse to the `pla_util.gpr` project file.
-3. Use GPS's **Build All** toolbar button to build the project, or try **Build** > **Project** > **Build All**.
+2. Launch `gnatstudio`, select **Open existing project**, and browse to the `pla_util.gpr` project file.
+3. Use GNAT Studio's **Build All** toolbar button to build the project, or try **Build** > **Project** > **Build All**.
+
+If the build is successful, the `pla-util` executable will be in the same directory as the `pla_util.gpr` project file.
+
+## How to Build the Program with GPRbuild
+1. Launch a terminal.
+2. Use git to clone this repository.
+3. Go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
+4. Run `gprbuild`.
 
 If the build is successful, the `pla-util` executable will be in the same directory as the `pla_util.gpr` project file.
 
