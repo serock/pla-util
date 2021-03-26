@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -20,14 +20,16 @@ with Ada.Exceptions;
 with Ada.Strings;
 with Ada.Text_IO;
 with Byte_IO;
-with Byte_Text_IO;
 with Commands;
 with Ethernet;
 with HFID_String;
+with Interfaces;
 with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
 
 package body Console is
+
+   package Byte_Text_IO is new Ada.Text_IO.Modular_IO(Num => Interfaces.Unsigned_8);
 
    Message_Too_Few_Arguments : constant String := "Too few arguments";
 

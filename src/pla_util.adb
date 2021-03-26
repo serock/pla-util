@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -15,7 +15,12 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Ada.Text_IO;
-with Interfaces;
+with Console;
 
-package Byte_Text_IO is new Ada.Text_IO.Modular_IO(Num => Interfaces.Unsigned_8);
+procedure Pla_Util is
+
+begin
+
+   Console.Process_Command_Line;
+
+end Pla_Util;
