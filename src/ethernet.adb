@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ use type Interfaces.Unsigned_8;
 
 package body Ethernet is
 
-   function Create_MAC_Address(Bytes : in MAC_48_Bytes) return MAC_Address_Type is
+   function Create_MAC_Address(Bytes : in MAC_Address_Bytes_Type) return MAC_Address_Type is
 
       MAC_Address : MAC_Address_Type;
 

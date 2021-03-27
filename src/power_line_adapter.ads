@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -19,11 +19,10 @@ with Ada.Containers.Bounded_Ordered_Sets;
 with Ethernet.Datagram_Socket;
 with HFID_String;
 with Interfaces;
-with Simple;
 
 package Power_Line_Adapter is
 
-   subtype NID_Type is Simple.Bytes_Type(1 .. 7);
+   subtype NID_Type is Ethernet.Bytes_Type(1 .. 7);
 
    type Adapter_Type is tagged private;
 

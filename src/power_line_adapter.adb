@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ use type Ethernet.MAC_Address_Type;
 
 package body Power_Line_Adapter is
 
-   subtype HFID_Bytes_Type is Simple.Bytes_Type(1 .. 64);
-   subtype Key_Type        is Simple.Bytes_Type(1 .. 16);
+   subtype HFID_Bytes_Type is Ethernet.Bytes_Type(1 .. 64);
+   subtype Key_Type        is Ethernet.Bytes_Type(1 .. 16);
 
    function "<"(Left  : in Adapter_Type;
                 Right : in Adapter_Type) return Boolean is

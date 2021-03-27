@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -16,18 +16,19 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Interfaces;
-with Simple;
 
 package Ethernet is
 
-   subtype MAC_48_Bytes is Simple.Bytes_Type(1 .. 6);
+   type Bytes_Type is array (Positive range <>) of Interfaces.Unsigned_8;
+
+   subtype MAC_Address_Bytes_Type is Bytes_Type(1 .. 6);
 
    type MAC_Address_Type is tagged private;
 
    Broadcast_Address : constant MAC_Address_Type;
    Null_Address      : constant MAC_Address_Type;
 
-   function Create_MAC_Address(Bytes : in MAC_48_Bytes) return MAC_Address_Type;
+   function Create_MAC_Address(Bytes : in MAC_Address_Bytes_Type) return MAC_Address_Type;
 
    function To_String(MAC_Address : in MAC_Address_Type;
                       Separator   : in Character := ':') return String;
@@ -37,11 +38,11 @@ package Ethernet is
 
 private
 
-   subtype Bytes_Type is Simple.Bytes_Type(1 .. 8);
+   subtype Long_MAC_Address_Bytes_Type is Bytes_Type(1 .. 8);
 
    type MAC_Address_Type is tagged
       record
-         Bytes : Bytes_Type;
+         Bytes : Long_MAC_Address_Bytes_Type;
       end record;
 
    Broadcast_Address : constant MAC_Address_Type := MAC_Address_Type'(Bytes => (1 .. 6 => 16#ff#, others => 16#00#));

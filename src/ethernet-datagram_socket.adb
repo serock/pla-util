@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ package body Ethernet.Datagram_Socket is
             sll_hatype   : Interfaces.C.unsigned_short;
             sll_pkttype  : Interfaces.C.unsigned_char;
             sll_halen    : Interfaces.C.unsigned_char;
-            sll_addr     : Bytes_Type;
+            sll_addr     : Long_MAC_Address_Bytes_Type;
          end record
         with Convention => C;
 

@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,11 @@
 with HFID_String;
 with Interfaces;
 limited private with Interfaces.C;
-with Simple;
 
 package Ethernet.Datagram_Socket is
 
    subtype Milliseconds_Type is Natural;
-   subtype Payload_Type      is Simple.Bytes_Type;
+   subtype Payload_Type      is Bytes_Type;
 
    type Protocol_Type is private;
    type Socket_Type   is tagged limited private;
