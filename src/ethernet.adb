@@ -15,12 +15,19 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Byte_IO;
+with Ada.Text_IO;
+with GNAT.Formatted_String;
 with Interfaces;
 
+use GNAT.Formatted_String;
 use type Interfaces.Unsigned_8;
 
 package body Ethernet is
+
+   package Byte_Text_IO is new Ada.Text_IO.Modular_IO(Num => Interfaces.Unsigned_8);
+
+   function Byte_Format is new GNAT.Formatted_String.Mod_Format(Int => Interfaces.Unsigned_8,
+                                                                Put => Byte_Text_IO.Put);
 
    function Create_MAC_Address(Bytes : in MAC_Address_Bytes_Type) return MAC_Address_Type is
 
@@ -37,17 +44,23 @@ package body Ethernet is
    function To_String(MAC_Address : in MAC_Address_Type;
                       Separator   : in Character := ':') return String is
 
+      Hex_Format : Formatted_String := +"%02x%c%02x%c%02x%c%02x%c%02x%c%02x";
+
       S : String(1 .. 17);
 
    begin
 
-      S :=
-        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(1)) & Separator &
-        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(2)) & Separator &
-        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(3)) & Separator &
-        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(4)) & Separator &
-        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(5)) & Separator &
-        Byte_IO.To_Hex_String(Item => MAC_Address.Bytes(6));
+      for I in 1 .. 5 loop
+
+         Hex_Format := Byte_Format(Format => Hex_Format,
+                                   Var => MAC_Address.Bytes(I)) & Separator;
+
+      end loop;
+
+      Hex_Format := Byte_Format(Format => Hex_Format,
+                                Var => MAC_Address.Bytes(6));
+
+      S := -Hex_Format;
 
       return S;
 

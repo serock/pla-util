@@ -19,17 +19,22 @@ with Ada.Command_Line;
 with Ada.Exceptions;
 with Ada.Strings;
 with Ada.Text_IO;
-with Byte_IO;
 with Commands;
 with Ethernet;
+with GNAT.Formatted_String;
 with HFID_String;
 with Interfaces;
 with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
 
+use GNAT.Formatted_String;
+
 package body Console is
 
    package Byte_Text_IO is new Ada.Text_IO.Modular_IO(Num => Interfaces.Unsigned_8);
+
+   function Byte_Format is new GNAT.Formatted_String.Mod_Format(Int => Interfaces.Unsigned_8,
+                                                                Put => Byte_Text_IO.Put);
 
    Message_Too_Few_Arguments : constant String := "Too few arguments";
 
@@ -161,7 +166,7 @@ package body Console is
 
          for J in Network_Info_List(I).NID'Range loop
 
-            Byte_IO.Put_Hex(Item => Network_Info_List(I).NID(J));
+            Ada.Text_IO.Put(Item => -(Byte_Format(Format => +"%02x", Var => Network_Info_List(I).NID(J))));
 
          end loop;
 
