@@ -1,3 +1,7 @@
+with "shared.gpr";
+with "common/common.gpr";
+with "net/net.gpr";
+with "pla/pla.gpr";
 project Pla_Util is
 
    for Source_Dirs use ("src");
@@ -5,9 +9,7 @@ project Pla_Util is
    for Exec_Dir use ".";
    for Main use ("pla_util.adb");
 
-   package Compiler is
-      for Default_Switches ("ada") use ("-gnat12", "-gnatf", "-gnateE", "-gnato", "-fstack-check", "-gnatE", "-g");
-   end Compiler;
+   package Compiler renames Shared.Compiler;
 
    package Builder is
       for Default_Switches ("ada") use ("-g", "-s");

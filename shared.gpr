@@ -1,0 +1,10 @@
+abstract project Shared is
+
+   for Source_Dirs use ();
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnat12", "-gnatf", "-gnateE", "-gnato", "-fstack-check", "-gnatE", "-g");
+   end Compiler;
+
+end Shared;
+
