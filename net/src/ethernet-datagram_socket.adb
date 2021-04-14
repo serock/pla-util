@@ -18,6 +18,7 @@
 with Ada.Characters.Latin_1;
 with Ada.Strings;
 with Interfaces.C;
+with OS_Constants;
 
 use type Interfaces.Unsigned_8;
 use type Interfaces.C.int;
@@ -27,34 +28,6 @@ use type Interfaces.C.unsigned;
 package body Ethernet.Datagram_Socket is
 
    package C_Binding is
-      -- bits/socket.h
-      C_AF_PACKET  : constant := 17;
-
-      -- asm-generic/errno-base.h
-      C_EAGAIN      : constant := 11;
-
-      -- asm-generic/errno.h
-      C_EWOULDBLOCK : constant := 11;
-
-      -- linux/if_ether.h
-      C_ETH_ALEN : constant := 6;
-
-      -- net/if.h
-      C_IF_NAMESIZE : constant := 16;
-
-      -- bits/ioctls.h
-      C_SIOCGIFINDEX  : constant := 16#8933#;
-
-      -- bits/socket_type.h
-      C_SOCK_DGRAM : constant := 2;
-
-      -- asm-generic/socket.h
-      -- gcc -E -dM /usr/include/sys/socket.h | grep TIMEO
-      C_SO_RCVTIMEO : constant := 20;
-      C_SO_SNDTIMEO : constant := 21;
-
-      -- asm-generic/socket.h
-      C_SOL_SOCKET : constant := 1;
 
       type Int_Pointer is access all Interfaces.C.int;
 
@@ -87,7 +60,7 @@ package body Ethernet.Datagram_Socket is
       -- net/if.h
       type ifreq is
          record
-            ifr_name    : Interfaces.C.char_array(1 .. C_IF_NAMESIZE);
+            ifr_name    : Interfaces.C.char_array(1 .. OS_Constants.IFNAMSIZ);
             ifr_ifindex : Interfaces.C.int;
          end record
         with Convention => C;
@@ -204,7 +177,7 @@ package body Ethernet.Datagram_Socket is
 
    begin
 
-      Socket_Address := (sll_family   => C_AF_PACKET,
+      Socket_Address := (sll_family   => OS_Constants.AF_PACKET,
                          sll_protocol => Network_Protocol,
                          sll_ifindex  => Interface_Index,
                          sll_hatype   => 0,
@@ -237,7 +210,7 @@ package body Ethernet.Datagram_Socket is
                         Count  => Count);
 
       Return_Value := C_Ioctl(Fd      => Fd,
-                              Request => C_SIOCGIFINDEX,
+                              Request => OS_Constants.SIOCGIFINDEX,
                               Argp    => If_Req);
 
       if Return_Value = -1 then
@@ -263,7 +236,7 @@ package body Ethernet.Datagram_Socket is
                        tv_usec => Interfaces.C.long((Timeout rem 1000) * 1000));
 
       Return_Value := C_Setsockopt(Fd      => File_Descriptor,
-                                   Level   => C_SOL_SOCKET,
+                                   Level   => OS_Constants.SOL_SOCKET,
                                    Optname => Option_Name,
                                    Optval  => Option_Value,
                                    Optlen  => timeval'Size / 8);
@@ -331,8 +304,8 @@ package body Ethernet.Datagram_Socket is
 
    begin
 
-      File_Descriptor := C_Socket(Domain   => C_AF_PACKET,
-                                  Kind     => C_SOCK_DGRAM,
+      File_Descriptor := C_Socket(Domain   => OS_Constants.AF_PACKET,
+                                  Kind     => OS_Constants.SOCK_DGRAM,
                                   Protocol => Interfaces.C.Int(Network_Protocol));
 
       if File_Descriptor = -1 then
@@ -375,11 +348,11 @@ package body Ethernet.Datagram_Socket is
            Interface_Index  => Interface_Index);
 
       Set_Socket_Timeout_Option(File_Descriptor => File_Descriptor,
-                                Option_Name     => C_SO_RCVTIMEO,
+                                Option_Name     => OS_Constants.SO_RCVTIMEO,
                                 Timeout         => Receive_Timeout);
 
       Set_Socket_Timeout_Option(File_Descriptor => File_Descriptor,
-                                Option_Name     => C_SO_SNDTIMEO,
+                                Option_Name     => OS_Constants.SO_SNDTIMEO,
                                 Timeout         => Send_Timeout);
 
       Socket.File_Descriptor  := File_Descriptor;
@@ -427,7 +400,7 @@ package body Ethernet.Datagram_Socket is
 
       if Return_Value = -1 then
 
-         if Errno = C_EAGAIN or else Errno = C_EWOULDBLOCK then
+         if Errno = OS_Constants.EAGAIN or else Errno = OS_Constants.EWOULDBLOCK then
 
             -- Call timed out before any data was received.
             -- There is no message and no source address.
@@ -471,12 +444,12 @@ package body Ethernet.Datagram_Socket is
 
       end if;
 
-      Destination := (sll_family   => C_AF_PACKET,
+      Destination := (sll_family   => OS_Constants.AF_PACKET,
                       sll_protocol => Socket.Network_Protocol,
                       sll_ifindex  => Socket.Interface_Index,
                       sll_hatype   => 0,
                       sll_pkttype  => 0,
-                      sll_halen    => C_ETH_ALEN,
+                      sll_halen    => OS_Constants.ETH_ALEN,
                       sll_addr     => To.Bytes);
 
       Return_Value := C_Sendto(Fd       => Socket.File_Descriptor,
