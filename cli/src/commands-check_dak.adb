@@ -24,21 +24,21 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-function Check_DAK(Device_Name : in String;
-                   Pass_Phrase : in String) return Boolean is
+function Check_DAK (Device_Name : in String;
+                    Pass_Phrase : in String) return Boolean is
 
-   Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
+   Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
    Result   : Boolean;
    Socket   : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Socket.Open(Protocol        => Packet_Sockets.Thin.Protocol_8912,
-               Device_Name     => Device_Name,
-               Receive_Timeout => Default_Receive_Timeout,
-               Send_Timeout    => Default_Send_Timeout);
+   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
+                Device_Name     => Device_Name,
+                Receive_Timeout => Default_Receive_Timeout,
+                Send_Timeout    => Default_Send_Timeout);
 
-   Adapters := Power_Line_Adapter.Network.Discover(Socket => Socket);
+   Adapters := Power_Line_Adapter.Network.Discover (Socket => Socket);
 
    if Adapters.Length = 0 then
 
@@ -46,8 +46,8 @@ begin
 
    end if;
 
-   Result := Adapters.First_Element.Check_DAK(Pass_Phrase => Pass_Phrase,
-                                              Socket      => Socket);
+   Result := Adapters.First_Element.Check_DAK (Pass_Phrase => Pass_Phrase,
+                                               Socket      => Socket);
 
    Socket.Close;
 

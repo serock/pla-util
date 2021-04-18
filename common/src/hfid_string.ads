@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -17,4 +17,4 @@
 ------------------------------------------------------------------------
 with Ada.Strings.Bounded;
 
-package HFID_String is new Ada.Strings.Bounded.Generic_Bounded_Length(Max => 64);
+package HFID_String is new Ada.Strings.Bounded.Generic_Bounded_Length (Max => 64);

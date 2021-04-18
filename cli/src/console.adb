@@ -31,68 +31,68 @@ use GNAT.Formatted_String;
 
 package body Console is
 
-   package Byte_Text_IO is new Ada.Text_IO.Modular_IO(Num => Interfaces.Unsigned_8);
+   package Byte_Text_IO is new Ada.Text_IO.Modular_IO (Num => Interfaces.Unsigned_8);
 
-   function Byte_Format is new GNAT.Formatted_String.Mod_Format(Int => Interfaces.Unsigned_8,
-                                                                Put => Byte_Text_IO.Put);
+   function Byte_Format is new GNAT.Formatted_String.Mod_Format (Int => Interfaces.Unsigned_8,
+                                                                 Put => Byte_Text_IO.Put);
 
    Message_Too_Few_Arguments : constant String := "Too few arguments";
 
    Syntax_Error : exception;
 
-   procedure Check_DAK(Device_Name : in String) is
+   procedure Check_DAK (Device_Name : in String) is
 
       Is_Match : Boolean;
 
    begin
 
-      Is_Match := Commands.Check_DAK(Device_Name => Device_Name,
-                                     Pass_Phrase => Ada.Command_Line.Argument(Number => 3));
+      Is_Match := Commands.Check_DAK (Device_Name => Device_Name,
+                                      Pass_Phrase => Ada.Command_Line.Argument (Number => 3));
 
       if Is_Match then
 
-         Ada.Text_IO.Put_Line(Item => "Device Access Key matches");
+         Ada.Text_IO.Put_Line (Item => "Device Access Key matches");
 
       else
 
-         Ada.Text_IO.Put_Line(Item => "Device Access Key does not match");
+         Ada.Text_IO.Put_Line (Item => "Device Access Key does not match");
 
       end if;
 
    end Check_DAK;
 
-   procedure Check_NMK(Device_Name : in String) is
+   procedure Check_NMK (Device_Name : in String) is
 
       Is_Match : Boolean;
 
    begin
 
-      Is_Match := Commands.Check_NMK(Device_Name => Device_Name,
-                                     Pass_Phrase => Ada.Command_Line.Argument(Number => 3));
+      Is_Match := Commands.Check_NMK (Device_Name => Device_Name,
+                                      Pass_Phrase => Ada.Command_Line.Argument (Number => 3));
 
       if Is_Match then
 
-         Ada.Text_IO.Put_Line(Item => "Network Membership Key matches");
+         Ada.Text_IO.Put_Line (Item => "Network Membership Key matches");
 
       else
 
-         Ada.Text_IO.Put_Line(Item => "Network Membership Key does not match");
+         Ada.Text_IO.Put_Line (Item => "Network Membership Key does not match");
 
       end if;
 
    end Check_NMK;
 
-   procedure Discover(Device_Name : in String) is
+   procedure Discover (Device_Name : in String) is
 
-      Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
+      Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
 
    begin
 
-      Adapters := Commands.Discover(Device_Name => Device_Name);
+      Adapters := Commands.Discover (Device_Name => Device_Name);
 
       for Adapter of Adapters loop
 
-         Ada.Text_IO.Put_Line(Item => Adapter.To_String);
+         Ada.Text_IO.Put_Line (Item => Adapter.To_String);
 
       end loop;
 
@@ -100,11 +100,11 @@ package body Console is
 
    function Get_HFID_Level return Commands.HFID_Level_Type is
 
-      HFID_Level_Arg : String := Ada.Command_Line.Argument(Number => 3);
+      HFID_Level_Arg : String := Ada.Command_Line.Argument (Number => 3);
 
    begin
 
-      return Commands.HFID_Level_Type'Value(HFID_Level_Arg);
+      return Commands.HFID_Level_Type'Value (HFID_Level_Arg);
 
    exception
 
@@ -114,27 +114,27 @@ package body Console is
 
    end Get_HFID_Level;
 
-   procedure Get_HFID(Device_Name : in String) is
+   procedure Get_HFID (Device_Name : in String) is
 
       HFID       : HFID_String.Bounded_String;
       HFID_Level : Commands.HFID_Level_Type := Get_HFID_Level;
 
    begin
 
-      HFID := Commands.Get_HFID(Device_Name => Device_Name,
-                                HFID_Level  => HFID_Level);
+      HFID := Commands.Get_HFID (Device_Name => Device_Name,
+                                 HFID_Level  => HFID_Level);
 
-      Ada.Text_IO.Put_Line(Item => HFID_String.To_String(Source => HFID));
+      Ada.Text_IO.Put_Line (Item => HFID_String.To_String (Source => HFID));
 
    end Get_HFID;
 
    function Get_Network_Scope return Commands.Network_Scope_Type is
 
-      Network_Scope_Arg : String := Ada.Command_Line.Argument(Number => 3);
+      Network_Scope_Arg : String := Ada.Command_Line.Argument (Number => 3);
 
    begin
 
-      return Commands.Network_Scope_Type'Value(Network_Scope_Arg);
+      return Commands.Network_Scope_Type'Value (Network_Scope_Arg);
 
    exception
 
@@ -144,95 +144,95 @@ package body Console is
 
    end Get_Network_Scope;
 
-   procedure Get_Network_Info(Device_Name : in String) is
+   procedure Get_Network_Info (Device_Name : in String) is
 
       Column_2 : constant := 36;
 
       Network_Scope     : Commands.Network_Scope_Type               := Get_Network_Scope;
-      Network_Info_List : Power_Line_Adapter.Network_Info_List_Type := Commands.Get_Network_Info(Device_Name   => Device_Name,
-                                                                                                 Network_Scope => Network_Scope);
+      Network_Info_List : Power_Line_Adapter.Network_Info_List_Type := Commands.Get_Network_Info (Device_Name   => Device_Name,
+                                                                                                  Network_Scope => Network_Scope);
 
    begin
 
-      Ada.Text_IO.Put_Line(Item => "Number of networks:" & Integer'Image(Network_Info_List'Length));
+      Ada.Text_IO.Put_Line (Item => "Number of networks:" & Integer'Image (Network_Info_List'Length));
 
       for I in 1 .. Network_Info_List'Length loop
 
-         Ada.Text_IO.Put_Line(Item => "Network" & Integer'Image(I) & ":");
+         Ada.Text_IO.Put_Line (Item => "Network" & Integer'Image (I) & ":");
 
-         Ada.Text_IO.Put(Item => "  NID:");
+         Ada.Text_IO.Put (Item => "  NID:");
 
-         Ada.Text_IO.Set_Col(To => Column_2);
+         Ada.Text_IO.Set_Col (To => Column_2);
 
-         for J in Network_Info_List(I).NID'Range loop
+         for J in Network_Info_List (I).NID'Range loop
 
-            Ada.Text_IO.Put(Item => -(Byte_Format(Format => +"%02x", Var => Network_Info_List(I).NID(J))));
+            Ada.Text_IO.Put (Item => -(Byte_Format (Format => +"%02x", Var => Network_Info_List (I).NID (J))));
 
          end loop;
 
-         Ada.Text_IO.New_Line(Spacing => 1);
+         Ada.Text_IO.New_Line (Spacing => 1);
 
-         Ada.Text_IO.Put(Item => "  SNID:");
+         Ada.Text_IO.Put (Item => "  SNID:");
 
-         Ada.Text_IO.Set_Col(To => Column_2);
+         Ada.Text_IO.Set_Col (To => Column_2);
 
-         Byte_Text_IO.Put(Item  => Network_Info_List(I).SNID,
-                          Width => 1,
-                          Base  => 10);
+         Byte_Text_IO.Put (Item  => Network_Info_List (I).SNID,
+                           Width => 1,
+                           Base  => 10);
 
-         Ada.Text_IO.New_Line(Spacing => 1);
+         Ada.Text_IO.New_Line (Spacing => 1);
 
-         Ada.Text_IO.Put(Item => "  TEI:");
+         Ada.Text_IO.Put (Item => "  TEI:");
 
-         Ada.Text_IO.Set_Col(To => Column_2);
+         Ada.Text_IO.Set_Col (To => Column_2);
 
-         Byte_Text_IO.Put(Item  => Network_Info_List(I).TEI,
-                          Width => 1,
-                          Base  => 10);
+         Byte_Text_IO.Put (Item  => Network_Info_List (I).TEI,
+                           Width => 1,
+                           Base  => 10);
 
-         Ada.Text_IO.New_Line(Spacing => 1);
+         Ada.Text_IO.New_Line (Spacing => 1);
 
-         Ada.Text_IO.Put(Item => "  CCo MAC Address:");
+         Ada.Text_IO.Put (Item => "  CCo MAC Address:");
 
-         Ada.Text_IO.Set_Col(To => Column_2);
+         Ada.Text_IO.Set_Col (To => Column_2);
 
-         Ada.Text_IO.Put_Line(Item => Packet_Sockets.Thin.To_String(MAC_Address => Network_Info_List(I).CCo_MAC_Address));
+         Ada.Text_IO.Put_Line (Item => Packet_Sockets.Thin.To_String (MAC_Address => Network_Info_List (I).CCo_MAC_Address));
 
-         Ada.Text_IO.Put(Item => "  Backup CCo MAC Address:");
+         Ada.Text_IO.Put (Item => "  Backup CCo MAC Address:");
 
-         Ada.Text_IO.Set_Col(To => Column_2);
+         Ada.Text_IO.Set_Col (To => Column_2);
 
-         Ada.Text_IO.Put_Line(Item => Packet_Sockets.Thin.To_String(MAC_Address => Network_Info_List(I).BCCo_MAC_Address));
+         Ada.Text_IO.Put_Line (Item => Packet_Sockets.Thin.To_String (MAC_Address => Network_Info_List (I).BCCo_MAC_Address));
 
-         Ada.Text_IO.Put(Item => "  Number of Coordinating Networks:");
+         Ada.Text_IO.Put (Item => "  Number of Coordinating Networks:");
 
-         Ada.Text_IO.Set_Col(To => Column_2);
+         Ada.Text_IO.Set_Col (To => Column_2);
 
-         Byte_Text_IO.Put(Item  => Network_Info_List(I).Num_Coord_Networks,
-                          Width => 1,
-                          Base  => 10);
+         Byte_Text_IO.Put (Item  => Network_Info_List (I).Num_Coord_Networks,
+                           Width => 1,
+                           Base  => 10);
 
-         Ada.Text_IO.New_Line(Spacing => 1);
+         Ada.Text_IO.New_Line (Spacing => 1);
 
-         Ada.Text_IO.Put(Item => "  Station Role:");
+         Ada.Text_IO.Put (Item => "  Station Role:");
 
-         Ada.Text_IO.Set_Col(To => Column_2);
+         Ada.Text_IO.Set_Col (To => Column_2);
 
-         Ada.Text_IO.Put_Line(Item => Power_Line_Adapter.Station_Role_Type'Image(Network_Info_List(I).Station_Role));
+         Ada.Text_IO.Put_Line (Item => Power_Line_Adapter.Station_Role_Type'Image (Network_Info_List (I).Station_Role));
 
-         Ada.Text_IO.Put(Item => "  Network Kind:");
+         Ada.Text_IO.Put (Item => "  Network Kind:");
 
-         Ada.Text_IO.Set_Col(To => Column_2);
+         Ada.Text_IO.Set_Col (To => Column_2);
 
-         Ada.Text_IO.Put_Line(Item => Power_Line_Adapter.Network_Kind_Type'Image(Network_Info_List(I).Network_Kind));
+         Ada.Text_IO.Put_Line (Item => Power_Line_Adapter.Network_Kind_Type'Image (Network_Info_List (I).Network_Kind));
 
-         Ada.Text_IO.Put(Item => "  Status:");
+         Ada.Text_IO.Put (Item => "  Status:");
 
-         Ada.Text_IO.Set_Col(To => Column_2);
+         Ada.Text_IO.Set_Col (To => Column_2);
 
-         Ada.Text_IO.Put_Line(Item => Power_Line_Adapter.Status_Type'Image(Network_Info_List(I).Status));
+         Ada.Text_IO.Put_Line (Item => Power_Line_Adapter.Status_Type'Image (Network_Info_List (I).Status));
 
-         Ada.Text_IO.New_Line(Spacing => 1);
+         Ada.Text_IO.New_Line (Spacing => 1);
 
       end loop;
 
@@ -240,7 +240,7 @@ package body Console is
 
    function Get_PLA_MAC_Address return String is
 
-      PLA_MAC_Address_Arg : String := Ada.Command_Line.Argument(Number => 3);
+      PLA_MAC_Address_Arg : String := Ada.Command_Line.Argument (Number => 3);
 
    begin
 
@@ -248,68 +248,68 @@ package body Console is
 
    end Get_PLA_MAC_Address;
 
-   procedure Reset(Device_Name : in String) is
+   procedure Reset (Device_Name : in String) is
 
       PLA_MAC_Address : String := Get_PLA_MAC_Address;
 
    begin
 
-      Commands.Reset(Device_Name     => Device_Name,
-                     PLA_MAC_Address => PLA_MAC_Address);
+      Commands.Reset (Device_Name     => Device_Name,
+                      PLA_MAC_Address => PLA_MAC_Address);
 
-      Ada.Text_IO.Put_Line(Item => "Device was reset to factory defaults");
+      Ada.Text_IO.Put_Line (Item => "Device was reset to factory defaults");
 
    end Reset;
 
-   procedure Restart(Device_Name : in String) is
+   procedure Restart (Device_Name : in String) is
 
       PLA_MAC_Address : String := Get_PLA_MAC_Address;
 
    begin
 
-      Commands.Restart(Device_Name     => Device_Name,
-                       PLA_MAC_Address => PLA_MAC_Address);
+      Commands.Restart (Device_Name     => Device_Name,
+                        PLA_MAC_Address => PLA_MAC_Address);
 
-      Ada.Text_IO.Put_Line(Item => "Device was restarted");
+      Ada.Text_IO.Put_Line (Item => "Device was restarted");
 
    end Restart;
 
-   procedure Set_HFID(Device_Name : in String) is
+   procedure Set_HFID (Device_Name : in String) is
 
-      HFID : HFID_String.Bounded_String := HFID_String.To_Bounded_String(Source => Ada.Command_Line.Argument(Number => 3),
+      HFID : HFID_String.Bounded_String := HFID_String.To_Bounded_String (Source => Ada.Command_Line.Argument (Number => 3),
                                                                          Drop   => Ada.Strings.Error);
 
    begin
 
-      Commands.Set_HFID(Device_Name => Device_Name,
-                        HFID        => HFID);
+      Commands.Set_HFID (Device_Name => Device_Name,
+                         HFID        => HFID);
 
-      Ada.Text_IO.Put_Line(Item => "User HFID set");
+      Ada.Text_IO.Put_Line (Item => "User HFID set");
 
    end Set_HFID;
 
-   procedure Set_NMK(Device_Name : in String) is
+   procedure Set_NMK (Device_Name : in String) is
 
    begin
 
-      Commands.Set_NMK(Device_Name => Device_Name,
-                       Pass_Phrase => Ada.Command_Line.Argument(Number => 3));
+      Commands.Set_NMK (Device_Name => Device_Name,
+                        Pass_Phrase => Ada.Command_Line.Argument (Number => 3));
 
-      Ada.Text_IO.Put_Line(Item => "Network Membership Key set");
+      Ada.Text_IO.Put_Line (Item => "Network Membership Key set");
 
    end Set_NMK;
 
-   function To_Command_Name(Source : in String) return String is
+   function To_Command_Name (Source : in String) return String is
 
-      Command_Name : String(Source'Range) := Source;
+      Command_Name : String (Source'Range) := Source;
 
    begin
 
       for I in Command_Name'Range loop
 
-         if Command_Name(I) = '-' then
+         if Command_Name (I) = '-' then
 
-            Command_Name(I) := '_';
+            Command_Name (I) := '_';
 
          end if;
 
@@ -333,11 +333,11 @@ package body Console is
 
       declare
 
-         Device_Name : constant String := Ada.Command_Line.Argument(Number => 1);
+         Device_Name : constant String := Ada.Command_Line.Argument (Number => 1);
 
       begin
 
-         Command := Commands.Command_Type'Value(To_Command_Name(Source => Ada.Command_Line.Argument(Number => 2)));
+         Command := Commands.Command_Type'Value (To_Command_Name (Source => Ada.Command_Line.Argument (Number => 2)));
 
          case Command is
 
@@ -349,7 +349,7 @@ package body Console is
 
                end if;
 
-               Check_DAK(Device_Name => Device_Name);
+               Check_DAK (Device_Name => Device_Name);
 
             when Commands.Check_NMK =>
 
@@ -359,11 +359,11 @@ package body Console is
 
                end if;
 
-               Check_NMK(Device_Name => Device_Name);
+               Check_NMK (Device_Name => Device_Name);
 
             when Commands.Discover =>
 
-               Discover(Device_Name => Device_Name);
+               Discover (Device_Name => Device_Name);
 
             when Commands.Get_HFID =>
 
@@ -373,7 +373,7 @@ package body Console is
 
                end if;
 
-               Get_HFID(Device_Name => Device_Name);
+               Get_HFID (Device_Name => Device_Name);
 
             when Commands.Get_Network_Info =>
 
@@ -383,7 +383,7 @@ package body Console is
 
                end if;
 
-               Get_Network_Info(Device_Name => Device_Name);
+               Get_Network_Info (Device_Name => Device_Name);
 
             when Commands.Reset =>
 
@@ -393,7 +393,7 @@ package body Console is
 
                end if;
 
-               Reset(Device_Name => Device_Name);
+               Reset (Device_Name => Device_Name);
 
             when Commands.Restart =>
 
@@ -403,7 +403,7 @@ package body Console is
 
                end if;
 
-               Restart(Device_Name => Device_Name);
+               Restart (Device_Name => Device_Name);
 
             when Commands.Set_HFID =>
 
@@ -413,7 +413,7 @@ package body Console is
 
                end if;
 
-               Set_HFID(Device_Name => Device_Name);
+               Set_HFID (Device_Name => Device_Name);
 
             when Commands.Set_NMK =>
 
@@ -423,7 +423,7 @@ package body Console is
 
                end if;
 
-               Set_NMK(Device_Name => Device_Name);
+               Set_NMK (Device_Name => Device_Name);
 
          end case;
 
@@ -431,29 +431,29 @@ package body Console is
 
    exception
 
-      when Error: Syntax_Error =>
+      when Error : Syntax_Error =>
 
-         Ada.Text_IO.Put_Line(Item => "Error: " & Ada.Exceptions.Exception_Message(X => Error));
-         Ada.Text_IO.New_Line(Spacing => 1);
-         Ada.Text_IO.Put_Line(Item => "Try one of the following commands:");
-         Ada.Text_IO.New_Line(Spacing => 1);
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> discover");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> reset <pla-mac-address>");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> restart <pla-mac-address>");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid manufacturer");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-hfid user");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info member");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> get-network-info any");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> set-hfid <id>");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> set-nmk <pass-phrase>");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
-         Ada.Text_IO.Put_Line(Item => "pla-util <NIC> check-nmk <pass-phrase>");
-         Ada.Text_IO.New_Line(Spacing => 1);
-         Ada.Text_IO.Put_Line(Item => "where <NIC> is the name of an ethernet network device");
+         Ada.Text_IO.Put_Line (Item => "Error: " & Ada.Exceptions.Exception_Message (X => Error));
+         Ada.Text_IO.New_Line (Spacing => 1);
+         Ada.Text_IO.Put_Line (Item => "Try one of the following commands:");
+         Ada.Text_IO.New_Line (Spacing => 1);
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> discover");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> reset <pla-mac-address>");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> restart <pla-mac-address>");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid manufacturer");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid user");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info member");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info any");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-hfid <id>");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-nmk <pass-phrase>");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-nmk <pass-phrase>");
+         Ada.Text_IO.New_Line (Spacing => 1);
+         Ada.Text_IO.Put_Line (Item => "where <NIC> is the name of an ethernet network device");
 
-      when Error: Commands.Command_Error | Power_Line_Adapter.Input_Error =>
+      when Error : Commands.Command_Error | Power_Line_Adapter.Input_Error =>
 
-         Ada.Text_IO.Put_Line(Item => "Error: " & Ada.Exceptions.Exception_Message(X => Error));
+         Ada.Text_IO.Put_Line (Item => "Error: " & Ada.Exceptions.Exception_Message (X => Error));
 
    end Process_Command_Line;
 

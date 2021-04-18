@@ -21,35 +21,35 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-procedure Set_NMK(Adapter     : in Adapter_Type;
-                  Pass_Phrase : in String;
-                  Socket      : in Packet_Sockets.Thin.Socket_Type) is
+procedure Set_NMK (Adapter     : in Adapter_Type;
+                   Pass_Phrase : in String;
+                   Socket      : in Packet_Sockets.Thin.Socket_Type) is
 
-   Expected_Response : Packet_Sockets.Thin.Payload_Type(1 .. 10);
+   Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 10);
    MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
-   Request           : Packet_Sockets.Thin.Payload_Type(1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response          : Packet_Sockets.Thin.Payload_Type(1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
+   Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
+   Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;
 
 begin
 
-   Validate_NMK_Pass_Phrase(Pass_Phrase      => Pass_Phrase,
-                            Check_Min_Length => True);
+   Validate_NMK_Pass_Phrase (Pass_Phrase      => Pass_Phrase,
+                             Check_Min_Length => True);
 
    Request := (16#02#, 16#18#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, others => 16#00#);
 
-   Request(10 .. 25) := Generate_NMK(Pass_Phrase => Pass_Phrase);
-   Request(27)       := 16#01#;
+   Request (10 .. 25) := Generate_NMK (Pass_Phrase => Pass_Phrase);
+   Request (27)       := 16#01#;
 
-   Adapter.Process(Request          => Request,
-                   Socket           => Socket,
-                   Response         => Response,
-                   Response_Length  => Response_Length,
-                   From_MAC_Address => MAC_Address);
+   Adapter.Process (Request          => Request,
+                    Socket           => Socket,
+                    Response         => Response,
+                    Response_Length  => Response_Length,
+                    From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#19#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
 
-   if Response(Expected_Response'Range) /= Expected_Response then
+   if Response (Expected_Response'Range) /= Expected_Response then
 
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
 

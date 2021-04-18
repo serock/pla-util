@@ -21,7 +21,7 @@ with Packet_Sockets.Thin;
 
 package Power_Line_Adapter is
 
-   subtype NID_Type is Packet_Sockets.Thin.Bytes_Type(1 .. 7);
+   subtype NID_Type is Packet_Sockets.Thin.Bytes_Type (1 .. 7);
 
    type Adapter_Type is tagged private;
 
@@ -53,49 +53,49 @@ package Power_Line_Adapter is
    function "<"(Left  : in Adapter_Type;
                 Right : in Adapter_Type) return Boolean;
 
-   function "="(Left  : in Adapter_Type;
-                Right : in Adapter_Type) return Boolean;
+   overriding function "="(Left  : in Adapter_Type;
+                           Right : in Adapter_Type) return Boolean;
 
-   function Check_DAK(Adapter     : in Adapter_Type;
-                      Pass_Phrase : in String;
-                      Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean;
+   function Check_DAK (Adapter     : in Adapter_Type;
+                       Pass_Phrase : in String;
+                       Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean;
 
-   function Check_NMK(Adapter     : in Adapter_Type;
-                      Pass_Phrase : in String;
-                      Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean;
+   function Check_NMK (Adapter     : in Adapter_Type;
+                       Pass_Phrase : in String;
+                       Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean;
 
-   function Get_MAC_Address(Adapter : in Adapter_Type) return Packet_Sockets.Thin.MAC_Address_Type;
+   function Get_MAC_Address (Adapter : in Adapter_Type) return Packet_Sockets.Thin.MAC_Address_Type;
 
-   function Has_MAC_Address(Adapter     : in Adapter_Type;
-                            MAC_Address : in String) return Boolean;
+   function Has_MAC_Address (Adapter     : in Adapter_Type;
+                             MAC_Address : in String) return Boolean;
 
-   function Get_Manufacturer_HFID(Adapter: in Adapter_Type;
-                                  Socket : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String;
+   function Get_Manufacturer_HFID (Adapter : in Adapter_Type;
+                                   Socket : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String;
 
-   function Get_User_HFID(Adapter : in Adapter_Type;
-                          Socket  : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String;
+   function Get_User_HFID (Adapter : in Adapter_Type;
+                           Socket  : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String;
 
-   function Get_Any_Network_Info(Adapter : in Adapter_Type;
-                                 Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type;
+   function Get_Any_Network_Info (Adapter : in Adapter_Type;
+                                  Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type;
 
-   function Get_Member_Network_Info(Adapter : in Adapter_Type;
-                                    Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type;
+   function Get_Member_Network_Info (Adapter : in Adapter_Type;
+                                     Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type;
 
-   procedure Reset(Adapter : in Adapter_Type;
-                   Socket  : in Packet_Sockets.Thin.Socket_Type);
+   procedure Reset (Adapter : in Adapter_Type;
+                    Socket  : in Packet_Sockets.Thin.Socket_Type);
 
-   procedure Restart(Adapter : in Adapter_Type;
-                     Socket  : in Packet_Sockets.Thin.Socket_Type);
-
-   procedure Set_HFID(Adapter : in Adapter_Type;
-                      HFID    : in HFID_String.Bounded_String;
+   procedure Restart (Adapter : in Adapter_Type;
                       Socket  : in Packet_Sockets.Thin.Socket_Type);
 
-   procedure Set_NMK(Adapter     : in Adapter_Type;
-                     Pass_Phrase : in String;
-                     Socket      : in Packet_Sockets.Thin.Socket_Type);
+   procedure Set_HFID (Adapter : in Adapter_Type;
+                       HFID    : in HFID_String.Bounded_String;
+                       Socket  : in Packet_Sockets.Thin.Socket_Type);
 
-   function To_String(Adapter : in Adapter_Type) return String;
+   procedure Set_NMK (Adapter     : in Adapter_Type;
+                      Pass_Phrase : in String;
+                      Socket      : in Packet_Sockets.Thin.Socket_Type);
+
+   function To_String (Adapter : in Adapter_Type) return String;
 
 private
 
@@ -106,9 +106,9 @@ private
          HFID              : HFID_String.Bounded_String;
       end record;
 
-   procedure Create(Adapter           : in out Adapter_Type;
-                    Network_Interface : in     Positive;
-                    MAC_Address       : in     Packet_Sockets.Thin.MAC_Address_Type;
-                    HFID              : in     HFID_String.Bounded_String);
+   procedure Create (Adapter           : in out Adapter_Type;
+                     Network_Interface : in     Positive;
+                     MAC_Address       : in     Packet_Sockets.Thin.MAC_Address_Type;
+                     HFID              : in     HFID_String.Bounded_String);
 
 end Power_Line_Adapter;

@@ -21,13 +21,13 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Get_Manufacturer_HFID(Adapter : in Adapter_Type;
-                               Socket  : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is
+function Get_Manufacturer_HFID (Adapter : in Adapter_Type;
+                                Socket  : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is
 
 begin
 
-   return Get_HFID(Arg     => 16#1b#,
-                   Adapter => Adapter,
-                   Socket  => Socket);
+   return Get_HFID (Arg     => 16#1b#,
+                    Adapter => Adapter,
+                    Socket  => Socket);
 
 end Get_Manufacturer_HFID;

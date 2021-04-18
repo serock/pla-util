@@ -23,17 +23,17 @@ package Packet_Sockets.Thin is
 
    type Bytes_Type is array (Positive range <>) of Interfaces.Unsigned_8;
 
-   subtype MAC_Address_Bytes_Type is Bytes_Type(1 .. 6);
+   subtype MAC_Address_Bytes_Type is Bytes_Type (1 .. 6);
 
    type MAC_Address_Type is private;
 
    Broadcast_Address : constant MAC_Address_Type;
    Null_Address      : constant MAC_Address_Type;
 
-   function Create_MAC_Address(Bytes : in MAC_Address_Bytes_Type) return MAC_Address_Type;
+   function Create_MAC_Address (Bytes : in MAC_Address_Bytes_Type) return MAC_Address_Type;
 
-   function To_String(MAC_Address : in MAC_Address_Type;
-                      Separator   : in Character := ':') return String;
+   function To_String (MAC_Address : in MAC_Address_Type;
+                       Separator   : in Character := ':') return String;
 
    function "<"(Left  : in MAC_Address_Type;
                 Right : in MAC_Address_Type) return Boolean;
@@ -50,24 +50,24 @@ package Packet_Sockets.Thin is
    Minimum_Payload_Size : constant := 46;
    Protocol_8912        : constant Protocol_Type;
 
-   procedure Close(Socket : in out Socket_Type);
+   procedure Close (Socket : in out Socket_Type);
 
-   procedure Open(Socket          : in out Socket_Type;
-                  Protocol        : in     Protocol_Type;
-                  Device_Name     : in     String;
-                  Receive_Timeout : in     Milliseconds_Type := 0;
-                  Send_Timeout    : in     Milliseconds_Type := 0);
+   procedure Open (Socket          : in out Socket_Type;
+                   Protocol        : in     Protocol_Type;
+                   Device_Name     : in     String;
+                   Receive_Timeout : in     Milliseconds_Type := 0;
+                   Send_Timeout    : in     Milliseconds_Type := 0);
 
-   procedure Receive(Socket         : in     Socket_Type;
-                     Payload        :    out Payload_Type;
-                     Payload_Length :    out Natural;
-                     From           :    out MAC_Address_Type);
+   procedure Receive (Socket         : in     Socket_Type;
+                      Payload        :    out Payload_Type;
+                      Payload_Length :    out Natural;
+                      From           :    out MAC_Address_Type);
 
-   procedure Send(Socket  : in Socket_Type;
-                  Payload : in Payload_Type;
-                  To      : in MAC_Address_Type);
+   procedure Send (Socket  : in Socket_Type;
+                   Payload : in Payload_Type;
+                   To      : in MAC_Address_Type);
 
-   function To_HFID_String(Payload : Payload_Type) return HFID_String.Bounded_String;
+   function To_HFID_String (Payload : Payload_Type) return HFID_String.Bounded_String;
 
    Socket_Error : exception;
 
@@ -88,7 +88,7 @@ private
 
    Protocol_8912 : constant Protocol_Type := 16#8912#;
 
-   subtype Long_MAC_Address_Bytes_Type is Bytes_Type(1 .. 8);
+   subtype Long_MAC_Address_Bytes_Type is Bytes_Type (1 .. 8);
 
    type MAC_Address_Type is
       record

@@ -21,13 +21,13 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Get_Member_Network_Info(Adapter : in Adapter_Type;
-                                 Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is
+function Get_Member_Network_Info (Adapter : in Adapter_Type;
+                                  Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is
 
 begin
 
-   return Get_Network_Info(Arg     => 16#00#,
-                           Adapter => Adapter,
-                           Socket  => Socket);
+   return Get_Network_Info (Arg     => 16#00#,
+                            Adapter => Adapter,
+                            Socket  => Socket);
 
 end Get_Member_Network_Info;

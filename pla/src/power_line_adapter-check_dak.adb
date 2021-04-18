@@ -21,108 +21,108 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Check_DAK(Adapter     : in Adapter_Type;
+function Check_DAK (Adapter     : in Adapter_Type;
                    Pass_Phrase : in String;
                    Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean is
 
    DAK               : Key_Type;
-   Expected_Response : Packet_Sockets.Thin.Payload_Type(1 .. 12);
+   Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 12);
    Generated_DAK     : Key_Type;
    MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
-   Request           : Packet_Sockets.Thin.Payload_Type(1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response          : Packet_Sockets.Thin.Payload_Type(1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
+   Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
+   Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;
 
 begin
 
-   Validate_DAK_Pass_Phrase(Pass_Phrase      => Pass_Phrase,
-                            Check_Min_Length => True);
+   Validate_DAK_Pass_Phrase (Pass_Phrase      => Pass_Phrase,
+                             Check_Min_Length => True);
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#09#, others => 16#00#);
 
-   Adapter.Process(Request          => Request,
-                   Socket           => Socket,
-                   Response         => Response,
-                   Response_Length  => Response_Length,
-                   From_MAC_Address => MAC_Address);
+   Adapter.Process (Request          => Request,
+                    Socket           => Socket,
+                    Response         => Response,
+                    Response_Length  => Response_Length,
+                    From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#04#, 16#01#, 16#00#);
 
-   if Response_Length < 16 or else Response(Expected_Response'Range) /= Expected_Response then
+   if Response_Length < 16 or else Response (Expected_Response'Range) /= Expected_Response then
 
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
 
    end if;
 
-   DAK(1) := Response(16);
-   DAK(2) := Response(15);
-   DAK(3) := Response(14);
-   DAK(4) := Response(13);
+   DAK (1) := Response (16);
+   DAK (2) := Response (15);
+   DAK (3) := Response (14);
+   DAK (4) := Response (13);
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#03#, 16#0a#, others => 16#00#);
 
-   Adapter.Process(Request          => Request,
-                   Socket           => Socket,
-                   Response         => Response,
-                   Response_Length  => Response_Length,
-                   From_MAC_Address => MAC_Address);
+   Adapter.Process (Request          => Request,
+                    Socket           => Socket,
+                    Response         => Response,
+                    Response_Length  => Response_Length,
+                    From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#03#, 16#04#, 16#01#, 16#00#);
 
-   if Response_Length < 16 or else Response(Expected_Response'Range) /= Expected_Response then
+   if Response_Length < 16 or else Response (Expected_Response'Range) /= Expected_Response then
 
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
 
    end if;
 
-   DAK(5) := Response(16);
-   DAK(6) := Response(15);
-   DAK(7) := Response(14);
-   DAK(8) := Response(13);
+   DAK (5) := Response (16);
+   DAK (6) := Response (15);
+   DAK (7) := Response (14);
+   DAK (8) := Response (13);
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#04#, 16#0b#, others => 16#00#);
 
-   Adapter.Process(Request          => Request,
-                   Socket           => Socket,
-                   Response         => Response,
-                   Response_Length  => Response_Length,
-                   From_MAC_Address => MAC_Address);
+   Adapter.Process (Request          => Request,
+                    Socket           => Socket,
+                    Response         => Response,
+                    Response_Length  => Response_Length,
+                    From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#04#, 16#04#, 16#01#, 16#00#);
 
-   if Response_Length < 16 or else Response(Expected_Response'Range) /= Expected_Response then
+   if Response_Length < 16 or else Response (Expected_Response'Range) /= Expected_Response then
 
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
 
    end if;
 
-   DAK(9)  := Response(16);
-   DAK(10) := Response(15);
-   DAK(11) := Response(14);
-   DAK(12) := Response(13);
+   DAK (9)  := Response (16);
+   DAK (10) := Response (15);
+   DAK (11) := Response (14);
+   DAK (12) := Response (13);
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#05#, 16#0c#, others => 16#00#);
 
-   Adapter.Process(Request          => Request,
-                   Socket           => Socket,
-                   Response         => Response,
-                   Response_Length  => Response_Length,
-                   From_MAC_Address => MAC_Address);
+   Adapter.Process (Request          => Request,
+                    Socket           => Socket,
+                    Response         => Response,
+                    Response_Length  => Response_Length,
+                    From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#05#, 16#04#, 16#01#, 16#00#);
 
-   if Response_Length < 16 or else Response(Expected_Response'Range) /= Expected_Response then
+   if Response_Length < 16 or else Response (Expected_Response'Range) /= Expected_Response then
 
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
 
    end if;
 
-   DAK(13) := Response(16);
-   DAK(14) := Response(15);
-   DAK(15) := Response(14);
-   DAK(16) := Response(13);
+   DAK (13) := Response (16);
+   DAK (14) := Response (15);
+   DAK (15) := Response (14);
+   DAK (16) := Response (13);
 
-   Generated_DAK := Generate_DAK(Pass_Phrase => Pass_Phrase);
+   Generated_DAK := Generate_DAK (Pass_Phrase => Pass_Phrase);
 
    return Generated_DAK = DAK;
 

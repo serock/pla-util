@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -22,30 +22,30 @@ package body Commands is
    Default_Receive_Timeout : constant        := 250;
    Default_Send_Timeout    : constant        := 250;
 
-   function Check_DAK(Device_Name : in String;
-                      Pass_Phrase : in String) return Boolean is separate;
+   function Check_DAK (Device_Name : in String;
+                       Pass_Phrase : in String) return Boolean is separate;
 
-   function Check_NMK(Device_Name : in String;
-                      Pass_Phrase : in String) return Boolean is separate;
+   function Check_NMK (Device_Name : in String;
+                       Pass_Phrase : in String) return Boolean is separate;
 
-   function Discover(Device_Name : in String) return Power_Line_Adapter_Sets.Set is separate;
+   function Discover (Device_Name : in String) return Power_Line_Adapter_Sets.Set is separate;
 
-   function Get_HFID(Device_Name : in String;
-                     HFID_Level  : in HFID_Level_Type) return HFID_String.Bounded_String is separate;
+   function Get_HFID (Device_Name : in String;
+                      HFID_Level  : in HFID_Level_Type) return HFID_String.Bounded_String is separate;
 
-   function Get_Network_Info(Device_Name   : in String;
-                             Network_Scope : in Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
+   function Get_Network_Info (Device_Name   : in String;
+                              Network_Scope : in Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
 
-   procedure Reset(Device_Name     : in String;
-                   PLA_MAC_Address : in String) is separate;
+   procedure Reset (Device_Name     : in String;
+                    PLA_MAC_Address : in String) is separate;
 
-   procedure Restart(Device_Name     : in String;
-                     PLA_MAC_Address : in String) is separate;
+   procedure Restart (Device_Name     : in String;
+                      PLA_MAC_Address : in String) is separate;
 
-   procedure Set_HFID(Device_Name : in String;
-                      HFID        : in HFID_String.Bounded_String) is separate;
+   procedure Set_HFID (Device_Name : in String;
+                       HFID        : in HFID_String.Bounded_String) is separate;
 
-   procedure Set_NMK(Device_Name : in String;
-                     Pass_Phrase : in String) is separate;
+   procedure Set_NMK (Device_Name : in String;
+                      Pass_Phrase : in String) is separate;
 
 end Commands;

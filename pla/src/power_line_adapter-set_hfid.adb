@@ -21,33 +21,33 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-procedure Set_HFID(Adapter : in Adapter_Type;
-                   HFID    : in HFID_String.Bounded_String;
-                   Socket  : in Packet_Sockets.Thin.Socket_Type) is
+procedure Set_HFID (Adapter : in Adapter_Type;
+                    HFID    : in HFID_String.Bounded_String;
+                    Socket  : in Packet_Sockets.Thin.Socket_Type) is
 
-   Expected_Response : Packet_Sockets.Thin.Payload_Type(1 .. 10);
+   Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 10);
    MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
-   Request           : Packet_Sockets.Thin.Payload_Type(1 .. 78);
-   Response          : Packet_Sockets.Thin.Payload_Type(1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
+   Request           : Packet_Sockets.Thin.Payload_Type (1 .. 78);
+   Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;
 
 begin
 
-   Validate_HFID(HFID => HFID);
+   Validate_HFID (HFID => HFID);
 
    Request := (16#02#, 16#58#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#25#, 16#00#, 16#01#, 16#40#, 16#00#, others => 16#00#);
 
-   Request(15 .. Request'Last) := Get_Bytes(HFID => HFID);
+   Request (15 .. Request'Last) := Get_Bytes (HFID => HFID);
 
-   Adapter.Process(Request          => Request,
-                   Socket           => Socket,
-                   Response         => Response,
-                   Response_Length  => Response_Length,
-                   From_MAC_Address => MAC_Address);
+   Adapter.Process (Request          => Request,
+                    Socket           => Socket,
+                    Response         => Response,
+                    Response_Length  => Response_Length,
+                    From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#59#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#00#);
 
-   if Response(Expected_Response'Range) /= Expected_Response then
+   if Response (Expected_Response'Range) /= Expected_Response then
 
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
 

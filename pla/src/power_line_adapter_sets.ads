@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -18,6 +18,6 @@
 with Ada.Containers.Bounded_Ordered_Sets;
 with Power_Line_Adapter;
 
-package Power_Line_Adapter_Sets is new Ada.Containers.Bounded_Ordered_Sets(Element_Type => Power_Line_Adapter.Adapter_Type,
-                                                                           "<"          => Power_Line_Adapter."<",
-                                                                           "="          => Power_Line_Adapter."=");
+package Power_Line_Adapter_Sets is new Ada.Containers.Bounded_Ordered_Sets (Element_Type => Power_Line_Adapter.Adapter_Type,
+                                                                            "<"          => Power_Line_Adapter."<",
+                                                                            "="          => Power_Line_Adapter."=");

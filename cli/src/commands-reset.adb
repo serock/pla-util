@@ -24,21 +24,21 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-procedure Reset(Device_Name     : in String;
-                PLA_MAC_Address : in String) is
+procedure Reset (Device_Name     : in String;
+                 PLA_MAC_Address : in String) is
 
-   Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
+   Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
    Socket   : Packet_Sockets.Thin.Socket_Type;
    Found    : Boolean := False;
 
 begin
 
-   Socket.Open(Protocol        => Packet_Sockets.Thin.Protocol_8912,
-               Device_Name     => Device_Name,
-               Receive_Timeout => Default_Receive_Timeout,
-               Send_Timeout    => Default_Send_Timeout);
+   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
+                Device_Name     => Device_Name,
+                Receive_Timeout => Default_Receive_Timeout,
+                Send_Timeout    => Default_Send_Timeout);
 
-   Adapters := Power_Line_Adapter.Network.Discover(Socket => Socket);
+   Adapters := Power_Line_Adapter.Network.Discover (Socket => Socket);
 
    if Adapters.Length = 0 then
 
@@ -48,9 +48,9 @@ begin
 
    for E of Adapters loop
 
-      if Power_Line_Adapter.Has_MAC_Address(Adapter => E, MAC_Address => PLA_MAC_Address) then
+      if Power_Line_Adapter.Has_MAC_Address (Adapter => E, MAC_Address => PLA_MAC_Address) then
 
-         E.Reset(Socket => Socket);
+         E.Reset (Socket => Socket);
          Found := True;
          exit;
 

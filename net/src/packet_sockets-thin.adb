@@ -63,7 +63,7 @@ package body Packet_Sockets.Thin is
       -- net/if.h
       type ifreq is
          record
-            ifr_name    : Interfaces.C.char_array(1 .. OS_Constants.IFNAMSIZ);
+            ifr_name    : Interfaces.C.char_array (1 .. OS_Constants.IFNAMSIZ);
             ifr_ifindex : Interfaces.C.int;
          end record
         with Convention => C;
@@ -75,13 +75,13 @@ package body Packet_Sockets.Thin is
       subtype ssize_t is Interfaces.C.long; -- valid for 64-bit operating system
 
       -- unistd.h
-      function C_Close(Fd : in Interfaces.C.int) return Interfaces.C.int
+      function C_Close (Fd : in Interfaces.C.int) return Interfaces.C.int
         with Import => True, Convention => C, External_Name => "close";
 
       -- sys/socket.h
-      function C_Bind(Fd   : in Interfaces.C.int;
-                      Addr : in sockaddr_ll;
-                      Len  : in socklen_t) return Interfaces.C.int
+      function C_Bind (Fd   : in Interfaces.C.int;
+                       Addr : in sockaddr_ll;
+                       Len  : in socklen_t) return Interfaces.C.int
         with Import => True, Convention => C, External_Name => "bind";
 
       -- bits/errno.h
@@ -89,51 +89,51 @@ package body Packet_Sockets.Thin is
         with Import => True, Convention => C, External_Name => "__errno_location";
 
       -- netinet/in.h
-      function C_Htons(Hostshort : in Protocol_Type) return Network_Protocol_Type
+      function C_Htons (Hostshort : in Protocol_Type) return Network_Protocol_Type
         with Import => True, Convention => C, External_Name => "htons";
 
       -- sys/ioctl.h
-      function C_Ioctl(Fd      : in     Interfaces.C.int;
-                       Request : in     Interfaces.C.unsigned_long;
-                       Argp    : in out ifreq) return Interfaces.C.int
+      function C_Ioctl (Fd      : in     Interfaces.C.int;
+                        Request : in     Interfaces.C.unsigned_long;
+                        Argp    : in out ifreq) return Interfaces.C.int
         with Import => True, Convention => C, External_Name => "ioctl";
 
       -- sys/socket.h
-      function C_Recvfrom(Fd       : in     Interfaces.C.int;
-                          Buf      :    out Payload_Type;
-                          N        : in     Interfaces.C.size_t;
-                          Flags    : in     Interfaces.C.int    := 0;
-                          Addr     :    out sockaddr_ll;
-                          Addr_Len : in out socklen_t) return ssize_t
+      function C_Recvfrom (Fd       : in     Interfaces.C.int;
+                           Buf      :    out Payload_Type;
+                           N        : in     Interfaces.C.size_t;
+                           Flags    : in     Interfaces.C.int    := 0;
+                           Addr     :    out sockaddr_ll;
+                           Addr_Len : in out socklen_t) return ssize_t
         with Import => True, Convention => C, External_Name => "recvfrom";
 
       -- sys/socket.h
-      function C_Sendto(Fd       : in Interfaces.C.int;
-                        Buf      : in Payload_Type;
-                        N        : in Interfaces.C.size_t;
-                        Flags    : in Interfaces.C.int    := 0;
-                        Addr     : in sockaddr_ll;
-                        Addr_Len : in socklen_t) return ssize_t
+      function C_Sendto (Fd       : in Interfaces.C.int;
+                         Buf      : in Payload_Type;
+                         N        : in Interfaces.C.size_t;
+                         Flags    : in Interfaces.C.int    := 0;
+                         Addr     : in sockaddr_ll;
+                         Addr_Len : in socklen_t) return ssize_t
         with Import => True, Convention => C, External_Name => "sendto";
 
       -- sys/socket.h
-      function C_Setsockopt(Fd      : in Interfaces.C.int;
-                            Level   : in Interfaces.C.int;
-                            Optname : in Interfaces.C.int;
-                            Optval  : in timeval;
-                            Optlen  : in socklen_t) return Interfaces.C.int
+      function C_Setsockopt (Fd      : in Interfaces.C.int;
+                             Level   : in Interfaces.C.int;
+                             Optname : in Interfaces.C.int;
+                             Optval  : in timeval;
+                             Optlen  : in socklen_t) return Interfaces.C.int
         with Import => True, Convention => C, External_Name => "setsockopt";
 
       -- sys/socket.h
-      function C_Socket(Domain   : in Interfaces.C.int;
-                        Kind     : in Interfaces.C.int;
-                        Protocol : in Interfaces.C.int) return Interfaces.C.int
+      function C_Socket (Domain   : in Interfaces.C.int;
+                         Kind     : in Interfaces.C.int;
+                         Protocol : in Interfaces.C.int) return Interfaces.C.int
         with Import => True, Convention => C, External_Name => "socket";
 
       -- string.h
-      function C_Strerror_r(Errnum : in     Interfaces.C.int;
-                            Buf    :    out Interfaces.C.char_array;
-                            Buflen : in     Interfaces.C.size_t) return Interfaces.C.int
+      function C_Strerror_r (Errnum : in     Interfaces.C.int;
+                             Buf    :    out Interfaces.C.char_array;
+                             Buflen : in     Interfaces.C.size_t) return Interfaces.C.int
         with Import => True, Convention => C, External_Name => "__xpg_strerror_r";
 
    end C_Binding;
@@ -148,20 +148,20 @@ package body Packet_Sockets.Thin is
 
    end Errno;
 
-   function Error_Message(Error_Number : in Interfaces.C.int) return String is
+   function Error_Message (Error_Number : in Interfaces.C.int) return String is
 
-      Error_Buffer : Interfaces.C.char_array(1 .. 128);
+      Error_Buffer : Interfaces.C.char_array (1 .. 128);
       Return_Value : Interfaces.C.int;
 
    begin
 
-      Return_Value := C_Strerror_r(Errnum => Error_Number,
-                                   Buf    => Error_Buffer,
-                                   Buflen => Error_Buffer'Length);
+      Return_Value := C_Strerror_r (Errnum => Error_Number,
+                                    Buf    => Error_Buffer,
+                                    Buflen => Error_Buffer'Length);
 
       if Return_Value = 0 then
 
-         return Interfaces.C.To_Ada(Item => Error_Buffer);
+         return Interfaces.C.To_Ada (Item => Error_Buffer);
 
       else
 
@@ -171,41 +171,41 @@ package body Packet_Sockets.Thin is
 
    end Error_Message;
 
-   package Byte_Text_IO is new Ada.Text_IO.Modular_IO(Num => Interfaces.Unsigned_8);
+   package Byte_Text_IO is new Ada.Text_IO.Modular_IO (Num => Interfaces.Unsigned_8);
 
-   function Byte_Format is new GNAT.Formatted_String.Mod_Format(Int => Interfaces.Unsigned_8,
-                                                                Put => Byte_Text_IO.Put);
+   function Byte_Format is new GNAT.Formatted_String.Mod_Format (Int => Interfaces.Unsigned_8,
+                                                                 Put => Byte_Text_IO.Put);
 
-   function Create_MAC_Address(Bytes : in MAC_Address_Bytes_Type) return MAC_Address_Type is
+   function Create_MAC_Address (Bytes : in MAC_Address_Bytes_Type) return MAC_Address_Type is
 
       MAC_Address : MAC_Address_Type;
 
    begin
 
-      MAC_Address.Bytes := (Bytes(1), Bytes(2), Bytes(3), Bytes(4), Bytes(5), Bytes(6), others => 0);
+      MAC_Address.Bytes := (Bytes (1), Bytes (2), Bytes (3), Bytes (4), Bytes (5), Bytes (6), others => 0);
 
       return MAC_Address;
 
    end Create_MAC_Address;
 
-   function To_String(MAC_Address : in MAC_Address_Type;
-                      Separator   : in Character := ':') return String is
+   function To_String (MAC_Address : in MAC_Address_Type;
+                       Separator   : in Character := ':') return String is
 
       Hex_Format : Formatted_String := +"%02x%c%02x%c%02x%c%02x%c%02x%c%02x";
 
-      S : String(1 .. 17);
+      S : String (1 .. 17);
 
    begin
 
       for I in 1 .. 5 loop
 
-         Hex_Format := Byte_Format(Format => Hex_Format,
-                                   Var => MAC_Address.Bytes(I)) & Separator;
+         Hex_Format := Byte_Format (Format => Hex_Format,
+                                    Var    => MAC_Address.Bytes (I)) & Separator;
 
       end loop;
 
-      Hex_Format := Byte_Format(Format => Hex_Format,
-                                Var => MAC_Address.Bytes(6));
+      Hex_Format := Byte_Format (Format => Hex_Format,
+                                 Var    => MAC_Address.Bytes (6));
 
       S := -Hex_Format;
 
@@ -220,9 +220,9 @@ package body Packet_Sockets.Thin is
 
       for I in 1 .. 6 loop
 
-         if Left.Bytes(I) /= Right.Bytes(I) then
+         if Left.Bytes (I) /= Right.Bytes (I) then
 
-            return Left.Bytes(I) < Right.Bytes(I);
+            return Left.Bytes (I) < Right.Bytes (I);
 
          end if;
 
@@ -232,9 +232,9 @@ package body Packet_Sockets.Thin is
 
    end "<";
 
-   procedure Bind(File_Descriptor  : in Interfaces.C.int;
-                  Network_Protocol : in Network_Protocol_Type;
-                  Interface_Index  : in Interfaces.C.int) is
+   procedure Bind (File_Descriptor  : in Interfaces.C.int;
+                   Network_Protocol : in Network_Protocol_Type;
+                   Interface_Index  : in Interfaces.C.int) is
 
       Socket_Address : sockaddr_ll;
       Return_Value   : Interfaces.C.int;
@@ -249,37 +249,37 @@ package body Packet_Sockets.Thin is
                          sll_halen    => 0,
                          sll_addr     => (others => 0));
 
-      Return_Value := C_Bind(Fd   => File_Descriptor,
-                             Addr => Socket_Address,
-                             Len  => Socket_Address'Size / 8);
+      Return_Value := C_Bind (Fd   => File_Descriptor,
+                              Addr => Socket_Address,
+                              Len  => Socket_Address'Size / 8);
 
       if Return_Value = -1 then
 
-         raise Socket_Error with Error_Message(Error_Number => Errno);
+         raise Socket_Error with Error_Message (Error_Number => Errno);
 
       end if;
 
    end Bind;
 
-   function Get_Interface_Index(Device_Name : in String;
-                                Fd          : in Interfaces.C.int) return Interfaces.C.int is
+   function Get_Interface_Index (Device_Name : in String;
+                                 Fd          : in Interfaces.C.int) return Interfaces.C.int is
       If_Req        : ifreq;
       Count         : Interfaces.C.size_t;
       Return_Value  : Interfaces.C.int;
 
    begin
 
-      Interfaces.C.To_C(Item   => Device_Name,
-                        Target => If_Req.ifr_name,
-                        Count  => Count);
+      Interfaces.C.To_C (Item   => Device_Name,
+                         Target => If_Req.ifr_name,
+                         Count  => Count);
 
-      Return_Value := C_Ioctl(Fd      => Fd,
-                              Request => OS_Constants.SIOCGIFINDEX,
-                              Argp    => If_Req);
+      Return_Value := C_Ioctl (Fd      => Fd,
+                               Request => OS_Constants.SIOCGIFINDEX,
+                               Argp    => If_Req);
 
       if Return_Value = -1 then
 
-         raise Socket_Error with Error_Message(Error_Number => Errno);
+         raise Socket_Error with Error_Message (Error_Number => Errno);
 
       end if;
 
@@ -287,33 +287,33 @@ package body Packet_Sockets.Thin is
 
    end Get_Interface_Index;
 
-   procedure Set_Socket_Timeout_Option(File_Descriptor : in Interfaces.C.int;
-                                       Option_Name     : in Interfaces.C.int;
-                                       Timeout         : in Milliseconds_Type) is
+   procedure Set_Socket_Timeout_Option (File_Descriptor : in Interfaces.C.int;
+                                        Option_Name     : in Interfaces.C.int;
+                                        Timeout         : in Milliseconds_Type) is
 
       Option_Value : timeval;
       Return_Value : Interfaces.C.int;
 
    begin
 
-      Option_Value := (tv_sec  => Interfaces.C.long(Timeout / 1000),
-                       tv_usec => Interfaces.C.long((Timeout rem 1000) * 1000));
+      Option_Value := (tv_sec  => Interfaces.C.long (Timeout / 1000),
+                       tv_usec => Interfaces.C.long ((Timeout rem 1000) * 1000));
 
-      Return_Value := C_Setsockopt(Fd      => File_Descriptor,
-                                   Level   => OS_Constants.SOL_SOCKET,
-                                   Optname => Option_Name,
-                                   Optval  => Option_Value,
-                                   Optlen  => timeval'Size / 8);
+      Return_Value := C_Setsockopt (Fd      => File_Descriptor,
+                                    Level   => OS_Constants.SOL_SOCKET,
+                                    Optname => Option_Name,
+                                    Optval  => Option_Value,
+                                    Optlen  => timeval'Size / 8);
 
       if Return_Value = -1 then
 
-         raise Socket_Error with Error_Message(Error_Number => Errno);
+         raise Socket_Error with Error_Message (Error_Number => Errno);
 
       end if;
 
    end Set_Socket_Timeout_Option;
 
-   procedure Close_Quietly(File_Descriptor : in out Interfaces.C.int) is
+   procedure Close_Quietly (File_Descriptor : in out Interfaces.C.int) is
 
       Return_Value : Interfaces.C.int;
 
@@ -325,13 +325,13 @@ package body Packet_Sockets.Thin is
 
       end if;
 
-      Return_Value := C_Close(Fd => File_Descriptor);
+      Return_Value := C_Close (Fd => File_Descriptor);
 
       File_Descriptor := -1;
 
    end Close_Quietly;
 
-   function Is_Open(Socket : in Socket_Type) return Boolean is
+   function Is_Open (Socket : in Socket_Type) return Boolean is
 
    begin
 
@@ -339,7 +339,7 @@ package body Packet_Sockets.Thin is
 
    end Is_Open;
 
-   procedure Close(Socket : in out Socket_Type) is
+   procedure Close (Socket : in out Socket_Type) is
 
       Return_Value : Interfaces.C.int;
 
@@ -347,14 +347,14 @@ package body Packet_Sockets.Thin is
 
       if Socket.Is_Open then
 
-         Return_Value := C_Close(Fd => Socket.File_Descriptor);
+         Return_Value := C_Close (Fd => Socket.File_Descriptor);
 
          Socket.File_Descriptor := -1;
          Socket.Interface_Index := -1;
 
          if Return_Value = -1 then
 
-            raise Socket_Error with Error_Message(Error_Number => Errno);
+            raise Socket_Error with Error_Message (Error_Number => Errno);
 
          end if;
 
@@ -362,19 +362,19 @@ package body Packet_Sockets.Thin is
 
    end Close;
 
-   function Create_Socket(Network_Protocol : in Network_Protocol_Type) return Interfaces.C.int is
+   function Create_Socket (Network_Protocol : in Network_Protocol_Type) return Interfaces.C.int is
 
       File_Descriptor : Interfaces.C.int;
 
    begin
 
-      File_Descriptor := C_Socket(Domain   => OS_Constants.AF_PACKET,
-                                  Kind     => OS_Constants.SOCK_DGRAM,
-                                  Protocol => Interfaces.C.Int(Network_Protocol));
+      File_Descriptor := C_Socket (Domain   => OS_Constants.AF_PACKET,
+                                   Kind     => OS_Constants.SOCK_DGRAM,
+                                   Protocol => Interfaces.C.int (Network_Protocol));
 
       if File_Descriptor = -1 then
 
-         raise Socket_Error with Error_Message(Error_Number => Errno);
+         raise Socket_Error with Error_Message (Error_Number => Errno);
 
       end if;
 
@@ -382,11 +382,11 @@ package body Packet_Sockets.Thin is
 
    end Create_Socket;
 
-   procedure Open(Socket          : in out Socket_Type;
-                  Protocol        : in     Protocol_Type;
-                  Device_Name     : in     String;
-                  Receive_Timeout : in     Milliseconds_Type := 0;
-                  Send_Timeout    : in     Milliseconds_Type := 0) is
+   procedure Open (Socket          : in out Socket_Type;
+                   Protocol        : in     Protocol_Type;
+                   Device_Name     : in     String;
+                   Receive_Timeout : in     Milliseconds_Type := 0;
+                   Send_Timeout    : in     Milliseconds_Type := 0) is
 
       File_Descriptor  : Interfaces.C.int;
       Interface_Index  : Interfaces.C.int;
@@ -400,24 +400,24 @@ package body Packet_Sockets.Thin is
 
       end if;
 
-      Network_Protocol := C_Htons(Hostshort => Protocol);
+      Network_Protocol := C_Htons (Hostshort => Protocol);
 
-      File_Descriptor := Create_Socket(Network_Protocol => Network_Protocol);
+      File_Descriptor := Create_Socket (Network_Protocol => Network_Protocol);
 
-      Interface_Index := Get_Interface_Index(Device_Name => Device_Name,
-                                             Fd          => File_Descriptor);
+      Interface_Index := Get_Interface_Index (Device_Name => Device_Name,
+                                              Fd          => File_Descriptor);
 
-      Bind(File_Descriptor  => File_Descriptor,
-           Network_Protocol => Network_Protocol,
-           Interface_Index  => Interface_Index);
+      Bind (File_Descriptor  => File_Descriptor,
+            Network_Protocol => Network_Protocol,
+            Interface_Index  => Interface_Index);
 
-      Set_Socket_Timeout_Option(File_Descriptor => File_Descriptor,
-                                Option_Name     => OS_Constants.SO_RCVTIMEO,
-                                Timeout         => Receive_Timeout);
+      Set_Socket_Timeout_Option (File_Descriptor => File_Descriptor,
+                                 Option_Name     => OS_Constants.SO_RCVTIMEO,
+                                 Timeout         => Receive_Timeout);
 
-      Set_Socket_Timeout_Option(File_Descriptor => File_Descriptor,
-                                Option_Name     => OS_Constants.SO_SNDTIMEO,
-                                Timeout         => Send_Timeout);
+      Set_Socket_Timeout_Option (File_Descriptor => File_Descriptor,
+                                 Option_Name     => OS_Constants.SO_SNDTIMEO,
+                                 Timeout         => Send_Timeout);
 
       Socket.File_Descriptor  := File_Descriptor;
       Socket.Network_Protocol := Network_Protocol;
@@ -429,7 +429,7 @@ package body Packet_Sockets.Thin is
 
          if File_Descriptor /= -1 then
 
-            Close_Quietly(File_Descriptor => File_Descriptor);
+            Close_Quietly (File_Descriptor => File_Descriptor);
 
          end if;
 
@@ -437,10 +437,10 @@ package body Packet_Sockets.Thin is
 
    end Open;
 
-   procedure Receive(Socket         : in     Socket_Type;
-                     Payload        :    out Payload_Type;
-                     Payload_Length :    out Natural;
-                     From           :    out MAC_Address_Type) is
+   procedure Receive (Socket         : in     Socket_Type;
+                      Payload        :    out Payload_Type;
+                      Payload_Length :    out Natural;
+                      From           :    out MAC_Address_Type) is
 
       Return_Value  : ssize_t;
       Source        : sockaddr_ll;
@@ -456,11 +456,11 @@ package body Packet_Sockets.Thin is
                  sll_halen    => 0,
                  sll_addr     => (others => 0));
 
-      Return_Value := C_Recvfrom(Fd       => Socket.File_Descriptor,
-                                 Buf      => Payload,
-                                 N        => Payload'Length,
-                                 Addr     => Source,
-                                 Addr_Len => Source_Length);
+      Return_Value := C_Recvfrom (Fd       => Socket.File_Descriptor,
+                                  Buf      => Payload,
+                                  N        => Payload'Length,
+                                  Addr     => Source,
+                                  Addr_Len => Source_Length);
 
       if Return_Value = -1 then
 
@@ -474,22 +474,22 @@ package body Packet_Sockets.Thin is
 
          else
 
-            raise Socket_Error with Error_Message(Error_Number => Errno);
+            raise Socket_Error with Error_Message (Error_Number => Errno);
 
          end if;
 
       else
 
-         Payload_Length := Natural(Return_Value);
+         Payload_Length := Natural (Return_Value);
          From           := MAC_Address_Type'(Bytes => Source.sll_addr);
 
       end if;
 
    end Receive;
 
-   procedure Send(Socket  : in Socket_Type;
-                  Payload : in Payload_Type;
-                  To      : in MAC_Address_Type) is
+   procedure Send (Socket  : in Socket_Type;
+                   Payload : in Payload_Type;
+                   To      : in MAC_Address_Type) is
 
       Destination  : sockaddr_ll;
       Return_Value : ssize_t;
@@ -504,7 +504,7 @@ package body Packet_Sockets.Thin is
 
       if Payload'Length < Minimum_Payload_Size then
 
-         raise Socket_Error with "Payload size is less than" & Positive'Image(Minimum_Payload_Size) & " bytes";
+         raise Socket_Error with "Payload size is less than" & Positive'Image (Minimum_Payload_Size) & " bytes";
 
       end if;
 
@@ -516,31 +516,31 @@ package body Packet_Sockets.Thin is
                       sll_halen    => OS_Constants.ETH_ALEN,
                       sll_addr     => To.Bytes);
 
-      Return_Value := C_Sendto(Fd       => Socket.File_Descriptor,
-                               Buf      => Payload,
-                               N        => Payload'Length,
-                               Addr     => Destination,
-                               Addr_Len => Destination'Size / 8);
+      Return_Value := C_Sendto (Fd       => Socket.File_Descriptor,
+                                Buf      => Payload,
+                                N        => Payload'Length,
+                                Addr     => Destination,
+                                Addr_Len => Destination'Size / 8);
 
       if Return_Value = -1 then
 
-         raise Socket_Error with Error_Message(Error_Number => Errno);
+         raise Socket_Error with Error_Message (Error_Number => Errno);
 
       end if;
 
    end Send;
 
-   function To_HFID_String(Payload : Payload_Type) return HFID_String.Bounded_String is
+   function To_HFID_String (Payload : Payload_Type) return HFID_String.Bounded_String is
 
       C    : Character;
-      P    : Natural := Payload'First(1);
+      P    : Natural := Payload'First;
       HFID : HFID_String.Bounded_String;
 
    begin
 
-      while P <= Payload'Last(1) loop
+      while P <= Payload'Last loop
 
-         C := Character'Val(Payload(P));
+         C := Character'Val (Payload (P));
 
          if C = Ada.Characters.Latin_1.NUL then
 
@@ -548,9 +548,9 @@ package body Packet_Sockets.Thin is
 
          end if;
 
-         HFID_String.Append(Source   => HFID,
-                            New_Item => C,
-                            Drop     => Ada.Strings.Error);
+         HFID_String.Append (Source   => HFID,
+                             New_Item => C,
+                             Drop     => Ada.Strings.Error);
 
          P := P + 1;
 

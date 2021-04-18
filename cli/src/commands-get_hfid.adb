@@ -24,21 +24,21 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-function Get_HFID(Device_Name : in String;
-                  HFID_Level  : in HFID_Level_Type) return HFID_String.Bounded_String is
+function Get_HFID (Device_Name : in String;
+                   HFID_Level  : in HFID_Level_Type) return HFID_String.Bounded_String is
 
-   Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
+   Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
    HFID     : HFID_String.Bounded_String;
    Socket   : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Socket.Open(Protocol        => Packet_Sockets.Thin.Protocol_8912,
-               Device_Name     => Device_Name,
-               Receive_Timeout => Default_Receive_Timeout,
-               Send_Timeout    => Default_Send_Timeout);
+   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
+                Device_Name     => Device_Name,
+                Receive_Timeout => Default_Receive_Timeout,
+                Send_Timeout    => Default_Send_Timeout);
 
-   Adapters := Power_Line_Adapter.Network.Discover(Socket => Socket);
+   Adapters := Power_Line_Adapter.Network.Discover (Socket => Socket);
 
    if Adapters.Length = 0 then
 
@@ -50,11 +50,11 @@ begin
 
       when Manufacturer =>
 
-         HFID := Adapters.First_Element.Get_Manufacturer_HFID(Socket => Socket);
+         HFID := Adapters.First_Element.Get_Manufacturer_HFID (Socket => Socket);
 
       when User =>
 
-         HFID := Adapters.First_Element.Get_User_HFID(Socket => Socket);
+         HFID := Adapters.First_Element.Get_User_HFID (Socket => Socket);
 
    end case;
 

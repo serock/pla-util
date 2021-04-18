@@ -24,20 +24,20 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-procedure Set_NMK(Device_Name : in String;
-                  Pass_Phrase : in String) is
+procedure Set_NMK (Device_Name : in String;
+                   Pass_Phrase : in String) is
 
-   Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
+   Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
    Socket   : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Socket.Open(Protocol        => Packet_Sockets.Thin.Protocol_8912,
-               Device_Name     => Device_Name,
-               Receive_Timeout => Default_Receive_Timeout,
-               Send_Timeout    => Default_Send_Timeout);
+   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
+                Device_Name     => Device_Name,
+                Receive_Timeout => Default_Receive_Timeout,
+                Send_Timeout    => Default_Send_Timeout);
 
-   Adapters := Power_Line_Adapter.Network.Discover(Socket => Socket);
+   Adapters := Power_Line_Adapter.Network.Discover (Socket => Socket);
 
    if Adapters.Length = 0 then
 
@@ -45,8 +45,8 @@ begin
 
    end if;
 
-   Adapters.First_Element.Set_NMK(Pass_Phrase => Pass_Phrase,
-                                  Socket      => Socket);
+   Adapters.First_Element.Set_NMK (Pass_Phrase => Pass_Phrase,
+                                   Socket      => Socket);
 
    Socket.Close;
 
