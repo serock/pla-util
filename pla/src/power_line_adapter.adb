@@ -18,7 +18,6 @@
 with Ada.Streams;
 with Ada.Characters.Latin_1;
 with GNAT.SHA256;
-with Interfaces;
 with Packet_Sockets.Thin;
 
 use type Ada.Streams.Stream_Element_Offset;

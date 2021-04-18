@@ -17,7 +17,6 @@
 ------------------------------------------------------------------------
 with Ada.Containers;
 with Packet_Sockets.Thin;
-with Interfaces;
 with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
 

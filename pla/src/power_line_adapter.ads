@@ -15,9 +15,6 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Ada.Containers.Bounded_Ordered_Sets;
---with Ethernet;
-with Packet_Sockets.Thin;
 with HFID_String;
 with Interfaces;
 with Packet_Sockets.Thin;

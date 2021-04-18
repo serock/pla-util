@@ -16,7 +16,6 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Containers;
-with Interfaces;
 with Packet_Sockets.Thin;
 with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
