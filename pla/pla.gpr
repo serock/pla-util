@@ -1,6 +1,7 @@
 with "../shared.gpr";
 with "../common/common.gpr";
 with "../net/net.gpr";
+
 project Pla is
 
    for Source_Dirs use ("src");

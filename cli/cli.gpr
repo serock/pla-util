@@ -2,6 +2,7 @@ with "../shared.gpr";
 with "../common/common.gpr";
 with "../net/net.gpr";
 with "../pla/pla.gpr";
+
 project Cli is
 
    for Source_Dirs use ("src");
