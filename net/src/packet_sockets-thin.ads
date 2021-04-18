@@ -19,7 +19,24 @@ with HFID_String;
 with Interfaces;
 limited private with Interfaces.C;
 
-package Ethernet.Datagram_Socket is
+package Packet_Sockets.Thin is
+
+   type Bytes_Type is array (Positive range <>) of Interfaces.Unsigned_8;
+
+   subtype MAC_Address_Bytes_Type is Bytes_Type(1 .. 6);
+
+   type MAC_Address_Type is private;
+
+   Broadcast_Address : constant MAC_Address_Type;
+   Null_Address      : constant MAC_Address_Type;
+
+   function Create_MAC_Address(Bytes : in MAC_Address_Bytes_Type) return MAC_Address_Type;
+
+   function To_String(MAC_Address : in MAC_Address_Type;
+                      Separator   : in Character := ':') return String;
+
+   function "<"(Left  : in MAC_Address_Type;
+                Right : in MAC_Address_Type) return Boolean;
 
    subtype Milliseconds_Type is Natural;
    subtype Payload_Type      is Bytes_Type;
@@ -71,4 +88,14 @@ private
 
    Protocol_8912 : constant Protocol_Type := 16#8912#;
 
-end Ethernet.Datagram_Socket;
+   subtype Long_MAC_Address_Bytes_Type is Bytes_Type(1 .. 8);
+
+   type MAC_Address_Type is
+      record
+         Bytes : Long_MAC_Address_Bytes_Type;
+      end record;
+
+   Broadcast_Address : constant MAC_Address_Type := MAC_Address_Type'(Bytes => (1 .. 6 => 16#ff#, others => 16#00#));
+   Null_Address      : constant MAC_Address_Type := MAC_Address_Type'(Bytes => (others => 16#00#));
+
+end Packet_Sockets.Thin;

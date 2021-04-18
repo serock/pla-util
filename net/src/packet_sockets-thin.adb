@@ -17,15 +17,18 @@
 ------------------------------------------------------------------------
 with Ada.Characters.Latin_1;
 with Ada.Strings;
+with Ada.Text_IO;
+with GNAT.Formatted_String;
 with Interfaces.C;
 with OS_Constants;
 
+use GNAT.Formatted_String;
 use type Interfaces.Unsigned_8;
 use type Interfaces.C.int;
 use type Interfaces.C.long;
 use type Interfaces.C.unsigned;
 
-package body Ethernet.Datagram_Socket is
+package body Packet_Sockets.Thin is
 
    package C_Binding is
 
@@ -167,6 +170,67 @@ package body Ethernet.Datagram_Socket is
       end if;
 
    end Error_Message;
+
+   package Byte_Text_IO is new Ada.Text_IO.Modular_IO(Num => Interfaces.Unsigned_8);
+
+   function Byte_Format is new GNAT.Formatted_String.Mod_Format(Int => Interfaces.Unsigned_8,
+                                                                Put => Byte_Text_IO.Put);
+
+   function Create_MAC_Address(Bytes : in MAC_Address_Bytes_Type) return MAC_Address_Type is
+
+      MAC_Address : MAC_Address_Type;
+
+   begin
+
+      MAC_Address.Bytes := (Bytes(1), Bytes(2), Bytes(3), Bytes(4), Bytes(5), Bytes(6), others => 0);
+
+      return MAC_Address;
+
+   end Create_MAC_Address;
+
+   function To_String(MAC_Address : in MAC_Address_Type;
+                      Separator   : in Character := ':') return String is
+
+      Hex_Format : Formatted_String := +"%02x%c%02x%c%02x%c%02x%c%02x%c%02x";
+
+      S : String(1 .. 17);
+
+   begin
+
+      for I in 1 .. 5 loop
+
+         Hex_Format := Byte_Format(Format => Hex_Format,
+                                   Var => MAC_Address.Bytes(I)) & Separator;
+
+      end loop;
+
+      Hex_Format := Byte_Format(Format => Hex_Format,
+                                Var => MAC_Address.Bytes(6));
+
+      S := -Hex_Format;
+
+      return S;
+
+   end To_String;
+
+   function "<"(Left  : in MAC_Address_Type;
+                Right : in MAC_Address_Type) return Boolean is
+
+   begin
+
+      for I in 1 .. 6 loop
+
+         if Left.Bytes(I) /= Right.Bytes(I) then
+
+            return Left.Bytes(I) < Right.Bytes(I);
+
+         end if;
+
+      end loop;
+
+      return False;
+
+   end "<";
 
    procedure Bind(File_Descriptor  : in Interfaces.C.int;
                   Network_Protocol : in Network_Protocol_Type;
@@ -496,4 +560,4 @@ package body Ethernet.Datagram_Socket is
 
    end To_HFID_String;
 
-end Ethernet.Datagram_Socket;
+end Packet_Sockets.Thin;

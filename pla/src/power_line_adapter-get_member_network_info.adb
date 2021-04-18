@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -15,14 +15,14 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Ethernet.Datagram_Socket;
+with Packet_Sockets.Thin;
 
-use type Ethernet.Datagram_Socket.Payload_Type;
+use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
 function Get_Member_Network_Info(Adapter : in Adapter_Type;
-                                 Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is
+                                 Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is
 
 begin
 

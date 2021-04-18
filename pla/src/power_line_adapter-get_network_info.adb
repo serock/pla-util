@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -15,22 +15,22 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Ethernet.Datagram_Socket;
+with Packet_Sockets.Thin;
 
-use type Ethernet.Datagram_Socket.Payload_Type;
+use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
 function Get_Network_Info(Arg     : in Interfaces.Unsigned_8;
                           Adapter : in Adapter_Type;
-                          Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is
+                          Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is
 
-   Expected_Response  : Ethernet.Datagram_Socket.Payload_Type(1 .. 9);
-   MAC_Address        : Ethernet.MAC_Address_Type;
+   Expected_Response  : Packet_Sockets.Thin.Payload_Type(1 .. 9);
+   MAC_Address        : Packet_Sockets.Thin.MAC_Address_Type;
    No_Network         : Network_Info_List_Type (1 .. 0);
    Number_Of_Networks : Natural;
-   Request            : Ethernet.Datagram_Socket.Payload_Type(1 .. Ethernet.Datagram_Socket.Minimum_Payload_Size);
-   Response           : Ethernet.Datagram_Socket.Payload_Type(1 .. 385);
+   Request            : Packet_Sockets.Thin.Payload_Type(1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
+   Response           : Packet_Sockets.Thin.Payload_Type(1 .. 385);
    Response_Length    : Natural;
 
 begin
@@ -47,7 +47,7 @@ begin
 
    if Response_Length < 26 or else Response(Expected_Response'Range) /= Expected_Response then
 
-      raise Ethernet.Datagram_Socket.Socket_Error with Ethernet.Datagram_Socket.Message_Unexpected_Response;
+      raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
 
    end if;
 
@@ -78,7 +78,7 @@ begin
          Network_Info(I).TEI          := Response(X);                        X := X + 1;
          Network_Info(I).Station_Role := Station_Role_Type'Val(Response(X)); X := X + 1;
 
-         Network_Info(I).CCo_MAC_Address := Ethernet.Create_MAC_Address(Bytes => Response(X .. X + 5));
+         Network_Info(I).CCo_MAC_Address := Packet_Sockets.Thin.Create_MAC_Address(Bytes => Response(X .. X + 5));
 
          X := X + 6;
 
@@ -90,7 +90,7 @@ begin
 
       for I in 1 .. Number_of_Networks loop
 
-         Network_Info(I).BCCo_MAC_Address := Ethernet.Create_MAC_Address(Bytes => Response(X .. X + 5));
+         Network_Info(I).BCCo_MAC_Address := Packet_Sockets.Thin.Create_MAC_Address(Bytes => Response(X .. X + 5));
 
          X := X + 6;
 

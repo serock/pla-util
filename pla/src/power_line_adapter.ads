@@ -16,13 +16,15 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Containers.Bounded_Ordered_Sets;
-with Ethernet.Datagram_Socket;
+--with Ethernet;
+with Packet_Sockets.Thin;
 with HFID_String;
 with Interfaces;
+with Packet_Sockets.Thin;
 
 package Power_Line_Adapter is
 
-   subtype NID_Type is Ethernet.Bytes_Type(1 .. 7);
+   subtype NID_Type is Packet_Sockets.Thin.Bytes_Type(1 .. 7);
 
    type Adapter_Type is tagged private;
 
@@ -37,8 +39,8 @@ package Power_Line_Adapter is
          NID                : NID_Type;
          SNID               : Interfaces.Unsigned_8;
          TEI                : Interfaces.Unsigned_8;
-         CCo_MAC_Address    : Ethernet.MAC_Address_Type;
-         BCCo_MAC_Address   : Ethernet.MAC_Address_Type;
+         CCo_MAC_Address    : Packet_Sockets.Thin.MAC_Address_Type;
+         BCCo_MAC_Address   : Packet_Sockets.Thin.MAC_Address_Type;
          Num_Coord_Networks : Interfaces.Unsigned_8;
          Station_Role       : Station_Role_Type;
          Network_Kind       : Network_Kind_Type;
@@ -59,42 +61,42 @@ package Power_Line_Adapter is
 
    function Check_DAK(Adapter     : in Adapter_Type;
                       Pass_Phrase : in String;
-                      Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean;
+                      Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean;
 
    function Check_NMK(Adapter     : in Adapter_Type;
                       Pass_Phrase : in String;
-                      Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean;
+                      Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean;
 
-   function Get_MAC_Address(Adapter : in Adapter_Type) return Ethernet.MAC_Address_Type;
+   function Get_MAC_Address(Adapter : in Adapter_Type) return Packet_Sockets.Thin.MAC_Address_Type;
 
    function Has_MAC_Address(Adapter     : in Adapter_Type;
                             MAC_Address : in String) return Boolean;
 
    function Get_Manufacturer_HFID(Adapter: in Adapter_Type;
-                                  Socket : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String;
+                                  Socket : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String;
 
    function Get_User_HFID(Adapter : in Adapter_Type;
-                          Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String;
+                          Socket  : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String;
 
    function Get_Any_Network_Info(Adapter : in Adapter_Type;
-                                 Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type;
+                                 Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type;
 
    function Get_Member_Network_Info(Adapter : in Adapter_Type;
-                                    Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type;
+                                    Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type;
 
    procedure Reset(Adapter : in Adapter_Type;
-                   Socket  : in Ethernet.Datagram_Socket.Socket_Type);
+                   Socket  : in Packet_Sockets.Thin.Socket_Type);
 
    procedure Restart(Adapter : in Adapter_Type;
-                     Socket  : in Ethernet.Datagram_Socket.Socket_Type);
+                     Socket  : in Packet_Sockets.Thin.Socket_Type);
 
    procedure Set_HFID(Adapter : in Adapter_Type;
                       HFID    : in HFID_String.Bounded_String;
-                      Socket  : in Ethernet.Datagram_Socket.Socket_Type);
+                      Socket  : in Packet_Sockets.Thin.Socket_Type);
 
    procedure Set_NMK(Adapter     : in Adapter_Type;
                      Pass_Phrase : in String;
-                     Socket      : in Ethernet.Datagram_Socket.Socket_Type);
+                     Socket      : in Packet_Sockets.Thin.Socket_Type);
 
    function To_String(Adapter : in Adapter_Type) return String;
 
@@ -103,13 +105,13 @@ private
    type Adapter_Type is tagged
       record
          Network_Interface : Positive;
-         MAC_Address       : Ethernet.MAC_Address_Type;
+         MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
          HFID              : HFID_String.Bounded_String;
       end record;
 
    procedure Create(Adapter           : in out Adapter_Type;
                     Network_Interface : in     Positive;
-                    MAC_Address       : in     Ethernet.MAC_Address_Type;
+                    MAC_Address       : in     Packet_Sockets.Thin.MAC_Address_Type;
                     HFID              : in     HFID_String.Bounded_String);
 
 end Power_Line_Adapter;

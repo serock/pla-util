@@ -17,17 +17,17 @@
 ------------------------------------------------------------------------
 with Ada.Streams;
 with Ada.Characters.Latin_1;
-with Ethernet;
 with GNAT.SHA256;
 with Interfaces;
+with Packet_Sockets.Thin;
 
 use type Ada.Streams.Stream_Element_Offset;
-use type Ethernet.MAC_Address_Type;
+use type Packet_Sockets.Thin.MAC_Address_Type;
 
 package body Power_Line_Adapter is
 
-   subtype HFID_Bytes_Type is Ethernet.Bytes_Type(1 .. 64);
-   subtype Key_Type        is Ethernet.Bytes_Type(1 .. 16);
+   subtype HFID_Bytes_Type is Packet_Sockets.Thin.Bytes_Type(1 .. 64);
+   subtype Key_Type        is Packet_Sockets.Thin.Bytes_Type(1 .. 16);
 
    function "<"(Left  : in Adapter_Type;
                 Right : in Adapter_Type) return Boolean is
@@ -232,7 +232,7 @@ package body Power_Line_Adapter is
 
    procedure Create(Adapter           : in out Adapter_Type;
                     Network_Interface : in     Positive;
-                    MAC_Address       : in     Ethernet.MAC_Address_Type;
+                    MAC_Address       : in     Packet_Sockets.Thin.MAC_Address_Type;
                     HFID              : in     HFID_String.Bounded_String) is
 
    begin
@@ -243,7 +243,7 @@ package body Power_Line_Adapter is
 
    end Create;
 
-   function Get_MAC_Address(Adapter : Adapter_Type) return Ethernet.MAC_Address_Type is
+   function Get_MAC_Address(Adapter : Adapter_Type) return Packet_Sockets.Thin.MAC_Address_Type is
 
    begin
 
@@ -255,16 +255,16 @@ package body Power_Line_Adapter is
                             MAC_Address : in String) return Boolean is
    begin
 
-      return Adapter.MAC_Address.To_String = MAC_Address;
+      return Packet_Sockets.Thin.To_String(MAC_Address => Adapter.MAC_Address) = MAC_Address;
 
    end Has_MAC_Address;
 
    procedure Process(Adapter          : in     Adapter_Type;
-                     Request          : in     Ethernet.Datagram_Socket.Payload_Type;
-                     Socket           : in     Ethernet.Datagram_Socket.Socket_Type;
-                     Response         :    out Ethernet.Datagram_Socket.Payload_Type;
+                     Request          : in     Packet_Sockets.Thin.Payload_Type;
+                     Socket           : in     Packet_Sockets.Thin.Socket_Type;
+                     Response         :    out Packet_Sockets.Thin.Payload_Type;
                      Response_Length  :    out Natural;
-                     From_MAC_Address :    out Ethernet.MAC_Address_Type) is
+                     From_MAC_Address :    out Packet_Sockets.Thin.MAC_Address_Type) is
 
    begin
 
@@ -277,7 +277,7 @@ package body Power_Line_Adapter is
 
       if Response_Length = 0 then
 
-         raise Ethernet.Datagram_Socket.Socket_Error with Ethernet.Datagram_Socket.Message_No_Response;
+         raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_No_Response;
 
       end if;
 
@@ -285,52 +285,52 @@ package body Power_Line_Adapter is
 
    function Check_DAK(Adapter     : in Adapter_Type;
                       Pass_Phrase : in String;
-                      Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean is separate;
+                      Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean is separate;
 
    function Check_NMK(Adapter     : in Adapter_Type;
                       Pass_Phrase : in String;
-                      Socket      : in Ethernet.Datagram_Socket.Socket_Type) return Boolean is separate;
+                      Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean is separate;
 
    function Get_HFID(Arg     : in Interfaces.Unsigned_8;
                      Adapter : in Adapter_Type;
-                     Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is separate;
+                     Socket  : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is separate;
 
    function Get_Manufacturer_HFID(Adapter : in Adapter_Type;
-                                  Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is separate;
+                                  Socket  : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is separate;
 
    function Get_User_HFID(Adapter : in Adapter_Type;
-                          Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is separate;
+                          Socket  : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is separate;
 
    function Get_Network_Info(Arg     : in Interfaces.Unsigned_8;
                              Adapter : in Adapter_Type;
-                             Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
+                             Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is separate;
 
    function Get_Any_Network_Info(Adapter : in Adapter_Type;
-                                 Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
+                                 Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is separate;
 
    function Get_Member_Network_Info(Adapter : in Adapter_Type;
-                                    Socket  : in Ethernet.Datagram_Socket.Socket_Type) return Network_Info_List_Type is separate;
+                                    Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is separate;
 
    procedure Reset(Adapter : in Adapter_Type;
-                   Socket  : in Ethernet.Datagram_Socket.Socket_Type) is separate;
+                   Socket  : in Packet_Sockets.Thin.Socket_Type) is separate;
 
    procedure Restart(Adapter : in Adapter_Type;
-                     Socket  : in Ethernet.Datagram_Socket.Socket_Type) is separate;
+                     Socket  : in Packet_Sockets.Thin.Socket_Type) is separate;
 
    procedure Set_HFID(Adapter : in Adapter_Type;
                       HFID    : in HFID_String.Bounded_String;
-                      Socket  : in Ethernet.Datagram_Socket.Socket_Type) is separate;
+                      Socket  : in Packet_Sockets.Thin.Socket_Type) is separate;
 
    procedure Set_NMK(Adapter     : in Adapter_Type;
                      Pass_Phrase : in String;
-                     Socket      : in Ethernet.Datagram_Socket.Socket_Type) is separate;
+                     Socket      : in Packet_Sockets.Thin.Socket_Type) is separate;
 
    function To_String(Adapter : in Adapter_Type) return String is
 
    begin
 
       return
-        Adapter.MAC_Address.To_String & ' ' &
+        Packet_Sockets.Thin.To_String(MAC_Address => Adapter.MAC_Address) & ' ' &
         HFID_String.To_String(Source => Adapter.HFID);
 
    end To_String;

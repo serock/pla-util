@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -15,20 +15,20 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Ethernet.Datagram_Socket;
+with Packet_Sockets.Thin;
 
-use type Ethernet.Datagram_Socket.Payload_Type;
+use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
 function Get_HFID(Arg     : in Interfaces.Unsigned_8;
                   Adapter : in Adapter_Type;
-                  Socket  : in Ethernet.Datagram_Socket.Socket_Type) return HFID_String.Bounded_String is
+                  Socket  : in Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is
 
-   Expected_Response : Ethernet.Datagram_Socket.Payload_Type(1 .. 12);
-   MAC_Address       : Ethernet.MAC_Address_Type;
-   Request           : Ethernet.Datagram_Socket.Payload_Type(1 .. Ethernet.Datagram_Socket.Minimum_Payload_Size);
-   Response          : Ethernet.Datagram_Socket.Payload_Type(1 .. 76);
+   Expected_Response : Packet_Sockets.Thin.Payload_Type(1 .. 12);
+   MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
+   Request           : Packet_Sockets.Thin.Payload_Type(1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
+   Response          : Packet_Sockets.Thin.Payload_Type(1 .. 76);
    Response_Length   : Natural;
 
 begin
@@ -45,10 +45,10 @@ begin
 
    if Response_Length < 13 or else Response(Expected_Response'Range) /= Expected_Response then
 
-      raise Ethernet.Datagram_Socket.Socket_Error with Ethernet.Datagram_Socket.Message_Unexpected_Response;
+      raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
 
    end if;
 
-   return Ethernet.Datagram_Socket.To_HFID_String(Payload => Response(13 .. Response_Length));
+   return Packet_Sockets.Thin.To_HFID_String(Payload => Response(13 .. Response_Length));
 
 end Get_HFID;

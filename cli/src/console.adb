@@ -20,10 +20,10 @@ with Ada.Exceptions;
 with Ada.Strings;
 with Ada.Text_IO;
 with Commands;
-with Ethernet;
 with GNAT.Formatted_String;
 with HFID_String;
 with Interfaces;
+with Packet_Sockets.Thin;
 with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
 
@@ -196,13 +196,13 @@ package body Console is
 
          Ada.Text_IO.Set_Col(To => Column_2);
 
-         Ada.Text_IO.Put_Line(Item => Ethernet.To_String(MAC_Address => Network_Info_List(I).CCo_MAC_Address));
+         Ada.Text_IO.Put_Line(Item => Packet_Sockets.Thin.To_String(MAC_Address => Network_Info_List(I).CCo_MAC_Address));
 
          Ada.Text_IO.Put(Item => "  Backup CCo MAC Address:");
 
          Ada.Text_IO.Set_Col(To => Column_2);
 
-         Ada.Text_IO.Put_Line(Item => Ethernet.To_String(MAC_Address => Network_Info_List(I).BCCo_MAC_Address));
+         Ada.Text_IO.Put_Line(Item => Packet_Sockets.Thin.To_String(MAC_Address => Network_Info_List(I).BCCo_MAC_Address));
 
          Ada.Text_IO.Put(Item => "  Number of Coordinating Networks:");
 

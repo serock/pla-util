@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2020 John Serock
+--  Copyright (C) 2016-2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Containers;
-with Ethernet.Datagram_Socket;
 with Interfaces;
+with Packet_Sockets.Thin;
 with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
 
@@ -29,11 +29,11 @@ procedure Set_HFID(Device_Name : in String;
                    HFID        : in HFID_String.Bounded_String) is
 
    Adapters : Power_Line_Adapter_Sets.Set(Capacity => Power_Line_Adapter.Max_Adapters);
-   Socket   : Ethernet.Datagram_Socket.Socket_Type;
+   Socket   : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Socket.Open(Protocol        => Ethernet.Datagram_Socket.Protocol_8912,
+   Socket.Open(Protocol        => Packet_Sockets.Thin.Protocol_8912,
                Device_Name     => Device_Name,
                Receive_Timeout => Default_Receive_Timeout,
                Send_Timeout    => Default_Send_Timeout);
