@@ -230,7 +230,7 @@ package body Power_Line_Adapter is
    end Validate_NMK_Pass_Phrase;
 
    procedure Create (Adapter           : in out Adapter_Type;
-                     Network_Interface : in     Positive;
+                     Network_Interface : in     Natural;
                      MAC_Address       : in     Packet_Sockets.Thin.MAC_Address_Type;
                      HFID              : in     HFID_String.Bounded_String) is
 

@@ -101,13 +101,13 @@ private
 
    type Adapter_Type is tagged
       record
-         Network_Interface : Positive;
+         Network_Interface : Natural;
          MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
          HFID              : HFID_String.Bounded_String;
       end record;
 
    procedure Create (Adapter           : in out Adapter_Type;
-                     Network_Interface : in     Positive;
+                     Network_Interface : in     Natural;
                      MAC_Address       : in     Packet_Sockets.Thin.MAC_Address_Type;
                      HFID              : in     HFID_String.Bounded_String);
 
