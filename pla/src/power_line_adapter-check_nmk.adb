@@ -21,13 +21,13 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Check_NMK (Adapter     : in Adapter_Type;
-                    Pass_Phrase : in String;
-                    Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean is
+function Check_NMK (Adapter     : Adapter_Type;
+                    Pass_Phrase : String;
+                    Socket      : Packet_Sockets.Thin.Socket_Type) return Boolean is
 
+   I                 : constant Positive := 13;
    Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 12);
    Generated_NMK     : Key_Type;
-   I                 : Positive := 13;
    MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
    NMK               : Key_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
@@ -50,13 +50,10 @@ begin
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#10#, 16#00#);
 
    if Response_Length < 28 or else Response (Expected_Response'Range) /= Expected_Response then
-
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
-
    end if;
 
-   NMK := Response (I .. I + Key_Type'Length - 1);
-
+   NMK           := Response (I .. I + Key_Type'Length - 1);
    Generated_NMK := Generate_NMK (Pass_Phrase => Pass_Phrase);
 
    return Generated_NMK = NMK;

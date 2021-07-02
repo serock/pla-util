@@ -21,7 +21,7 @@ with Power_Line_Adapter_Sets;
 
 separate (Commands)
 
-function Discover (Device_Name : in String) return Power_Line_Adapter_Sets.Set is
+function Discover (Device_Name : String) return Power_Line_Adapter_Sets.Set is
 
    Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
    Socket   : Packet_Sockets.Thin.Socket_Type;
@@ -42,9 +42,7 @@ begin
 exception
 
    when others =>
-
       Socket.Close;
-
       raise;
 
 end Discover;

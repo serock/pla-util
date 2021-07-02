@@ -24,8 +24,8 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-function Get_HFID (Device_Name : in String;
-                   HFID_Level  : in HFID_Level_Type) return HFID_String.Bounded_String is
+function Get_HFID (Device_Name : String;
+                   HFID_Level  : HFID_Level_Type) return HFID_String.Bounded_String is
 
    Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
    HFID     : HFID_String.Bounded_String;
@@ -41,21 +41,14 @@ begin
    Adapters := Power_Line_Adapter.Network.Discover (Socket => Socket);
 
    if Adapters.Length = 0 then
-
       raise Command_Error with Message_No_Adapters;
-
    end if;
 
    case HFID_Level is
-
       when Manufacturer =>
-
          HFID := Adapters.First_Element.Get_Manufacturer_HFID (Socket => Socket);
-
       when User =>
-
          HFID := Adapters.First_Element.Get_User_HFID (Socket => Socket);
-
    end case;
 
    Socket.Close;
@@ -65,9 +58,7 @@ begin
 exception
 
    when others =>
-
       Socket.Close;
-
       raise;
 
 end Get_HFID;

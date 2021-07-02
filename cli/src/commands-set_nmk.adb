@@ -24,8 +24,8 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-procedure Set_NMK (Device_Name : in String;
-                   Pass_Phrase : in String) is
+procedure Set_NMK (Device_Name : String;
+                   Pass_Phrase : String) is
 
    Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
    Socket   : Packet_Sockets.Thin.Socket_Type;
@@ -40,9 +40,7 @@ begin
    Adapters := Power_Line_Adapter.Network.Discover (Socket => Socket);
 
    if Adapters.Length = 0 then
-
       raise Command_Error with Message_No_Adapters;
-
    end if;
 
    Adapters.First_Element.Set_NMK (Pass_Phrase => Pass_Phrase,
@@ -53,9 +51,7 @@ begin
 exception
 
    when others =>
-
       Socket.Close;
-
       raise;
 
 end Set_NMK;

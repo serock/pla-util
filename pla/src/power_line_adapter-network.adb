@@ -21,7 +21,7 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 package body Power_Line_Adapter.Network is
 
-   function Discover (Socket : in Packet_Sockets.Thin.Socket_Type) return Power_Line_Adapter_Sets.Set is
+   function Discover (Socket : Packet_Sockets.Thin.Socket_Type) return Power_Line_Adapter_Sets.Set is
 
       Adapter           : Adapter_Type;
       Adapters          : Power_Line_Adapter_Sets.Set (Capacity => Max_Adapters);
@@ -43,21 +43,16 @@ package body Power_Line_Adapter.Network is
       Expected_Response := (16#02#, 16#71#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
 
       loop
-
          Socket.Receive (Payload        => Response,
                          Payload_Length => Response_Length,
                          From           => MAC_Address);
 
          if Response_Length = 0 then
-
             exit;
-
          end if;
 
          if Response (Expected_Response'Range) /= Expected_Response then
-
             raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
-
          end if;
 
          Network_Interface := Natural (Response (10));
@@ -67,7 +62,6 @@ package body Power_Line_Adapter.Network is
                          HFID              => Packet_Sockets.Thin.To_HFID_String (Payload => Response (12 .. Response_Length)));
 
          Adapters.Include (New_Item => Adapter);
-
       end loop;
 
       return Adapters;

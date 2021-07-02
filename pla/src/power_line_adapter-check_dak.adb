@@ -21,9 +21,9 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Check_DAK (Adapter     : in Adapter_Type;
-                   Pass_Phrase : in String;
-                   Socket      : in Packet_Sockets.Thin.Socket_Type) return Boolean is
+function Check_DAK (Adapter     : Adapter_Type;
+                    Pass_Phrase : String;
+                    Socket      : Packet_Sockets.Thin.Socket_Type) return Boolean is
 
    DAK               : Key_Type;
    Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 12);
@@ -49,9 +49,7 @@ begin
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#04#, 16#01#, 16#00#);
 
    if Response_Length < 16 or else Response (Expected_Response'Range) /= Expected_Response then
-
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
-
    end if;
 
    DAK (1) := Response (16);
@@ -70,9 +68,7 @@ begin
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#03#, 16#04#, 16#01#, 16#00#);
 
    if Response_Length < 16 or else Response (Expected_Response'Range) /= Expected_Response then
-
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
-
    end if;
 
    DAK (5) := Response (16);
@@ -91,9 +87,7 @@ begin
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#04#, 16#04#, 16#01#, 16#00#);
 
    if Response_Length < 16 or else Response (Expected_Response'Range) /= Expected_Response then
-
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
-
    end if;
 
    DAK (9)  := Response (16);
@@ -112,9 +106,7 @@ begin
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#05#, 16#04#, 16#01#, 16#00#);
 
    if Response_Length < 16 or else Response (Expected_Response'Range) /= Expected_Response then
-
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
-
    end if;
 
    DAK (13) := Response (16);

@@ -16,8 +16,8 @@ This program may work with other powerline adapters that comply with the HomePlu
 ## Development Environment
 This program is being developed using:
 
-* [openSUSE Leap 15.2](https://www.opensuse.org/)
-* [GNAT Community Edition 2020](https://www.adacore.com/download), which includes the GNAT Studio IDE and the GPRbuild tool
+* [openSUSE Leap 15.3](https://www.opensuse.org/)
+* [GNAT Community Edition 2021](https://www.adacore.com/download), which includes the GNAT Studio IDE and the GPRbuild tool
 * Git 2.26.2
 
 ## How to Build the Program with GNAT Studio

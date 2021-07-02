@@ -19,6 +19,6 @@ with Power_Line_Adapter_Sets;
 
 package Power_Line_Adapter.Network is
 
-   function Discover (Socket : in Packet_Sockets.Thin.Socket_Type) return Power_Line_Adapter_Sets.Set;
+   function Discover (Socket : Packet_Sockets.Thin.Socket_Type) return Power_Line_Adapter_Sets.Set;
 
 end Power_Line_Adapter.Network;

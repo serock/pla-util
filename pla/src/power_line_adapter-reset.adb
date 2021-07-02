@@ -21,8 +21,8 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-procedure Reset (Adapter : in Adapter_Type;
-                 Socket  : in Packet_Sockets.Thin.Socket_Type) is
+procedure Reset (Adapter : Adapter_Type;
+                 Socket  : Packet_Sockets.Thin.Socket_Type) is
 
    Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 10);
    MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
@@ -43,9 +43,7 @@ begin
    Expected_Response := (16#02#, 16#55#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
 
    if Response (Expected_Response'Range) /= Expected_Response then
-
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
-
    end if;
 
 end Reset;

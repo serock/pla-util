@@ -21,8 +21,8 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Get_Any_Network_Info (Adapter : in Adapter_Type;
-                               Socket  : in Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is
+function Get_Any_Network_Info (Adapter : Adapter_Type;
+                               Socket  : Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is
 
 begin
 

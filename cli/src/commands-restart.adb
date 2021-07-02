@@ -24,8 +24,8 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-procedure Restart (Device_Name     : in String;
-                   PLA_MAC_Address : in String) is
+procedure Restart (Device_Name     : String;
+                   PLA_MAC_Address : String) is
 
    Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
    Socket   : Packet_Sockets.Thin.Socket_Type;
@@ -41,27 +41,21 @@ begin
    Adapters := Power_Line_Adapter.Network.Discover (Socket => Socket);
 
    if Adapters.Length = 0 then
-
       raise Command_Error with Message_No_Adapters;
-
    end if;
 
    for E of Adapters loop
 
       if Power_Line_Adapter.Has_MAC_Address (Adapter => E, MAC_Address => PLA_MAC_Address) then
-
          E.Restart (Socket => Socket);
          Found := True;
          exit;
-
       end if;
 
    end loop;
 
    if not Found then
-
       raise Command_Error with Message_Not_Found;
-
    end if;
 
    Socket.Close;
@@ -69,9 +63,7 @@ begin
 exception
 
    when others =>
-
       Socket.Close;
-
       raise;
 
 end Restart;
