@@ -21,11 +21,11 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-procedure Restart (Adapter : Adapter_Type;
-                   Socket  : Packet_Sockets.Thin.Socket_Type) is
+procedure Restart (Self   : Adapter_Type;
+                   Socket : Packet_Sockets.Thin.Socket_Type) is
 
    Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 10);
-   MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
+   MAC_Address       : MAC_Address_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;
@@ -34,11 +34,11 @@ begin
 
    Request := (16#02#, 16#20#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#01#, others => 16#00#);
 
-   Adapter.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+   Self.Process (Request          => Request,
+                 Socket           => Socket,
+                 Response         => Response,
+                 Response_Length  => Response_Length,
+                 From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#21#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
 

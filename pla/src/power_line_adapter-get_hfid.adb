@@ -21,12 +21,12 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Get_HFID (Arg     : Interfaces.Unsigned_8;
-                   Adapter : Adapter_Type;
-                   Socket  : Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is
+function Get_HFID (Self   : Adapter_Type;
+                   Arg    : Interfaces.Unsigned_8;
+                   Socket : Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is
 
    Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 12);
-   MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
+   MAC_Address       : MAC_Address_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. 76);
    Response_Length   : Natural;
@@ -35,11 +35,11 @@ begin
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, Arg, others => 16#00#);
 
-   Adapter.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+   Self.Process (Request          => Request,
+                 Socket           => Socket,
+                 Response         => Response,
+                 Response_Length  => Response_Length,
+                 From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#40#, 16#00#);
 

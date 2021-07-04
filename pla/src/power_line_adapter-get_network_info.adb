@@ -21,12 +21,12 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Get_Network_Info (Arg     : Interfaces.Unsigned_8;
-                           Adapter : Adapter_Type;
-                           Socket  : Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is
+function Get_Network_Info (Self   : Adapter_Type;
+                           Arg    : Interfaces.Unsigned_8;
+                           Socket : Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is
 
    Expected_Response  : Packet_Sockets.Thin.Payload_Type (1 .. 9);
-   MAC_Address        : Packet_Sockets.Thin.MAC_Address_Type;
+   MAC_Address        : MAC_Address_Type;
    No_Network         : Network_Info_List_Type (1 .. 0);
    Number_Of_Networks : Natural;
    Request            : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
@@ -37,11 +37,11 @@ begin
 
    Request := (16#02#, 16#28#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#, Arg, others => 16#00#);
 
-   Adapter.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+   Self.Process (Request          => Request,
+                 Socket           => Socket,
+                 Response         => Response,
+                 Response_Length  => Response_Length,
+                 From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#29#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
 
@@ -69,7 +69,7 @@ begin
          Network_Info (I).SNID            := Response (X);                         X := X + 1;
          Network_Info (I).TEI             := Response (X);                         X := X + 1;
          Network_Info (I).Station_Role    := Station_Role_Type'Val (Response (X)); X := X + 1;
-         Network_Info (I).CCo_MAC_Address := Packet_Sockets.Thin.Create_MAC_Address (Bytes => Response (X .. X + 5));
+         Network_Info (I).CCo_MAC_Address := Create_MAC_Address (Octets => Response (X .. X + 5));
          X := X + 6;
          Network_Info (I).Network_Kind       := Network_Kind_Type'Val (Response (X)); X := X + 1;
          Network_Info (I).Num_Coord_Networks := Response (X);                         X := X + 1;
@@ -77,7 +77,7 @@ begin
       end loop;
 
       for I in 1 .. Number_Of_Networks loop
-         Network_Info (I).BCCo_MAC_Address := Packet_Sockets.Thin.Create_MAC_Address (Bytes => Response (X .. X + 5));
+         Network_Info (I).BCCo_MAC_Address := Create_MAC_Address (Octets => Response (X .. X + 5));
          X := X + 6;
       end loop;
 

@@ -17,12 +17,9 @@
 ------------------------------------------------------------------------
 with Ada.Characters.Latin_1;
 with Ada.Strings;
-with Ada.Text_IO;
-with GNAT.Formatted_String;
 with Interfaces.C;
 with OS_Constants;
 
-use GNAT.Formatted_String;
 use type Interfaces.Unsigned_8;
 use type Interfaces.C.int;
 use type Interfaces.C.long;
@@ -30,7 +27,7 @@ use type Interfaces.C.unsigned;
 
 package body Packet_Sockets.Thin is
 
-   package Byte_Text_IO is new Ada.Text_IO.Modular_IO (Num => Interfaces.Unsigned_8);
+   subtype Long_MAC_Address_Octets_Type is Octets_Type (1 .. 8);
 
    package C_Binding is
 
@@ -49,7 +46,7 @@ package body Packet_Sockets.Thin is
             sll_hatype   : Interfaces.C.unsigned_short;
             sll_pkttype  : Interfaces.C.unsigned_char;
             sll_halen    : Interfaces.C.unsigned_char;
-            sll_addr     : Long_MAC_Address_Bytes_Type;
+            sll_addr     : Long_MAC_Address_Octets_Type;
          end record
         with Convention => C;
 
@@ -142,26 +139,6 @@ package body Packet_Sockets.Thin is
 
    use C_Binding;
 
-   function Byte_Format is new GNAT.Formatted_String.Mod_Format (Int => Interfaces.Unsigned_8,
-                                                                 Put => Byte_Text_IO.Put);
-
-   function "<" (Left  : MAC_Address_Type;
-                 Right : MAC_Address_Type) return Boolean is
-
-   begin
-
-      for I in 1 .. 6 loop
-
-         if Left.Bytes (I) /= Right.Bytes (I) then
-            return Left.Bytes (I) < Right.Bytes (I);
-         end if;
-
-      end loop;
-
-      return False;
-
-   end "<";
-
    procedure Bind (File_Descriptor  : Interfaces.C.int;
                    Network_Protocol : Network_Protocol_Type;
                    Interface_Index  : Interfaces.C.int) is
@@ -189,17 +166,17 @@ package body Packet_Sockets.Thin is
 
    end Bind;
 
-   procedure Close (Socket : in out Socket_Type) is
+   procedure Close (Self : in out Socket_Type) is
 
       Close_Status : Interfaces.C.int;
 
    begin
 
-      if Socket.Is_Open then
+      if Self.Is_Open then
 
-         Close_Status           := C_Close (Fd => Socket.File_Descriptor);
-         Socket.File_Descriptor := -1;
-         Socket.Interface_Index := -1;
+         Close_Status           := C_Close (Fd => Self.File_Descriptor);
+         Self.File_Descriptor := -1;
+         Self.Interface_Index := -1;
 
          if Close_Status = -1 then
             raise Socket_Error with Error_Message (Error_Number => Errno);
@@ -226,18 +203,6 @@ package body Packet_Sockets.Thin is
       end if;
 
    end Close_Quietly;
-
-   function Create_MAC_Address (Bytes : MAC_Address_Bytes_Type) return MAC_Address_Type is
-
-      MAC_Address : MAC_Address_Type;
-
-   begin
-
-      MAC_Address.Bytes := (Bytes (1), Bytes (2), Bytes (3), Bytes (4), Bytes (5), Bytes (6), others => 0);
-
-      return MAC_Address;
-
-   end Create_MAC_Address;
 
    function Create_Socket (Network_Protocol : Network_Protocol_Type) return Interfaces.C.int is
 
@@ -308,11 +273,11 @@ package body Packet_Sockets.Thin is
 
    end Get_Interface_Index;
 
-   function Is_Open (Socket : Socket_Type) return Boolean is
+   function Is_Open (Self : Socket_Type) return Boolean is
 
    begin
 
-      return Socket.File_Descriptor /= -1;
+      return Self.File_Descriptor /= -1;
 
    end Is_Open;
 
@@ -365,7 +330,7 @@ package body Packet_Sockets.Thin is
 
    end Open;
 
-   procedure Receive (Socket         :     Socket_Type;
+   procedure Receive (Self           :     Socket_Type;
                       Payload        : out Payload_Type;
                       Payload_Length : out Natural;
                       From           : out MAC_Address_Type) is
@@ -384,7 +349,7 @@ package body Packet_Sockets.Thin is
                  sll_halen    => 0,
                  sll_addr     => (others => 0));
 
-      Return_Value := C_Recvfrom (Fd       => Socket.File_Descriptor,
+      Return_Value := C_Recvfrom (Fd       => Self.File_Descriptor,
                                   Buf      => Payload,
                                   N        => Payload'Length,
                                   Addr     => Source,
@@ -396,45 +361,46 @@ package body Packet_Sockets.Thin is
             --  Call timed out before any data was received.
             --  There is no message and no source address.
             Payload_Length := 0;
-            From           := Null_Address;
+            From           := Null_MAC_Address;
          else
             raise Socket_Error with Error_Message (Error_Number => Errno);
          end if;
 
       else
          Payload_Length := Natural (Return_Value);
-         From           := MAC_Address_Type'(Bytes => Source.sll_addr);
+         From           := Create_MAC_Address (Octets => Source.sll_addr (1 .. 6));
       end if;
 
    end Receive;
 
-   procedure Send (Socket  : Socket_Type;
+   procedure Send (Self    : Socket_Type;
                    Payload : Payload_Type;
                    To      : MAC_Address_Type) is
 
+      Fill         : constant Octets_Type (1 .. 2) := (others => 16#00#);
       Destination  : sockaddr_ll;
       Return_Value : ssize_t;
 
    begin
 
-      --  Check whether the payload is large enough for the size of the resulting Ethernet packet to
-      --  be at least 60 bytes. The packet will have a 14-byte header (6-byte destination address,
-      --  6-byte source address, and 2-byte protocol or ethertype). Thus, the payload size must be
-      --  at least 60 bytes - 14 bytes = 46 bytes. This assumes that there is no VLAN info in the
-      --  header.
+      --  Check whether the payload is large enough for the size of the resulting Ethernet packet
+      --  to be at least 60 octets. The packet will have a 14-octet header (6-octet destination
+      --  address, 6-octet source address, and 2-octet protocol or ethertype). Thus, the payload
+      --  size must be at least 46 octets = 60 octets - 14 octets. This assumes that there is no
+      --  VLAN info in the header.
       if Payload'Length < Minimum_Payload_Size then
-         raise Socket_Error with "Payload size is less than" & Positive'Image (Minimum_Payload_Size) & " bytes";
+         raise Socket_Error with "Payload size is less than" & Positive'Image (Minimum_Payload_Size) & " octets";
       end if;
 
       Destination := (sll_family   => OS_Constants.AF_PACKET,
-                      sll_protocol => Socket.Network_Protocol,
-                      sll_ifindex  => Socket.Interface_Index,
+                      sll_protocol => Self.Network_Protocol,
+                      sll_ifindex  => Self.Interface_Index,
                       sll_hatype   => 0,
                       sll_pkttype  => 0,
                       sll_halen    => OS_Constants.ETH_ALEN,
-                      sll_addr     => To.Bytes);
+                      sll_addr     => To.Get_Octets & Fill);
 
-      Return_Value := C_Sendto (Fd       => Socket.File_Descriptor,
+      Return_Value := C_Sendto (Fd       => Self.File_Descriptor,
                                 Buf      => Payload,
                                 N        => Payload'Length,
                                 Addr     => Destination,
@@ -496,27 +462,5 @@ package body Packet_Sockets.Thin is
       return HFID;
 
    end To_HFID_String;
-
-   function To_String (MAC_Address : MAC_Address_Type;
-                       Separator   : Character := ':') return String is
-
-      Hex_Format : Formatted_String := +"%02x%c%02x%c%02x%c%02x%c%02x%c%02x";
-      S          : String (1 .. 17);
-
-   begin
-
-      for I in 1 .. 5 loop
-         Hex_Format := Byte_Format (Format => Hex_Format,
-                                    Var    => MAC_Address.Bytes (I)) & Separator;
-      end loop;
-
-      Hex_Format := Byte_Format (Format => Hex_Format,
-                                 Var    => MAC_Address.Bytes (6));
-
-      S := -Hex_Format;
-
-      return S;
-
-   end To_String;
 
 end Packet_Sockets.Thin;

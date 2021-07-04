@@ -26,7 +26,7 @@ package body Power_Line_Adapter.Network is
       Adapter           : Adapter_Type;
       Adapters          : Power_Line_Adapter_Sets.Set (Capacity => Max_Adapters);
       Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 9);
-      MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
+      MAC_Address       : MAC_Address_Type;
       Network_Interface : Natural;
       Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
       Response          : Packet_Sockets.Thin.Payload_Type (1 .. 75);
@@ -38,7 +38,7 @@ package body Power_Line_Adapter.Network is
                   16#fc#, 16#f9#, 16#79#, 16#6b#, 16#52#, 16#14#, 16#13#, 16#e9#, 16#e2#, others => 16#00#);
 
       Socket.Send (Payload => Request,
-                   To      => Packet_Sockets.Thin.Broadcast_Address);
+                   To      => Broadcast_MAC_Address);
 
       Expected_Response := (16#02#, 16#71#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
 

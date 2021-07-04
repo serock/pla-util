@@ -21,14 +21,14 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Check_NMK (Adapter     : Adapter_Type;
+function Check_NMK (Self        : Adapter_Type;
                     Pass_Phrase : String;
                     Socket      : Packet_Sockets.Thin.Socket_Type) return Boolean is
 
    I                 : constant Positive := 13;
    Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 12);
    Generated_NMK     : Key_Type;
-   MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
+   MAC_Address       : MAC_Address_Type;
    NMK               : Key_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
@@ -41,7 +41,7 @@ begin
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#24#, others => 16#00#);
 
-   Adapter.Process (Request          => Request,
+   Self.Process (Request          => Request,
                     Socket           => Socket,
                     Response         => Response,
                     Response_Length  => Response_Length,

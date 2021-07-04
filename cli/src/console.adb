@@ -21,19 +21,14 @@ with Ada.Strings;
 with Ada.Text_IO;
 with GNAT.Formatted_String;
 with HFID_String;
-with Interfaces;
-with Packet_Sockets.Thin;
+with Octets;
 with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
 
 use GNAT.Formatted_String;
+use Octets;
 
 package body Console is
-
-   package Byte_Text_IO is new Ada.Text_IO.Modular_IO (Num => Interfaces.Unsigned_8);
-
-   function Byte_Format is new GNAT.Formatted_String.Mod_Format (Int => Interfaces.Unsigned_8,
-                                                                 Put => Byte_Text_IO.Put);
 
    Message_Too_Few_Arguments : constant String := "Too few arguments";
    Syntax_Error              : exception;
@@ -80,7 +75,7 @@ package body Console is
       Adapters := Commands.Discover (Device_Name => Device_Name);
 
       for Adapter of Adapters loop
-         Ada.Text_IO.Put_Line (Item => Adapter.To_String);
+         Ada.Text_IO.Put_Line (Item => Adapter.Image);
       end loop;
 
    end Discover;
@@ -131,33 +126,33 @@ package body Console is
          Ada.Text_IO.Set_Col (To => Column_2);
 
          for J in Network_Info_List (I).NID'Range loop
-            Ada.Text_IO.Put (Item => -(Byte_Format (Format => +"%02x", Var => Network_Info_List (I).NID (J))));
+            Ada.Text_IO.Put (Item => -(Octet_Format (Format => +"%02x", Var => Network_Info_List (I).NID (J))));
          end loop;
 
          Ada.Text_IO.New_Line (Spacing => 1);
          Ada.Text_IO.Put (Item => "  SNID:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Byte_Text_IO.Put (Item  => Network_Info_List (I).SNID,
-                           Width => 1,
-                           Base  => 10);
+         Octet_Text_IO.Put (Item  => Network_Info_List (I).SNID,
+                            Width => 1,
+                            Base  => 10);
          Ada.Text_IO.New_Line (Spacing => 1);
          Ada.Text_IO.Put (Item => "  TEI:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Byte_Text_IO.Put (Item  => Network_Info_List (I).TEI,
-                           Width => 1,
-                           Base  => 10);
+         Octet_Text_IO.Put (Item  => Network_Info_List (I).TEI,
+                            Width => 1,
+                            Base  => 10);
          Ada.Text_IO.New_Line (Spacing => 1);
          Ada.Text_IO.Put (Item => "  CCo MAC Address:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Ada.Text_IO.Put_Line (Item => Packet_Sockets.Thin.To_String (MAC_Address => Network_Info_List (I).CCo_MAC_Address));
+         Ada.Text_IO.Put_Line (Item => Network_Info_List (I).CCo_MAC_Address.Image);
          Ada.Text_IO.Put (Item => "  Backup CCo MAC Address:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Ada.Text_IO.Put_Line (Item => Packet_Sockets.Thin.To_String (MAC_Address => Network_Info_List (I).BCCo_MAC_Address));
+         Ada.Text_IO.Put_Line (Network_Info_List (I).BCCo_MAC_Address.Image);
          Ada.Text_IO.Put (Item => "  Number of Coordinating Networks:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Byte_Text_IO.Put (Item  => Network_Info_List (I).Num_Coord_Networks,
-                           Width => 1,
-                           Base  => 10);
+         Octet_Text_IO.Put (Item  => Network_Info_List (I).Num_Coord_Networks,
+                            Width => 1,
+                            Base  => 10);
          Ada.Text_IO.New_Line (Spacing => 1);
          Ada.Text_IO.Put (Item => "  Station Role:");
          Ada.Text_IO.Set_Col (To => Column_2);

@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2021 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -15,18 +15,17 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Packet_Sockets.Thin;
+with Ada.Text_IO;
+with GNAT.Formatted_String;
+with Interfaces;
 
-use type Packet_Sockets.Thin.Payload_Type;
+package Octets is
 
-separate (Power_Line_Adapter)
+   type Octets_Type is array (Positive range <>) of Interfaces.Unsigned_8;
 
-function Get_User_HFID (Self   : Adapter_Type;
-                        Socket : Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is
+   package Octet_Text_IO is new Ada.Text_IO.Modular_IO (Num => Interfaces.Unsigned_8);
 
-begin
+   function Octet_Format is new GNAT.Formatted_String.Mod_Format (Int => Interfaces.Unsigned_8,
+                                                                  Put => Octet_Text_IO.Put);
 
-   return Self.Get_HFID (Arg    => 16#25#,
-                         Socket => Socket);
-
-end Get_User_HFID;
+end Octets;

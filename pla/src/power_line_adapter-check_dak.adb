@@ -21,14 +21,14 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Check_DAK (Adapter     : Adapter_Type;
+function Check_DAK (Self        : Adapter_Type;
                     Pass_Phrase : String;
                     Socket      : Packet_Sockets.Thin.Socket_Type) return Boolean is
 
    DAK               : Key_Type;
    Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 12);
    Generated_DAK     : Key_Type;
-   MAC_Address       : Packet_Sockets.Thin.MAC_Address_Type;
+   MAC_Address       : MAC_Address_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;
@@ -40,11 +40,11 @@ begin
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#09#, others => 16#00#);
 
-   Adapter.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+   Self.Process (Request          => Request,
+                 Socket           => Socket,
+                 Response         => Response,
+                 Response_Length  => Response_Length,
+                 From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#04#, 16#01#, 16#00#);
 
@@ -59,11 +59,11 @@ begin
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#03#, 16#0a#, others => 16#00#);
 
-   Adapter.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+   Self.Process (Request          => Request,
+                 Socket           => Socket,
+                 Response         => Response,
+                 Response_Length  => Response_Length,
+                 From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#03#, 16#04#, 16#01#, 16#00#);
 
@@ -78,11 +78,11 @@ begin
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#04#, 16#0b#, others => 16#00#);
 
-   Adapter.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+   Self.Process (Request          => Request,
+                 Socket           => Socket,
+                 Response         => Response,
+                 Response_Length  => Response_Length,
+                 From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#04#, 16#04#, 16#01#, 16#00#);
 
@@ -97,11 +97,11 @@ begin
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#05#, 16#0c#, others => 16#00#);
 
-   Adapter.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+   Self.Process (Request          => Request,
+                 Socket           => Socket,
+                 Response         => Response,
+                 Response_Length  => Response_Length,
+                 From_MAC_Address => MAC_Address);
 
    Expected_Response := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#05#, 16#04#, 16#01#, 16#00#);
 

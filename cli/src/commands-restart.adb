@@ -46,7 +46,7 @@ begin
 
    for E of Adapters loop
 
-      if Power_Line_Adapter.Has_MAC_Address (Adapter => E, MAC_Address => PLA_MAC_Address) then
+      if E.Has_MAC_Address (MAC_Address => PLA_MAC_Address) then
          E.Restart (Socket => Socket);
          Found := True;
          exit;
