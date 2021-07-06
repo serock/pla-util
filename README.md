@@ -76,6 +76,4 @@ connected to a powerline adapter.
 ## License
 This program is licensed under the GNU General Public License Version 3.
 
-## To Do List
-* [ ] Implement command to display adapter info (0.9.1)
 
