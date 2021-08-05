@@ -12,6 +12,7 @@ This program may work with other powerline adapters that comply with the HomePlu
 * D-Link DHP-700AV
 * Tenda PH3
 * Netgear PLP1000 (uses BCM60333)
+* Netgear PLP2000 (uses BCM60500)
 
 ## Development Environment
 This program is being developed using:
@@ -31,7 +32,8 @@ If the build is successful, the `pla-util` executable will be in the same direct
 1. Launch a terminal.
 2. Use git to clone this repository.
 3. Go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
-4. Run `gprbuild -P pla_util.gpr`.
+4. You might need to install gprbuild, on debian: `sudo apt install gprbuild gnat`
+5. Run `gprbuild -P pla_util.gpr`.
 
 If the build is successful, the `pla-util` executable will be in the same directory as the `pla_util.gpr` project file.
 
