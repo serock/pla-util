@@ -19,8 +19,8 @@ with HFID_String;
 with Interfaces;
 with MAC_Addresses;
 with Octets;
-with Packet_Sockets.Thin;
 private with Ada.Streams;
+private with Packet_Sockets.Thin;
 
 use MAC_Addresses;
 use Octets;
@@ -60,46 +60,49 @@ package Power_Line_Adapter is
    overriding function "=" (Left  : Adapter_Type;
                             Right : Adapter_Type) return Boolean;
 
-   function Check_DAK (Self        : Adapter_Type;
-                       Pass_Phrase : String;
-                       Socket      : Packet_Sockets.Thin.Socket_Type) return Boolean;
+   function Check_DAK (Self                : Adapter_Type;
+                       Pass_Phrase         : String;
+                       Network_Device_Name : String) return Boolean;
 
-   function Check_NMK (Self        : Adapter_Type;
-                       Pass_Phrase : String;
-                       Socket      : Packet_Sockets.Thin.Socket_Type) return Boolean;
+   function Check_NMK (Self                : Adapter_Type;
+                       Pass_Phrase         : String;
+                       Network_Device_Name : String) return Boolean;
+
+   function Get_Any_Network_Info (Self                : Adapter_Type;
+                                  Network_Device_Name : String) return Network_Info_List_Type;
+
+   function Get_Manufacturer_HFID (Self                : Adapter_Type;
+                                   Network_Device_Name : String) return HFID_String.Bounded_String;
+
+   function Get_Member_Network_Info (Self                : Adapter_Type;
+                                     Network_Device_Name : String) return Network_Info_List_Type;
+
+   function Get_User_HFID (Self                : Adapter_Type;
+                           Network_Device_Name : String) return HFID_String.Bounded_String;
 
    function Has_MAC_Address (Self        : Adapter_Type;
                              MAC_Address : String) return Boolean;
 
-   function Get_Manufacturer_HFID (Self   : Adapter_Type;
-                                   Socket : Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String;
-
-   function Get_User_HFID (Self   : Adapter_Type;
-                           Socket : Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String;
-
-   function Get_Any_Network_Info (Self   : Adapter_Type;
-                                  Socket : Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type;
-
-   function Get_Member_Network_Info (Self   : Adapter_Type;
-                                     Socket : Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type;
-
    function Image (Self : Adapter_Type) return String;
 
-   procedure Reset (Self   : Adapter_Type;
-                    Socket : Packet_Sockets.Thin.Socket_Type);
+   procedure Reset (Self                : Adapter_Type;
+                    Network_Device_Name : String);
 
-   procedure Restart (Self   : Adapter_Type;
-                      Socket : Packet_Sockets.Thin.Socket_Type);
+   procedure Restart (Self                : Adapter_Type;
+                      Network_Device_Name : String);
 
-   procedure Set_HFID (Self   : Adapter_Type;
-                       HFID   : HFID_String.Bounded_String;
-                       Socket : Packet_Sockets.Thin.Socket_Type);
+   procedure Set_HFID (Self                : Adapter_Type;
+                       HFID                : HFID_String.Bounded_String;
+                       Network_Device_Name : String);
 
-   procedure Set_NMK (Self        : Adapter_Type;
-                      Pass_Phrase : String;
-                      Socket      : Packet_Sockets.Thin.Socket_Type);
+   procedure Set_NMK (Self                : Adapter_Type;
+                      Pass_Phrase         : String;
+                      Network_Device_Name : String);
 
 private
+
+   Default_Receive_Timeout : constant := 250;
+   Default_Send_Timeout    : constant := 250;
 
    type Adapter_Type is tagged
       record
@@ -123,13 +126,13 @@ private
 
    function Generate_NMK (Pass_Phrase : String) return Key_Type;
 
-   function Get_HFID (Self   : Adapter_Type;
-                      Arg    : Interfaces.Unsigned_8;
-                      Socket : Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String;
+   function Get_HFID (Self                : Adapter_Type;
+                      Arg                 : Interfaces.Unsigned_8;
+                      Network_Device_Name : String) return HFID_String.Bounded_String;
 
-   function Get_Network_Info (Self   : Adapter_Type;
-                              Arg    : Interfaces.Unsigned_8;
-                              Socket : Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type;
+   function Get_Network_Info (Self                : Adapter_Type;
+                              Arg                 : Interfaces.Unsigned_8;
+                              Network_Device_Name : String) return Network_Info_List_Type;
 
    function Get_Octets (HFID : HFID_String.Bounded_String) return HFID_Octets_Type;
 

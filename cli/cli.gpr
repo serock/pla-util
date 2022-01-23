@@ -1,6 +1,5 @@
 with "../shared.gpr";
 with "../common/common.gpr";
-with "../net/net.gpr";
 with "../pla/pla.gpr";
 
 project Cli is
@@ -13,7 +12,6 @@ project Cli is
    package Compiler renames Shared.Compiler;
 
    package Builder is
-      for Default_Switches ("ada") use ("-g", "-s");
       for Executable ("pla_util.adb") use "pla-util";
    end Builder;
 

@@ -23,18 +23,18 @@ package Console is
 
 private
 
-   procedure Check_DAK (Device_Name : String);
-   procedure Check_NMK (Device_Name : String);
-   procedure Discover (Device_Name : String);
-   procedure Get_HFID (Device_Name : String);
+   procedure Check_DAK (Network_Device_Name : String);
+   procedure Check_NMK (Network_Device_Name : String);
+   procedure Discover (Network_Device_Name : String);
+   procedure Get_HFID (Network_Device_Name : String);
    function Get_HFID_Level return Commands.HFID_Level_Type;
-   procedure Get_Network_Info (Device_Name : String);
+   procedure Get_Network_Info (Network_Device_Name : String);
    function Get_Network_Scope return Commands.Network_Scope_Type;
    function Get_PLA_MAC_Address return String;
-   procedure Reset (Device_Name : String);
-   procedure Restart (Device_Name : String);
-   procedure Set_HFID (Device_Name : String);
-   procedure Set_NMK (Device_Name : String);
+   procedure Reset (Network_Device_Name : String);
+   procedure Restart (Network_Device_Name : String);
+   procedure Set_HFID (Network_Device_Name : String);
+   procedure Set_NMK (Network_Device_Name : String);
    function To_Command_Name (Source : String) return String;
 
 end Console;

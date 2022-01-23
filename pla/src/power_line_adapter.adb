@@ -249,46 +249,46 @@ package body Power_Line_Adapter is
 
    end Validate_Pass_Phrase;
 
-   function Check_DAK (Self        : Adapter_Type;
-                       Pass_Phrase : String;
-                       Socket      : Packet_Sockets.Thin.Socket_Type) return Boolean is separate;
+   function Check_DAK (Self                : Adapter_Type;
+                       Pass_Phrase         : String;
+                       Network_Device_Name : String) return Boolean is separate;
 
-   function Check_NMK (Self        : Adapter_Type;
-                       Pass_Phrase : String;
-                       Socket      : Packet_Sockets.Thin.Socket_Type) return Boolean is separate;
+   function Check_NMK (Self                : Adapter_Type;
+                       Pass_Phrase         : String;
+                       Network_Device_Name : String) return Boolean is separate;
 
-   function Get_HFID (Self   : Adapter_Type;
-                      Arg    : Interfaces.Unsigned_8;
-                      Socket : Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is separate;
+   function Get_Any_Network_Info (Self                : Adapter_Type;
+                                  Network_Device_Name : String) return Network_Info_List_Type is separate;
 
-   function Get_Manufacturer_HFID (Self   : Adapter_Type;
-                                   Socket : Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is separate;
+   function Get_HFID (Self                : Adapter_Type;
+                      Arg                 : Interfaces.Unsigned_8;
+                      Network_Device_Name : String) return HFID_String.Bounded_String is separate;
 
-   function Get_User_HFID (Self   : Adapter_Type;
-                           Socket : Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is separate;
+   function Get_Manufacturer_HFID (Self                : Adapter_Type;
+                                   Network_Device_Name : String) return HFID_String.Bounded_String is separate;
+
+   function Get_Member_Network_Info (Self                : Adapter_Type;
+                                     Network_Device_Name : String) return Network_Info_List_Type is separate;
 
    function Get_Network_Info (Self   : Adapter_Type;
                               Arg    : Interfaces.Unsigned_8;
-                              Socket : Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is separate;
+                              Network_Device_Name : String) return Network_Info_List_Type is separate;
 
-   function Get_Any_Network_Info (Self   : Adapter_Type;
-                                  Socket : Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is separate;
+   function Get_User_HFID (Self                : Adapter_Type;
+                           Network_Device_Name : String) return HFID_String.Bounded_String is separate;
 
-   function Get_Member_Network_Info (Self   : Adapter_Type;
-                                     Socket : Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is separate;
+   procedure Reset (Self                : Adapter_Type;
+                    Network_Device_Name : String) is separate;
 
-   procedure Reset (Self   : Adapter_Type;
-                    Socket : Packet_Sockets.Thin.Socket_Type) is separate;
+   procedure Restart (Self                : Adapter_Type;
+                      Network_Device_Name : String) is separate;
 
-   procedure Restart (Self   : Adapter_Type;
-                      Socket : Packet_Sockets.Thin.Socket_Type) is separate;
+   procedure Set_HFID (Self                : Adapter_Type;
+                       HFID                : HFID_String.Bounded_String;
+                       Network_Device_Name : String) is separate;
 
-   procedure Set_HFID (Self   : Adapter_Type;
-                       HFID   : HFID_String.Bounded_String;
-                       Socket : Packet_Sockets.Thin.Socket_Type) is separate;
-
-   procedure Set_NMK (Self        : Adapter_Type;
-                      Pass_Phrase : String;
-                      Socket      : Packet_Sockets.Thin.Socket_Type) is separate;
+   procedure Set_NMK (Self                : Adapter_Type;
+                      Pass_Phrase         : String;
+                      Network_Device_Name : String) is separate;
 
 end Power_Line_Adapter;

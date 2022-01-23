@@ -33,14 +33,14 @@ package body Console is
    Message_Too_Few_Arguments : constant String := "Too few arguments";
    Syntax_Error              : exception;
 
-   procedure Check_DAK (Device_Name : String) is
+   procedure Check_DAK (Network_Device_Name : String) is
 
       Is_Match : Boolean;
 
    begin
 
-      Is_Match := Commands.Check_DAK (Device_Name => Device_Name,
-                                      Pass_Phrase => Ada.Command_Line.Argument (Number => 3));
+      Is_Match := Commands.Check_DAK (Network_Device_Name => Network_Device_Name,
+                                      Pass_Phrase         => Ada.Command_Line.Argument (Number => 3));
 
       if Is_Match then
          Ada.Text_IO.Put_Line (Item => "Device Access Key matches");
@@ -50,14 +50,14 @@ package body Console is
 
    end Check_DAK;
 
-   procedure Check_NMK (Device_Name : String) is
+   procedure Check_NMK (Network_Device_Name : String) is
 
       Is_Match : Boolean;
 
    begin
 
-      Is_Match := Commands.Check_NMK (Device_Name => Device_Name,
-                                      Pass_Phrase => Ada.Command_Line.Argument (Number => 3));
+      Is_Match := Commands.Check_NMK (Network_Device_Name => Network_Device_Name,
+                                      Pass_Phrase         => Ada.Command_Line.Argument (Number => 3));
       if Is_Match then
          Ada.Text_IO.Put_Line (Item => "Network Membership Key matches");
       else
@@ -66,13 +66,13 @@ package body Console is
 
    end Check_NMK;
 
-   procedure Discover (Device_Name : String) is
+   procedure Discover (Network_Device_Name : String) is
 
       Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
 
    begin
 
-      Adapters := Commands.Discover (Device_Name => Device_Name);
+      Adapters := Commands.Discover (Network_Device_Name => Network_Device_Name);
 
       for Adapter of Adapters loop
          Ada.Text_IO.Put_Line (Item => Adapter.Image);
@@ -80,15 +80,15 @@ package body Console is
 
    end Discover;
 
-   procedure Get_HFID (Device_Name : String) is
+   procedure Get_HFID (Network_Device_Name : String) is
 
       HFID_Level : constant Commands.HFID_Level_Type := Get_HFID_Level;
       HFID       : HFID_String.Bounded_String;
 
    begin
 
-      HFID := Commands.Get_HFID (Device_Name => Device_Name,
-                                 HFID_Level  => HFID_Level);
+      HFID := Commands.Get_HFID (Network_Device_Name => Network_Device_Name,
+                                 HFID_Level          => HFID_Level);
 
       Ada.Text_IO.Put_Line (Item => HFID_String.To_String (Source => HFID));
 
@@ -109,12 +109,12 @@ package body Console is
 
    end Get_HFID_Level;
 
-   procedure Get_Network_Info (Device_Name : String) is
+   procedure Get_Network_Info (Network_Device_Name : String) is
 
       Column_2          : constant                                           := 36;
       Network_Scope     : constant Commands.Network_Scope_Type               := Get_Network_Scope;
-      Network_Info_List : constant Power_Line_Adapter.Network_Info_List_Type := Commands.Get_Network_Info (Device_Name   => Device_Name,
-                                                                                                           Network_Scope => Network_Scope);
+      Network_Info_List : constant Power_Line_Adapter.Network_Info_List_Type := Commands.Get_Network_Info (Network_Device_Name => Network_Device_Name,
+                                                                                                           Network_Scope       => Network_Scope);
 
    begin
 
@@ -203,8 +203,8 @@ package body Console is
 
       declare
 
-         Command     : Commands.Command_Type;
-         Device_Name : constant String := Ada.Command_Line.Argument (Number => 1);
+         Command             : Commands.Command_Type;
+         Network_Device_Name : constant String := Ada.Command_Line.Argument (Number => 1);
 
       begin
 
@@ -217,7 +217,7 @@ package body Console is
                   raise Syntax_Error with Message_Too_Few_Arguments;
                end if;
 
-               Check_DAK (Device_Name => Device_Name);
+               Check_DAK (Network_Device_Name => Network_Device_Name);
 
             when Commands.Check_NMK =>
 
@@ -225,11 +225,11 @@ package body Console is
                   raise Syntax_Error with Message_Too_Few_Arguments;
                end if;
 
-               Check_NMK (Device_Name => Device_Name);
+               Check_NMK (Network_Device_Name => Network_Device_Name);
 
             when Commands.Discover =>
 
-               Discover (Device_Name => Device_Name);
+               Discover (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_HFID =>
 
@@ -237,7 +237,7 @@ package body Console is
                   raise Syntax_Error with Message_Too_Few_Arguments;
                end if;
 
-               Get_HFID (Device_Name => Device_Name);
+               Get_HFID (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_Network_Info =>
 
@@ -245,7 +245,7 @@ package body Console is
                   raise Syntax_Error with Message_Too_Few_Arguments;
                end if;
 
-               Get_Network_Info (Device_Name => Device_Name);
+               Get_Network_Info (Network_Device_Name => Network_Device_Name);
 
             when Commands.Reset =>
 
@@ -253,7 +253,7 @@ package body Console is
                   raise Syntax_Error with Message_Too_Few_Arguments;
                end if;
 
-               Reset (Device_Name => Device_Name);
+               Reset (Network_Device_Name => Network_Device_Name);
 
             when Commands.Restart =>
 
@@ -261,7 +261,7 @@ package body Console is
                   raise Syntax_Error with Message_Too_Few_Arguments;
                end if;
 
-               Restart (Device_Name => Device_Name);
+               Restart (Network_Device_Name => Network_Device_Name);
 
             when Commands.Set_HFID =>
 
@@ -269,7 +269,7 @@ package body Console is
                   raise Syntax_Error with Message_Too_Few_Arguments;
                end if;
 
-               Set_HFID (Device_Name => Device_Name);
+               Set_HFID (Network_Device_Name => Network_Device_Name);
 
             when Commands.Set_NMK =>
 
@@ -277,7 +277,7 @@ package body Console is
                   raise Syntax_Error with Message_Too_Few_Arguments;
                end if;
 
-               Set_NMK (Device_Name => Device_Name);
+               Set_NMK (Network_Device_Name => Network_Device_Name);
          end case;
 
       end;
@@ -307,52 +307,52 @@ package body Console is
 
    end Process_Command_Line;
 
-   procedure Reset (Device_Name : String) is
+   procedure Reset (Network_Device_Name : String) is
 
       PLA_MAC_Address : constant String := Get_PLA_MAC_Address;
 
    begin
 
-      Commands.Reset (Device_Name     => Device_Name,
-                      PLA_MAC_Address => PLA_MAC_Address);
+      Commands.Reset (Network_Device_Name => Network_Device_Name,
+                      PLA_MAC_Address     => PLA_MAC_Address);
 
       Ada.Text_IO.Put_Line (Item => "Device was reset to factory defaults");
 
    end Reset;
 
-   procedure Restart (Device_Name : String) is
+   procedure Restart (Network_Device_Name : String) is
 
       PLA_MAC_Address : constant String := Get_PLA_MAC_Address;
 
    begin
 
-      Commands.Restart (Device_Name     => Device_Name,
-                        PLA_MAC_Address => PLA_MAC_Address);
+      Commands.Restart (Network_Device_Name => Network_Device_Name,
+                        PLA_MAC_Address     => PLA_MAC_Address);
 
       Ada.Text_IO.Put_Line (Item => "Device was restarted");
 
    end Restart;
 
-   procedure Set_HFID (Device_Name : String) is
+   procedure Set_HFID (Network_Device_Name : String) is
 
       HFID : constant HFID_String.Bounded_String := HFID_String.To_Bounded_String (Source => Ada.Command_Line.Argument (Number => 3),
                                                                                    Drop   => Ada.Strings.Error);
 
    begin
 
-      Commands.Set_HFID (Device_Name => Device_Name,
-                         HFID        => HFID);
+      Commands.Set_HFID (Network_Device_Name => Network_Device_Name,
+                         HFID                => HFID);
 
       Ada.Text_IO.Put_Line (Item => "User HFID set");
 
    end Set_HFID;
 
-   procedure Set_NMK (Device_Name : String) is
+   procedure Set_NMK (Network_Device_Name : String) is
 
    begin
 
-      Commands.Set_NMK (Device_Name => Device_Name,
-                        Pass_Phrase => Ada.Command_Line.Argument (Number => 3));
+      Commands.Set_NMK (Network_Device_Name => Network_Device_Name,
+                        Pass_Phrase         => Ada.Command_Line.Argument (Number => 3));
 
       Ada.Text_IO.Put_Line (Item => "Network Membership Key set");
 

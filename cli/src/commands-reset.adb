@@ -16,7 +16,6 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Containers;
-with Packet_Sockets.Thin;
 with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
 
@@ -24,21 +23,15 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-procedure Reset (Device_Name     : String;
-                 PLA_MAC_Address : String) is
+procedure Reset (Network_Device_Name : String;
+                 PLA_MAC_Address     : String) is
 
    Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
-   Socket   : Packet_Sockets.Thin.Socket_Type;
    Found    : Boolean := False;
 
 begin
 
-   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
-                Device_Name     => Device_Name,
-                Receive_Timeout => Default_Receive_Timeout,
-                Send_Timeout    => Default_Send_Timeout);
-
-   Adapters := Power_Line_Adapter.Network.Discover (Socket => Socket);
+   Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
 
    if Adapters.Length = 0 then
       raise Command_Error with Message_No_Adapters;
@@ -47,7 +40,7 @@ begin
    for E of Adapters loop
 
       if E.Has_MAC_Address (MAC_Address => PLA_MAC_Address) then
-         E.Reset (Socket => Socket);
+         E.Reset (Network_Device_Name => Network_Device_Name);
          Found := True;
          exit;
       end if;
@@ -57,13 +50,5 @@ begin
    if not Found then
       raise Command_Error with Message_Not_Found;
    end if;
-
-   Socket.Close;
-
-exception
-
-   when others =>
-      Socket.Close;
-      raise;
 
 end Reset;

@@ -16,7 +16,6 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Containers;
-with Packet_Sockets.Thin;
 with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
 
@@ -24,34 +23,20 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-procedure Set_HFID (Device_Name : String;
-                    HFID        : HFID_String.Bounded_String) is
+procedure Set_HFID (Network_Device_Name : String;
+                    HFID                : HFID_String.Bounded_String) is
 
    Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
-   Socket   : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
-                Device_Name     => Device_Name,
-                Receive_Timeout => Default_Receive_Timeout,
-                Send_Timeout    => Default_Send_Timeout);
-
-   Adapters := Power_Line_Adapter.Network.Discover (Socket => Socket);
+   Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
 
    if Adapters.Length = 0 then
       raise Command_Error with Message_No_Adapters;
    end if;
 
-   Adapters.First_Element.Set_HFID (HFID   => HFID,
-                                    Socket => Socket);
-
-   Socket.Close;
-
-exception
-
-   when others =>
-      Socket.Close;
-      raise;
+   Adapters.First_Element.Set_HFID (HFID                => HFID,
+                                    Network_Device_Name => Network_Device_Name);
 
 end Set_HFID;

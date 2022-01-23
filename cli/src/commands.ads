@@ -39,30 +39,30 @@ package Commands is
 
    Command_Error : exception;
 
-   function Check_DAK (Device_Name : String;
-                       Pass_Phrase : String) return Boolean;
+   function Check_DAK (Network_Device_Name : String;
+                       Pass_Phrase         : String) return Boolean;
 
-   function Check_NMK (Device_Name : String;
-                       Pass_Phrase : String) return Boolean;
+   function Check_NMK (Network_Device_Name : String;
+                       Pass_Phrase         : String) return Boolean;
 
-   function Discover (Device_Name : String) return Power_Line_Adapter_Sets.Set;
+   function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set;
 
-   function Get_HFID (Device_Name : String;
-                      HFID_Level  : HFID_Level_Type) return HFID_String.Bounded_String;
+   function Get_HFID (Network_Device_Name : String;
+                      HFID_Level          : HFID_Level_Type) return HFID_String.Bounded_String;
 
-   function Get_Network_Info (Device_Name   : String;
-                              Network_Scope : Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type;
+   function Get_Network_Info (Network_Device_Name : String;
+                              Network_Scope       : Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type;
 
-   procedure Reset (Device_Name     : String;
-                    PLA_MAC_Address : String);
+   procedure Reset (Network_Device_Name : String;
+                    PLA_MAC_Address     : String);
 
-   procedure Restart (Device_Name     : String;
-                      PLA_MAC_Address : String);
+   procedure Restart (Network_Device_Name : String;
+                      PLA_MAC_Address     : String);
 
-   procedure Set_HFID (Device_Name : String;
-                       HFID        : HFID_String.Bounded_String);
+   procedure Set_HFID (Network_Device_Name : String;
+                       HFID                : HFID_String.Bounded_String);
 
-   procedure Set_NMK (Device_Name : String;
-                      Pass_Phrase : String);
+   procedure Set_NMK (Network_Device_Name : String;
+                      Pass_Phrase         : String);
 
 end Commands;

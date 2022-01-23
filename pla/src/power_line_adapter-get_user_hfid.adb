@@ -15,18 +15,14 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Packet_Sockets.Thin;
-
-use type Packet_Sockets.Thin.Payload_Type;
-
 separate (Power_Line_Adapter)
 
-function Get_User_HFID (Self   : Adapter_Type;
-                        Socket : Packet_Sockets.Thin.Socket_Type) return HFID_String.Bounded_String is
+function Get_User_HFID (Self                : Adapter_Type;
+                        Network_Device_Name : String) return HFID_String.Bounded_String is
 
 begin
 
-   return Self.Get_HFID (Arg    => 16#25#,
-                         Socket => Socket);
+   return Self.Get_HFID (Arg                 => 16#25#,
+                         Network_Device_Name => Network_Device_Name);
 
 end Get_User_HFID;

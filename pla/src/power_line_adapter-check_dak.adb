@@ -21,9 +21,9 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-function Check_DAK (Self        : Adapter_Type;
-                    Pass_Phrase : String;
-                    Socket      : Packet_Sockets.Thin.Socket_Type) return Boolean is
+function Check_DAK (Self                : Adapter_Type;
+                    Pass_Phrase         : String;
+                    Network_Device_Name : String) return Boolean is
 
    DAK               : Key_Type;
    Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 12);
@@ -32,6 +32,7 @@ function Check_DAK (Self        : Adapter_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;
+   Socket            : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
@@ -39,6 +40,11 @@ begin
                              Check_Min_Length => True);
 
    Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#09#, others => 16#00#);
+
+   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
+                Device_Name     => Network_Device_Name,
+                Receive_Timeout => Default_Receive_Timeout,
+                Send_Timeout    => Default_Send_Timeout);
 
    Self.Process (Request          => Request,
                  Socket           => Socket,
@@ -109,6 +115,8 @@ begin
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
    end if;
 
+   Socket.Close;
+
    DAK (13) := Response (16);
    DAK (14) := Response (15);
    DAK (15) := Response (14);
@@ -117,5 +125,11 @@ begin
    Generated_DAK := Generate_DAK (Pass_Phrase => Pass_Phrase);
 
    return Generated_DAK = DAK;
+
+exception
+
+   when others =>
+      Socket.Close;
+      raise;
 
 end Check_DAK;

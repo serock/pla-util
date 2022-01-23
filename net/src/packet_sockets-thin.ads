@@ -26,13 +26,14 @@ use Octets;
 
 package Packet_Sockets.Thin is
 
-   type Protocol_Type    is private;
-   type Socket_Type      is tagged limited private;
+   type Protocol_Type is private;
+   type Socket_Type   is tagged limited private;
 
-   subtype Milliseconds_Type      is Natural;
-   subtype Payload_Type           is Octets_Type;
+   subtype Milliseconds_Type is Natural;
+   subtype Payload_Type      is Octets_Type;
 
    Protocol_8912               : constant Protocol_Type;
+   Protocol_HomePlug           : constant Protocol_Type;
    Message_No_Response         : constant String := "No response received from adapter";
    Message_Unexpected_Response : constant String := "Unexpected response received from adapter";
    Minimum_Payload_Size        : constant        := 46;
@@ -73,7 +74,8 @@ private
          Network_Protocol : Network_Protocol_Type;
       end record;
 
-   Protocol_8912     : constant Protocol_Type    := 16#8912#;
+   Protocol_8912     : constant Protocol_Type := 16#8912#;
+   Protocol_HomePlug : constant Protocol_Type := 16#88e1#;
 
    procedure Bind (File_Descriptor  : Interfaces.C.int;
                    Network_Protocol : Network_Protocol_Type;

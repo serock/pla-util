@@ -21,18 +21,24 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 separate (Power_Line_Adapter)
 
-procedure Restart (Self   : Adapter_Type;
-                   Socket : Packet_Sockets.Thin.Socket_Type) is
+procedure Restart (Self                : Adapter_Type;
+                   Network_Device_Name : String) is
 
    Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 10);
    MAC_Address       : MAC_Address_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;
+   Socket            : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
    Request := (16#02#, 16#20#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#01#, others => 16#00#);
+
+   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
+                Device_Name     => Network_Device_Name,
+                Receive_Timeout => Default_Receive_Timeout,
+                Send_Timeout    => Default_Send_Timeout);
 
    Self.Process (Request          => Request,
                  Socket           => Socket,
@@ -45,5 +51,13 @@ begin
    if Response (Expected_Response'Range) /= Expected_Response then
       raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
    end if;
+
+   Socket.Close;
+
+exception
+
+   when others =>
+      Socket.Close;
+      raise;
 
 end Restart;

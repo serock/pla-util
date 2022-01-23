@@ -15,18 +15,14 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Packet_Sockets.Thin;
-
-use type Packet_Sockets.Thin.Payload_Type;
-
 separate (Power_Line_Adapter)
 
-function Get_Member_Network_Info (Self   : Adapter_Type;
-                                  Socket : Packet_Sockets.Thin.Socket_Type) return Network_Info_List_Type is
+function Get_Member_Network_Info (Self                : Adapter_Type;
+                                  Network_Device_Name : String) return Network_Info_List_Type is
 
 begin
 
-   return Self.Get_Network_Info (Arg    => 16#00#,
-                                 Socket => Socket);
+   return Self.Get_Network_Info (Arg                 => 16#00#,
+                                 Network_Device_Name => Network_Device_Name);
 
 end Get_Member_Network_Info;

@@ -15,34 +15,19 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Packet_Sockets.Thin;
 with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
 
 separate (Commands)
 
-function Discover (Device_Name : String) return Power_Line_Adapter_Sets.Set is
+function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set is
 
    Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
-   Socket   : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
-                Device_Name     => Device_Name,
-                Receive_Timeout => Default_Receive_Timeout,
-                Send_Timeout    => Default_Send_Timeout);
-
-   Adapters := Power_Line_Adapter.Network.Discover (Socket => Socket);
-
-   Socket.Close;
+   Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
 
    return Adapters;
-
-exception
-
-   when others =>
-      Socket.Close;
-      raise;
 
 end Discover;

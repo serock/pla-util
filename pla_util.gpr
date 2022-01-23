@@ -3,5 +3,9 @@ aggregate project Pla_Util is
    for Project_Files use ("cli/cli.gpr");
    for Object_Dir use "obj";
 
+   package Builder is
+      for Switches (others) use ("--no-indirect-imports", "-s");
+   end Builder;
+
 end Pla_Util;
 
