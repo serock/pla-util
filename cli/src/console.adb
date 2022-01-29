@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2016-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -18,9 +18,12 @@
 with Ada.Command_Line;
 with Ada.Exceptions;
 with Ada.Strings;
+with Ada.Strings.Fixed;
+with Ada.Strings.Maps;
 with Ada.Text_IO;
 with GNAT.Formatted_String;
 with HFID_String;
+with Interfaces;
 with Octets;
 with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
@@ -30,8 +33,12 @@ use Octets;
 
 package body Console is
 
-   Message_Too_Few_Arguments : constant String := "Too few arguments";
-   Syntax_Error              : exception;
+   package Unsigned_16_Text_IO is new Ada.Text_IO.Modular_IO (Num => Interfaces.Unsigned_16);
+
+   Message_Too_Few_Arguments   : constant String                             := "Too few arguments";
+   Separator_Character_Mapping : constant Ada.Strings.Maps.Character_Mapping := Ada.Strings.Maps.To_Mapping (From => "-",
+                                                                                                             To   => "_");
+   Syntax_Error                : exception;
 
    procedure Check_DAK (Network_Device_Name : String) is
 
@@ -183,6 +190,36 @@ package body Console is
 
    end Get_Network_Scope;
 
+   procedure Get_Network_Stats (Network_Device_Name : String) is
+
+      Column_2           : constant                                            := 30;
+      Network_Stats_List : constant Power_Line_Adapter.Network_Stats_List_Type := Commands.Get_Network_Stats (Network_Device_Name => Network_Device_Name);
+
+   begin
+
+      Ada.Text_IO.Put_Line (Item => "Number of stations:" & Integer'Image (Network_Stats_List'Length));
+
+      for I in 1 .. Network_Stats_List'Length loop
+         Ada.Text_IO.Put_Line (Item => "Station" & Integer'Image (I) & ":");
+         Ada.Text_IO.Put (Item => "  Destination Address (DA):");
+         Ada.Text_IO.Set_Col (To => Column_2);
+         Ada.Text_IO.Put_Line (Item => Network_Stats_List (I).Destination_Address.Image);
+         Ada.Text_IO.Put (Item => "  Avg PHY Data Rate to DA:");
+         Ada.Text_IO.Set_Col (To => Column_2);
+         Unsigned_16_Text_IO.Put (Item  => Network_Stats_List (I).Average_PHY_Data_Rate_To_Destination,
+                                  Width => 3,
+                                  Base  => 10);
+         Ada.Text_IO.Put_Line (Item => " Mbps");
+         Ada.Text_IO.Put (Item => "  Avg PHY Data Rate from DA:");
+         Ada.Text_IO.Set_Col (To => Column_2);
+         Unsigned_16_Text_IO.Put (Item  => Network_Stats_List (I).Average_PHY_Data_Rate_From_Destination,
+                                  Width => 3,
+                                  Base  => 10);
+         Ada.Text_IO.Put_Line (Item => " Mbps");
+      end loop;
+
+   end Get_Network_Stats;
+
    function Get_PLA_MAC_Address return String is
 
       PLA_MAC_Address_Arg : constant String := Ada.Command_Line.Argument (Number => 3);
@@ -204,11 +241,12 @@ package body Console is
       declare
 
          Command             : Commands.Command_Type;
+         Command_Id          : constant String := Ada.Command_Line.Argument (Number => 2);
          Network_Device_Name : constant String := Ada.Command_Line.Argument (Number => 1);
 
       begin
 
-         Command := Commands.Command_Type'Value (To_Command_Name (Source => Ada.Command_Line.Argument (Number => 2)));
+         Command := To_Command (Source => Command_Id);
 
          case Command is
             when Commands.Check_DAK =>
@@ -246,6 +284,10 @@ package body Console is
                end if;
 
                Get_Network_Info (Network_Device_Name => Network_Device_Name);
+
+            when Commands.Get_Network_Stats =>
+
+               Get_Network_Stats (Network_Device_Name => Network_Device_Name);
 
             when Commands.Reset =>
 
@@ -296,13 +338,14 @@ package body Console is
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid user");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info member");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info any");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-stats");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-hfid <id>");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-nmk <pass-phrase>");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-nmk <pass-phrase>");
          Ada.Text_IO.New_Line (Spacing => 1);
          Ada.Text_IO.Put_Line (Item => "where <NIC> is the name of an ethernet network device");
-      when Error : Commands.Command_Error | Power_Line_Adapter.Input_Error =>
+      when Error : Commands.Command_Error | Power_Line_Adapter.Adapter_Error =>
          Ada.Text_IO.Put_Line (Item => "Error: " & Ada.Exceptions.Exception_Message (X => Error));
 
    end Process_Command_Line;
@@ -358,22 +401,23 @@ package body Console is
 
    end Set_NMK;
 
-   function To_Command_Name (Source : String) return String is
+   function To_Command (Source : String) return Commands.Command_Type is
 
-      Command_Name : String (Source'Range) := Source;
+      Command      : Commands.Command_Type;
+      Command_Name : constant String := Ada.Strings.Fixed.Translate (Source  => Source,
+                                                                     Mapping => Separator_Character_Mapping);
 
    begin
 
-      for I in Command_Name'Range loop
+      Command := Commands.Command_Type'Value (Command_Name);
 
-         if Command_Name (I) = '-' then
-            Command_Name (I) := '_';
-         end if;
+      return Command;
 
-      end loop;
+   exception
 
-      return Command_Name;
+      when Constraint_Error =>
+         raise Syntax_Error with "Invalid command """ & Source & '"';
 
-   end To_Command_Name;
+   end To_Command;
 
 end Console;

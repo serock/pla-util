@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2016-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ package body Packet_Sockets.Thin is
                               Len  => Socket_Address'Size / 8);
 
       if Return_Value = -1 then
-         raise Socket_Error with Error_Message (Error_Number => Errno);
+         raise Packet_Error with Error_Message (Error_Number => Errno);
       end if;
 
    end Bind;
@@ -174,12 +174,12 @@ package body Packet_Sockets.Thin is
 
       if Self.Is_Open then
 
-         Close_Status           := C_Close (Fd => Self.File_Descriptor);
+         Close_Status         := C_Close (Fd => Self.File_Descriptor);
          Self.File_Descriptor := -1;
          Self.Interface_Index := -1;
 
          if Close_Status = -1 then
-            raise Socket_Error with Error_Message (Error_Number => Errno);
+            raise Packet_Error with Error_Message (Error_Number => Errno);
          end if;
 
       end if;
@@ -215,7 +215,7 @@ package body Packet_Sockets.Thin is
                                    Protocol => Interfaces.C.int (Network_Protocol));
 
       if File_Descriptor = -1 then
-         raise Socket_Error with Error_Message (Error_Number => Errno);
+         raise Packet_Error with Error_Message (Error_Number => Errno);
       end if;
 
       return File_Descriptor;
@@ -266,7 +266,7 @@ package body Packet_Sockets.Thin is
                                Argp    => If_Req);
 
       if Return_Value = -1 then
-         raise Socket_Error with Error_Message (Error_Number => Errno);
+         raise Packet_Error with Error_Message (Error_Number => Errno) & " : " & Device_Name;
       end if;
 
       return If_Req.ifr_ifindex;
@@ -294,7 +294,7 @@ package body Packet_Sockets.Thin is
    begin
 
       if Socket.File_Descriptor /= -1 then
-         raise Socket_Error with "Socket is already open";
+         raise Packet_Error with "Socket is already open";
       end if;
 
       Network_Protocol := C_Htons (Hostshort => Protocol);
@@ -320,7 +320,7 @@ package body Packet_Sockets.Thin is
 
    exception
 
-      when Socket_Error =>
+      when Packet_Error =>
 
          if File_Descriptor /= -1 then
             Close_Quietly (File_Descriptor => File_Descriptor);
@@ -363,7 +363,7 @@ package body Packet_Sockets.Thin is
             Payload_Length := 0;
             From           := Null_MAC_Address;
          else
-            raise Socket_Error with Error_Message (Error_Number => Errno);
+            raise Packet_Error with Error_Message (Error_Number => Errno);
          end if;
 
       else
@@ -389,7 +389,7 @@ package body Packet_Sockets.Thin is
       --  size must be at least 46 octets = 60 octets - 14 octets. This assumes that there is no
       --  VLAN info in the header.
       if Payload'Length < Minimum_Payload_Size then
-         raise Socket_Error with "Payload size is less than" & Positive'Image (Minimum_Payload_Size) & " octets";
+         raise Packet_Error with "Payload size is less than" & Positive'Image (Minimum_Payload_Size) & " octets";
       end if;
 
       Destination := (sll_family   => OS_Constants.AF_PACKET,
@@ -407,7 +407,7 @@ package body Packet_Sockets.Thin is
                                 Addr_Len => Destination'Size / 8);
 
       if Return_Value = -1 then
-         raise Socket_Error with Error_Message (Error_Number => Errno);
+         raise Packet_Error with Error_Message (Error_Number => Errno);
       end if;
 
    end Send;
@@ -431,7 +431,7 @@ package body Packet_Sockets.Thin is
                                     Optlen  => timeval'Size / 8);
 
       if Return_Value = -1 then
-         raise Socket_Error with Error_Message (Error_Number => Errno);
+         raise Packet_Error with Error_Message (Error_Number => Errno);
       end if;
 
    end Set_Socket_Timeout_Option;

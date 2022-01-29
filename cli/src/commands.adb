@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2016-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ package body Commands is
 
    function Get_Network_Info (Network_Device_Name : String;
                               Network_Scope       : Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
+
+   function Get_Network_Stats (Network_Device_Name : String) return Power_Line_Adapter.Network_Stats_List_Type is separate;
 
    procedure Reset (Network_Device_Name : String;
                     PLA_MAC_Address     : String) is separate;

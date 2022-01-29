@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2016-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -32,13 +32,11 @@ package Packet_Sockets.Thin is
    subtype Milliseconds_Type is Natural;
    subtype Payload_Type      is Octets_Type;
 
-   Protocol_8912               : constant Protocol_Type;
-   Protocol_HomePlug           : constant Protocol_Type;
-   Message_No_Response         : constant String := "No response received from adapter";
-   Message_Unexpected_Response : constant String := "Unexpected response received from adapter";
-   Minimum_Payload_Size        : constant        := 46;
+   Protocol_8912        : constant Protocol_Type;
+   Protocol_HomePlug    : constant Protocol_Type;
+   Minimum_Payload_Size : constant := 46;
 
-   Socket_Error : exception;
+   Packet_Error : exception;
 
    procedure Close (Self : in out Socket_Type);
 

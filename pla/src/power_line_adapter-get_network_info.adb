@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2016-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
+with Ada.Exceptions;
 with Packet_Sockets.Thin;
 
 use type Packet_Sockets.Thin.Payload_Type;
@@ -25,7 +26,7 @@ function Get_Network_Info (Self                : Adapter_Type;
                            Arg                 : Interfaces.Unsigned_8;
                            Network_Device_Name : String) return Network_Info_List_Type is
 
-   Expected_Response  : Packet_Sockets.Thin.Payload_Type (1 .. 9);
+   Expected_Response  : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#29#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
    MAC_Address        : MAC_Address_Type;
    No_Network         : Network_Info_List_Type (1 .. 0);
    Number_Of_Networks : Natural;
@@ -38,22 +39,30 @@ begin
 
    Request := (16#02#, 16#28#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#, Arg, others => 16#00#);
 
-   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
-                Device_Name     => Network_Device_Name,
-                Receive_Timeout => Default_Receive_Timeout,
-                Send_Timeout    => Default_Send_Timeout);
+   begin
 
-   Self.Process (Request          => Request,
-                 Socket           => Socket,
-                 Response         => Response,
-                 Response_Length  => Response_Length,
-                 From_MAC_Address => MAC_Address);
+      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
+                   Device_Name     => Network_Device_Name,
+                   Receive_Timeout => Default_Receive_Timeout,
+                   Send_Timeout    => Default_Send_Timeout);
 
-   Expected_Response := (16#02#, 16#29#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
+      Self.Process (Request          => Request,
+                    Socket           => Socket,
+                    Response         => Response,
+                    Response_Length  => Response_Length,
+                    From_MAC_Address => MAC_Address);
 
-   if Response_Length < 26 or else Response (Expected_Response'Range) /= Expected_Response then
-      raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
-   end if;
+      if Response_Length < 26 or else Response (Expected_Response'Range) /= Expected_Response then
+         raise Adapter_Error with Message_Unexpected_Response;
+      end if;
+
+   exception
+
+      when others =>
+         Socket.Close;
+         raise;
+
+   end;
 
    Socket.Close;
 
@@ -95,8 +104,7 @@ begin
 
 exception
 
-   when others =>
-      Socket.Close;
-      raise;
+   when Error : Packet_Sockets.Thin.Packet_Error =>
+      raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Get_Network_Info;

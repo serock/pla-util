@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2016-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
+with Ada.Exceptions;
 with Packet_Sockets.Thin;
 
 use type Packet_Sockets.Thin.Payload_Type;
@@ -25,7 +26,7 @@ procedure Set_HFID (Self                : Adapter_Type;
                     HFID                : HFID_String.Bounded_String;
                     Network_Device_Name : String) is
 
-   Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 10);
+   Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#59#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#00#);
    MAC_Address       : MAC_Address_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. 78);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
@@ -39,29 +40,36 @@ begin
    Request                      := (16#02#, 16#58#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#25#, 16#00#, 16#01#, 16#40#, 16#00#, others => 16#00#);
    Request (15 .. Request'Last) := Get_Octets (HFID => HFID);
 
-   Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
-                Device_Name     => Network_Device_Name,
-                Receive_Timeout => Default_Receive_Timeout,
-                Send_Timeout    => Default_Send_Timeout);
+   begin
 
-   Self.Process (Request          => Request,
-                 Socket           => Socket,
-                 Response         => Response,
-                 Response_Length  => Response_Length,
-                 From_MAC_Address => MAC_Address);
+      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
+                   Device_Name     => Network_Device_Name,
+                   Receive_Timeout => Default_Receive_Timeout,
+                   Send_Timeout    => Default_Send_Timeout);
 
-   Expected_Response := (16#02#, 16#59#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#00#);
+      Self.Process (Request          => Request,
+                    Socket           => Socket,
+                    Response         => Response,
+                    Response_Length  => Response_Length,
+                    From_MAC_Address => MAC_Address);
 
-   if Response (Expected_Response'Range) /= Expected_Response then
-      raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_Unexpected_Response;
-   end if;
+      if Response (Expected_Response'Range) /= Expected_Response then
+         raise Adapter_Error with Message_Unexpected_Response;
+      end if;
+
+   exception
+
+      when others =>
+         Socket.Close;
+         raise;
+
+   end;
 
    Socket.Close;
 
 exception
 
-   when others =>
-      Socket.Close;
-      raise;
+   when Error : Packet_Sockets.Thin.Packet_Error =>
+      raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Set_HFID;

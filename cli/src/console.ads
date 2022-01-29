@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2016-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -30,11 +30,12 @@ private
    function Get_HFID_Level return Commands.HFID_Level_Type;
    procedure Get_Network_Info (Network_Device_Name : String);
    function Get_Network_Scope return Commands.Network_Scope_Type;
+   procedure Get_Network_Stats (Network_Device_Name : String);
    function Get_PLA_MAC_Address return String;
    procedure Reset (Network_Device_Name : String);
    procedure Restart (Network_Device_Name : String);
    procedure Set_HFID (Network_Device_Name : String);
    procedure Set_NMK (Network_Device_Name : String);
-   function To_Command_Name (Source : String) return String;
+   function To_Command (Source : String) return Commands.Command_Type;
 
 end Console;

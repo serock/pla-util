@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2016-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -164,7 +164,7 @@ package body Power_Line_Adapter is
                       From           => From_MAC_Address);
 
       if Response_Length = 0 then
-         raise Packet_Sockets.Thin.Socket_Error with Packet_Sockets.Thin.Message_No_Response;
+         raise Adapter_Error with Message_No_Response;
       end if;
 
    end Process;
@@ -193,7 +193,7 @@ package body Power_Line_Adapter is
    begin
 
       if Length < Min_HFID_Length then
-         raise Input_Error with "HFID has fewer than" & Integer'Image (Min_HFID_Length) & " characters";
+         raise Adapter_Error with "HFID has fewer than" & Integer'Image (Min_HFID_Length) & " characters";
       end if;
 
       for I in 1 .. Length loop
@@ -202,7 +202,7 @@ package body Power_Line_Adapter is
                                    Index  => I);
 
          if C < ' ' or else C > Ada.Characters.Latin_1.DEL then
-            raise Input_Error with "HFID contains one or more illegal characters";
+            raise Adapter_Error with "HFID contains one or more illegal characters";
          end if;
 
       end loop;
@@ -232,17 +232,17 @@ package body Power_Line_Adapter is
    begin
 
       if Pass_Phrase'Length > Max_Pass_Phrase_Length then
-         raise Input_Error with "Pass phrase has more than" & Integer'Image (Max_Pass_Phrase_Length) & " characters";
+         raise Adapter_Error with "Pass phrase has more than" & Integer'Image (Max_Pass_Phrase_Length) & " characters";
       end if;
 
       if Check_Min_Length and then Pass_Phrase'Length < Min_Pass_Phrase_Length then
-         raise Input_Error with "Pass phrase has fewer than" & Integer'Image (Min_Pass_Phrase_Length) & " characters";
+         raise Adapter_Error with "Pass phrase has fewer than" & Integer'Image (Min_Pass_Phrase_Length) & " characters";
       end if;
 
       for I in Pass_Phrase'Range loop
 
          if Pass_Phrase (I) < ' ' or else Pass_Phrase (I) > Ada.Characters.Latin_1.DEL then
-            raise Input_Error with "Pass phrase contains one or more illegal characters";
+            raise Adapter_Error with "Pass phrase contains one or more illegal characters";
          end if;
 
       end loop;
@@ -273,6 +273,9 @@ package body Power_Line_Adapter is
    function Get_Network_Info (Self   : Adapter_Type;
                               Arg    : Interfaces.Unsigned_8;
                               Network_Device_Name : String) return Network_Info_List_Type is separate;
+
+   function Get_Network_Stats (Self                : Adapter_Type;
+                               Network_Device_Name : String) return Network_Stats_List_Type is separate;
 
    function Get_User_HFID (Self                : Adapter_Type;
                            Network_Device_Name : String) return HFID_String.Bounded_String is separate;

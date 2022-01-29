@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2016-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -50,9 +50,18 @@ package Power_Line_Adapter is
 
    type Network_Info_List_Type is array (Positive range <>) of Network_Info_Type;
 
+   type Network_Stats_Type is
+      record
+         Destination_Address                    : MAC_Address_Type;
+         Average_PHY_Data_Rate_To_Destination   : Interfaces.Unsigned_16;
+         Average_PHY_Data_Rate_From_Destination : Interfaces.Unsigned_16;
+      end record;
+
+   type Network_Stats_List_Type is array (Positive range <>) of Network_Stats_Type;
+
    Max_Adapters : constant := 16;
 
-   Input_Error : exception;
+   Adapter_Error : exception;
 
    function "<" (Left  : Adapter_Type;
                  Right : Adapter_Type) return Boolean;
@@ -76,6 +85,9 @@ package Power_Line_Adapter is
 
    function Get_Member_Network_Info (Self                : Adapter_Type;
                                      Network_Device_Name : String) return Network_Info_List_Type;
+
+   function Get_Network_Stats (Self                : Adapter_Type;
+                               Network_Device_Name : String) return Network_Stats_List_Type;
 
    function Get_User_HFID (Self                : Adapter_Type;
                            Network_Device_Name : String) return HFID_String.Bounded_String;
@@ -101,8 +113,10 @@ package Power_Line_Adapter is
 
 private
 
-   Default_Receive_Timeout : constant := 250;
-   Default_Send_Timeout    : constant := 250;
+   Default_Receive_Timeout     : constant        := 250;
+   Default_Send_Timeout        : constant        := 250;
+   Message_No_Response         : constant String := "No response received from adapter";
+   Message_Unexpected_Response : constant String := "Unexpected response received from adapter";
 
    type Adapter_Type is tagged
       record
