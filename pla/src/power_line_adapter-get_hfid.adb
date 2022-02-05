@@ -23,7 +23,7 @@ use type Packet_Sockets.Thin.Payload_Type;
 separate (Power_Line_Adapter)
 
 function Get_HFID (Self                : Adapter_Type;
-                   Arg                 : Interfaces.Unsigned_8;
+                   Kind                : HFID_Kind_Type;
                    Network_Device_Name : String) return HFID_String.Bounded_String is
 
    Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#40#, 16#00#);
@@ -35,7 +35,12 @@ function Get_HFID (Self                : Adapter_Type;
 
 begin
 
-   Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, Arg, others => 16#00#);
+   Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#25#, others => 16#00#);
+
+   case Kind is
+      when MANUFACTURER => Request (10) := 16#1b#;
+      when USER         => null;
+   end case;
 
    begin
 

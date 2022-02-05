@@ -16,10 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Exceptions;
-with Interfaces;
 with Packet_Sockets.Thin;
-
-use Interfaces;
 
 separate (Power_Line_Adapter)
 
@@ -82,10 +79,12 @@ begin
       X := 7;
       for I in 1 .. Number_Of_Stations loop
 
-         Network_Stats (I).Destination_Address                    := Create_MAC_Address (Octets => Response (X .. X + 5));
+         Network_Stats (I).Destination_Address    := Create_MAC_Address (Octets => Response (X .. X + 5));
          X := X + 6;
-         Network_Stats (I).Average_PHY_Data_Rate_To_Destination   := Interfaces.Unsigned_16 (Response (X)) + 256 * Interfaces.Unsigned_16 (Response (X + 1)); X := X + 2;
-         Network_Stats (I).Average_PHY_Data_Rate_From_Destination := Interfaces.Unsigned_16 (Response (X)) + 256 * Interfaces.Unsigned_16 (Response (X + 1)); X := X + 2;
+         Network_Stats (I).Average_Rate_To_Dest   := Data_Rate_Type (Response (X)) + 256 * Data_Rate_Type (Response (X + 1));
+         X := X + 2;
+         Network_Stats (I).Average_Rate_From_Dest := Data_Rate_Type (Response (X)) + 256 * Data_Rate_Type (Response (X + 1));
+         X := X + 2;
 
       end loop;
 

@@ -16,33 +16,35 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with HFID_String;
-with Interfaces;
 with MAC_Addresses;
-with Octets;
 private with Ada.Streams;
+private with Octets;
 private with Packet_Sockets.Thin;
 
 use MAC_Addresses;
-use Octets;
 
 package Power_Line_Adapter is
 
-   subtype NID_Type is Octets_Type (1 .. 7);
+   type NID_Type is mod 16#40_0000_0000_0000#;
 
    type Adapter_Type is tagged private;
 
+   type Data_Rate_Type    is mod 2048;
    type Network_Kind_Type is (IN_HOME_NETWORK, ACCESS_NETWORK);
+   type Networks_Type     is mod 256;
+   type SNID_Type         is mod 16;
    type Station_Role_Type is (UNASSOC_STA, UNASSOC_CCO, STA, CCO, BACKUP_CCO);
    type Status_Type       is (JOINED, NOT_JOINED_HAVE_NMK, NOT_JOINED_NO_NMK);
+   type TEI_Type          is mod 256;
 
    type Network_Info_Type is
       record
          NID                : NID_Type;
-         SNID               : Interfaces.Unsigned_8;
-         TEI                : Interfaces.Unsigned_8;
+         SNID               : SNID_Type;
+         TEI                : TEI_Type;
          CCo_MAC_Address    : MAC_Address_Type;
          BCCo_MAC_Address   : MAC_Address_Type;
-         Num_Coord_Networks : Interfaces.Unsigned_8;
+         Num_Coord_Networks : Networks_Type;
          Station_Role       : Station_Role_Type;
          Network_Kind       : Network_Kind_Type;
          Status             : Status_Type;
@@ -52,9 +54,9 @@ package Power_Line_Adapter is
 
    type Network_Stats_Type is
       record
-         Destination_Address                    : MAC_Address_Type;
-         Average_PHY_Data_Rate_To_Destination   : Interfaces.Unsigned_16;
-         Average_PHY_Data_Rate_From_Destination : Interfaces.Unsigned_16;
+         Destination_Address    : MAC_Address_Type;
+         Average_Rate_To_Dest   : Data_Rate_Type;
+         Average_Rate_From_Dest : Data_Rate_Type;
       end record;
 
    type Network_Stats_List_Type is array (Positive range <>) of Network_Stats_Type;
@@ -113,10 +115,15 @@ package Power_Line_Adapter is
 
 private
 
+   use Octets;
+
    Default_Receive_Timeout     : constant        := 250;
    Default_Send_Timeout        : constant        := 250;
    Message_No_Response         : constant String := "No response received from adapter";
    Message_Unexpected_Response : constant String := "Unexpected response received from adapter";
+
+   type HFID_Kind_Type     is (MANUFACTURER, USER);
+   type Network_Scope_Type is (MEMBER, ANY);
 
    type Adapter_Type is tagged
       record
@@ -141,11 +148,11 @@ private
    function Generate_NMK (Pass_Phrase : String) return Key_Type;
 
    function Get_HFID (Self                : Adapter_Type;
-                      Arg                 : Interfaces.Unsigned_8;
+                      Kind                : HFID_Kind_Type;
                       Network_Device_Name : String) return HFID_String.Bounded_String;
 
    function Get_Network_Info (Self                : Adapter_Type;
-                              Arg                 : Interfaces.Unsigned_8;
+                              Scope               : Network_Scope_Type;
                               Network_Device_Name : String) return Network_Info_List_Type;
 
    function Get_Octets (HFID : HFID_String.Bounded_String) return HFID_Octets_Type;

@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2016-2021 John Serock
+--  Copyright (C) 2016-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ function Get_User_HFID (Self                : Adapter_Type;
 
 begin
 
-   return Self.Get_HFID (Arg                 => 16#25#,
+   return Self.Get_HFID (Kind                => USER,
                          Network_Device_Name => Network_Device_Name);
 
 end Get_User_HFID;

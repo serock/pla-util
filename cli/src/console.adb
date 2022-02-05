@@ -23,17 +23,22 @@ with Ada.Strings.Maps;
 with Ada.Text_IO;
 with GNAT.Formatted_String;
 with HFID_String;
-with Interfaces;
-with Octets;
 with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
 
 use GNAT.Formatted_String;
-use Octets;
+use type Power_Line_Adapter.NID_Type;
 
 package body Console is
 
-   package Unsigned_16_Text_IO is new Ada.Text_IO.Modular_IO (Num => Interfaces.Unsigned_16);
+   package Data_Rate_Text_IO is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.Data_Rate_Type);
+   package Networks_Text_IO  is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.Networks_Type);
+   package NID_Text_IO       is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.NID_Type);
+   package SNID_Text_IO      is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.SNID_Type);
+   package TEI_Text_IO       is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.TEI_Type);
+
+   function NID_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapter.NID_Type,
+                                                                Put => NID_Text_IO.Put);
 
    Message_Too_Few_Arguments   : constant String                             := "Too few arguments";
    Separator_Character_Mapping : constant Ada.Strings.Maps.Character_Mapping := Ada.Strings.Maps.To_Mapping (From => "-",
@@ -120,6 +125,7 @@ package body Console is
 
       Column_2          : constant                                           := 36;
       Network_Scope     : constant Commands.Network_Scope_Type               := Get_Network_Scope;
+      Network_Info      : Power_Line_Adapter.Network_Info_Type;
       Network_Info_List : constant Power_Line_Adapter.Network_Info_List_Type := Commands.Get_Network_Info (Network_Device_Name => Network_Device_Name,
                                                                                                            Network_Scope       => Network_Scope);
 
@@ -128,38 +134,39 @@ package body Console is
       Ada.Text_IO.Put_Line (Item => "Number of networks:" & Integer'Image (Network_Info_List'Length));
 
       for I in 1 .. Network_Info_List'Length loop
+         Network_Info := Network_Info_List (I);
          Ada.Text_IO.Put_Line (Item => "Network" & Integer'Image (I) & ":");
          Ada.Text_IO.Put (Item => "  NID:");
          Ada.Text_IO.Set_Col (To => Column_2);
-
-         for J in Network_Info_List (I).NID'Range loop
-            Ada.Text_IO.Put (Item => -(Octet_Format (Format => +"%02x", Var => Network_Info_List (I).NID (J))));
-         end loop;
-
-         Ada.Text_IO.New_Line (Spacing => 1);
+         Ada.Text_IO.Put (Item => -(NID_Format (Format => +"%014x", Var => Network_Info.NID)));
+         if (Network_Info.NID and 16#01_0000_0000_0000#) = 0 then
+            Ada.Text_IO.Put_Line (Item => " (SL-SC)");
+         else
+            Ada.Text_IO.Put_Line (Item => " (SL-HS)");
+         end if;
          Ada.Text_IO.Put (Item => "  SNID:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Octet_Text_IO.Put (Item  => Network_Info_List (I).SNID,
-                            Width => 1,
-                            Base  => 10);
+         SNID_Text_IO.Put (Item  => Network_Info.SNID,
+                           Width => 1,
+                           Base  => 10);
          Ada.Text_IO.New_Line (Spacing => 1);
          Ada.Text_IO.Put (Item => "  TEI:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Octet_Text_IO.Put (Item  => Network_Info_List (I).TEI,
-                            Width => 1,
-                            Base  => 10);
+         TEI_Text_IO.Put (Item  => Network_Info.TEI,
+                          Width => 1,
+                          Base  => 10);
          Ada.Text_IO.New_Line (Spacing => 1);
          Ada.Text_IO.Put (Item => "  CCo MAC Address:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Ada.Text_IO.Put_Line (Item => Network_Info_List (I).CCo_MAC_Address.Image);
+         Ada.Text_IO.Put_Line (Item => Network_Info.CCo_MAC_Address.Image);
          Ada.Text_IO.Put (Item => "  Backup CCo MAC Address:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Ada.Text_IO.Put_Line (Network_Info_List (I).BCCo_MAC_Address.Image);
+         Ada.Text_IO.Put_Line (Item => Network_Info.BCCo_MAC_Address.Image);
          Ada.Text_IO.Put (Item => "  Number of Coordinating Networks:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Octet_Text_IO.Put (Item  => Network_Info_List (I).Num_Coord_Networks,
-                            Width => 1,
-                            Base  => 10);
+         Networks_Text_IO.Put (Item  => Network_Info.Num_Coord_Networks,
+                               Width => 1,
+                               Base  => 10);
          Ada.Text_IO.New_Line (Spacing => 1);
          Ada.Text_IO.Put (Item => "  Station Role:");
          Ada.Text_IO.Set_Col (To => Column_2);
@@ -206,15 +213,15 @@ package body Console is
          Ada.Text_IO.Put_Line (Item => Network_Stats_List (I).Destination_Address.Image);
          Ada.Text_IO.Put (Item => "  Avg PHY Data Rate to DA:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Unsigned_16_Text_IO.Put (Item  => Network_Stats_List (I).Average_PHY_Data_Rate_To_Destination,
-                                  Width => 3,
-                                  Base  => 10);
+         Data_Rate_Text_IO.Put (Item  => Network_Stats_List (I).Average_Rate_To_Dest,
+                                Width => 3,
+                                Base  => 10);
          Ada.Text_IO.Put_Line (Item => " Mbps");
          Ada.Text_IO.Put (Item => "  Avg PHY Data Rate from DA:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Unsigned_16_Text_IO.Put (Item  => Network_Stats_List (I).Average_PHY_Data_Rate_From_Destination,
-                                  Width => 3,
-                                  Base  => 10);
+         Data_Rate_Text_IO.Put (Item  => Network_Stats_List (I).Average_Rate_From_Dest,
+                                Width => 3,
+                                Base  => 10);
          Ada.Text_IO.Put_Line (Item => " Mbps");
       end loop;
 

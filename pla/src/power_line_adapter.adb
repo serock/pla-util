@@ -18,6 +18,7 @@
 with Ada.Characters.Latin_1;
 with Ada.Streams;
 with GNAT.SHA256;
+with Interfaces;
 
 use type Ada.Streams.Stream_Element_Offset;
 
@@ -261,7 +262,7 @@ package body Power_Line_Adapter is
                                   Network_Device_Name : String) return Network_Info_List_Type is separate;
 
    function Get_HFID (Self                : Adapter_Type;
-                      Arg                 : Interfaces.Unsigned_8;
+                      Kind                : HFID_Kind_Type;
                       Network_Device_Name : String) return HFID_String.Bounded_String is separate;
 
    function Get_Manufacturer_HFID (Self                : Adapter_Type;
@@ -270,8 +271,8 @@ package body Power_Line_Adapter is
    function Get_Member_Network_Info (Self                : Adapter_Type;
                                      Network_Device_Name : String) return Network_Info_List_Type is separate;
 
-   function Get_Network_Info (Self   : Adapter_Type;
-                              Arg    : Interfaces.Unsigned_8;
+   function Get_Network_Info (Self                : Adapter_Type;
+                              Scope               : Network_Scope_Type;
                               Network_Device_Name : String) return Network_Info_List_Type is separate;
 
    function Get_Network_Stats (Self                : Adapter_Type;
