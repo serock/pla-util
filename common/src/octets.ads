@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2021 John Serock
+--  Copyright (C) 2021-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -17,15 +17,17 @@
 ------------------------------------------------------------------------
 with Ada.Text_IO;
 with GNAT.Formatted_String;
-with Interfaces;
 
 package Octets is
 
-   type Octets_Type is array (Positive range <>) of Interfaces.Unsigned_8;
+   type Octet_Type is mod 256;
+   for Octet_Type'Size use 8;
 
-   package Octet_Text_IO is new Ada.Text_IO.Modular_IO (Num => Interfaces.Unsigned_8);
+   type Octets_Type is array (Positive range <>) of Octet_Type;
 
-   function Octet_Format is new GNAT.Formatted_String.Mod_Format (Int => Interfaces.Unsigned_8,
+   package Octet_Text_IO is new Ada.Text_IO.Modular_IO (Num => Octet_Type);
+
+   function Octet_Format is new GNAT.Formatted_String.Mod_Format (Int => Octet_Type,
                                                                   Put => Octet_Text_IO.Put);
 
 end Octets;

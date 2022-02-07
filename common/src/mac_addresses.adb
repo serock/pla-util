@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 --  pla-util - A powerline adapter utility
---  Copyright (C) 2021 John Serock
+--  Copyright (C) 2021-2022 John Serock
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -16,10 +16,8 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with GNAT.Formatted_String;
-with Interfaces;
 
 use GNAT.Formatted_String;
-use Interfaces;
 
 package body MAC_Addresses is
 

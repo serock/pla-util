@@ -18,7 +18,6 @@
 with Ada.Characters.Latin_1;
 with Ada.Streams;
 with GNAT.SHA256;
-with Interfaces;
 
 use type Ada.Streams.Stream_Element_Offset;
 
@@ -96,7 +95,7 @@ package body Power_Line_Adapter is
 
       J := 1;
       for I in Key_Type'Range loop
-         Key (I) := Interfaces.Unsigned_8 (Digest (J));
+         Key (I) := Octet_Type (Digest (J));
          J       := J + 1;
       end loop;
 
