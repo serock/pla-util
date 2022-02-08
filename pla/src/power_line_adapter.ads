@@ -122,12 +122,13 @@ private
    Message_No_Response         : constant String := "No response received from adapter";
    Message_Unexpected_Response : constant String := "Unexpected response received from adapter";
 
-   type HFID_Kind_Type     is (MANUFACTURER, USER);
-   type Network_Scope_Type is (MEMBER, ANY);
+   type HFID_Kind_Type         is (MANUFACTURER, USER);
+   type Network_Interface_Type is (MII0, MII1, PLC, SDR);
+   type Network_Scope_Type     is (MEMBER, ANY);
 
    type Adapter_Type is tagged
       record
-         Network_Interface : Natural;
+         Network_Interface : Network_Interface_Type;
          MAC_Address       : MAC_Address_Type;
          HFID              : HFID_String.Bounded_String;
       end record;
@@ -136,7 +137,7 @@ private
    subtype Key_Type         is Octets_Type (1 .. 16);
 
    procedure Create (Adapter           : in out Adapter_Type;
-                     Network_Interface :        Natural;
+                     Network_Interface :        Network_Interface_Type;
                      MAC_Address       :        MAC_Address_Type;
                      HFID              :        HFID_String.Bounded_String);
 

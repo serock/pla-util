@@ -44,7 +44,7 @@ package body Power_Line_Adapter is
    end "=";
 
    procedure Create (Adapter           : in out Adapter_Type;
-                     Network_Interface :        Natural;
+                     Network_Interface :        Network_Interface_Type;
                      MAC_Address       :        MAC_Address_Type;
                      HFID              :        HFID_String.Bounded_String) is
 
@@ -142,8 +142,7 @@ package body Power_Line_Adapter is
 
    begin
 
-      return Self.MAC_Address.Image & ' ' &
-        HFID_String.To_String (Source => Self.HFID);
+      return Self.MAC_Address.Image & " via " & Self.Network_Interface'Image & " interface, HFID: " & HFID_String.To_String (Source => Self.HFID);
 
    end Image;
 

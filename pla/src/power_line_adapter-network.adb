@@ -28,7 +28,7 @@ package body Power_Line_Adapter.Network is
       Adapters          : Power_Line_Adapter_Sets.Set (Capacity => Max_Adapters);
       Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#71#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
       MAC_Address       : MAC_Address_Type;
-      Network_Interface : Natural;
+      Network_Interface : Network_Interface_Type;
       Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
       Response          : Packet_Sockets.Thin.Payload_Type (1 .. 75);
       Response_Length   : Natural;
@@ -62,7 +62,14 @@ package body Power_Line_Adapter.Network is
                raise Adapter_Error with Message_Unexpected_Response;
             end if;
 
-            Network_Interface := Natural (Response (10));
+            case Response (10) is
+               when 0      => Network_Interface := MII0;
+               when 1      => Network_Interface := MII1;
+               when 2 | 3  => Network_Interface := PLC;
+               when 4      => Network_Interface := SDR;
+               when others =>
+                  raise Adapter_Error with Message_Unexpected_Response;
+            end case;
 
             Adapter.Create (Network_Interface => Network_Interface,
                             MAC_Address       => MAC_Address,

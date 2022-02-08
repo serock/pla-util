@@ -10,7 +10,8 @@ This program has been used with the following power line adapters:
 * D-Link DHP-700AV (uses BCM60500)
 * NETGEAR PLP1000 (uses BCM60333)
 * NETGEAR PLP2000 (uses BCM60500)
-* Tenda PH3
+* Tenda PH3 (uses BCM60355)
+* TP-Link TL-PA7017 (uses BCM60355)
 * TP-Link TL-PA9020 (uses BCM60500)
 
 ## Development Environment
