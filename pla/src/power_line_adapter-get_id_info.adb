@@ -74,13 +74,7 @@ begin
 
    if Id_Info.Homeplug_AV_Version = HPAV_2_0 then
 
-      case Response (12) is
-         when 16#00# => Id_Info.MCS := MIMO_Not_Supported;
-         when 16#01# => Id_Info.MCS := Selection_Diversity;
-         when 16#02# => Id_Info.MCS := MIMO_With_Beam_Forming;
-         when others =>
-            raise Adapter_Error with Message_Unexpected_Response;
-      end case;
+      Id_Info.MCS := MCS_Type'Val (Response (12));
 
    else
 
