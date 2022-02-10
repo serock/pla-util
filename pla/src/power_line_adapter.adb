@@ -263,6 +263,9 @@ package body Power_Line_Adapter is
                       Kind                : HFID_Kind_Type;
                       Network_Device_Name : String) return HFID_String.Bounded_String is separate;
 
+   function Get_Id_Info (Self                : Adapter_Type;
+                         Network_Device_Name : String) return Id_Info_Type is separate;
+
    function Get_Manufacturer_HFID (Self                : Adapter_Type;
                                    Network_Device_Name : String) return HFID_String.Bounded_String is separate;
 

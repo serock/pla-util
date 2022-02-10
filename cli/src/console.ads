@@ -16,6 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 private with Commands;
+private with Power_Line_Adapter;
 
 package Console is
 
@@ -28,10 +29,12 @@ private
    procedure Discover (Network_Device_Name : String);
    procedure Get_HFID (Network_Device_Name : String);
    function Get_HFID_Level return Commands.HFID_Level_Type;
+   procedure Get_Id_Info (Network_Device_Name : String);
    procedure Get_Network_Info (Network_Device_Name : String);
    function Get_Network_Scope return Commands.Network_Scope_Type;
    procedure Get_Network_Stats (Network_Device_Name : String);
    function Get_PLA_MAC_Address return String;
+   function Image (HPAV_Version : Power_Line_Adapter.HPAV_Version_Type) return String;
    procedure Reset (Network_Device_Name : String);
    procedure Restart (Network_Device_Name : String);
    procedure Set_HFID (Network_Device_Name : String);

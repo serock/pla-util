@@ -31,6 +31,8 @@ package body Commands is
    function Get_HFID (Network_Device_Name : String;
                       HFID_Level          : HFID_Level_Type) return HFID_String.Bounded_String is separate;
 
+   function Get_Id_Info (Network_Device_Name : String) return Power_Line_Adapter.Id_Info_Type is separate;
+
    function Get_Network_Info (Network_Device_Name : String;
                               Network_Scope       : Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
 

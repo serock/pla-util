@@ -64,6 +64,7 @@ To run the program, use one of the following commands:
 ./pla-util <nic> restart <pla-mac-address>
 ./pla-util <nic> get-hfid manufacturer
 ./pla-util <nic> get-hfid user
+./pla-util <nic> get-id-info
 ./pla-util <nic> get-network-info member
 ./pla-util <nic> get-network-info any
 ./pla-util <nic> get-network-stats

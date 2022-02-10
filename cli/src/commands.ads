@@ -25,6 +25,7 @@ package Commands is
                          Check_NMK,
                          Discover,
                          Get_HFID,
+                         Get_Id_Info,
                          Get_Network_Info,
                          Get_Network_Stats,
                          Reset,
@@ -50,6 +51,8 @@ package Commands is
 
    function Get_HFID (Network_Device_Name : String;
                       HFID_Level          : HFID_Level_Type) return HFID_String.Bounded_String;
+
+   function Get_Id_Info (Network_Device_Name : String) return Power_Line_Adapter.Id_Info_Type;
 
    function Get_Network_Info (Network_Device_Name : String;
                               Network_Scope       : Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type;

@@ -25,17 +25,24 @@ use MAC_Addresses;
 
 package Power_Line_Adapter is
 
-   type NID_Type is mod 16#40_0000_0000_0000#;
-
    type Adapter_Type is tagged private;
 
    type Data_Rate_Type    is mod 2048;
-   type Network_Kind_Type is (IN_HOME_NETWORK, ACCESS_NETWORK);
+   type HPAV_Version_Type is (HPAV_1_1, HPAV_2_0, Not_HPAV);
+   type MCS_Type          is (MIMO_Not_Supported, Selection_Diversity, MIMO_With_Beam_Forming);
+   type Network_Kind_Type is (In_Home_Network, Access_Network);
    type Networks_Type     is mod 256;
+   type NID_Type          is mod 16#40_0000_0000_0000#;
    type SNID_Type         is mod 16;
-   type Station_Role_Type is (UNASSOC_STA, UNASSOC_CCO, STA, CCO, BACKUP_CCO);
-   type Status_Type       is (JOINED, NOT_JOINED_HAVE_NMK, NOT_JOINED_NO_NMK);
+   type Station_Role_Type is (Unassoc_STA, Unassoc_CCo, STA, CCo, Backup_CCo);
+   type Status_Type       is (Joined, Not_Joined_Have_NMK, Not_Joined_No_NMK);
    type TEI_Type          is mod 256;
+
+   type Id_Info_Type is
+      record
+         Homeplug_AV_Version : HPAV_Version_Type;
+         MCS                 : MCS_Type;
+      end record;
 
    type Network_Info_Type is
       record
@@ -81,6 +88,9 @@ package Power_Line_Adapter is
 
    function Get_Any_Network_Info (Self                : Adapter_Type;
                                   Network_Device_Name : String) return Network_Info_List_Type;
+
+   function Get_Id_Info (Self                : Adapter_Type;
+                         Network_Device_Name : String) return Id_Info_Type;
 
    function Get_Manufacturer_HFID (Self                : Adapter_Type;
                                    Network_Device_Name : String) return HFID_String.Bounded_String;

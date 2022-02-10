@@ -121,6 +121,22 @@ package body Console is
 
    end Get_HFID_Level;
 
+   procedure Get_Id_Info (Network_Device_Name : String) is
+
+      Column_2 : constant                                 := 22;
+      Id_Info  : constant Power_Line_Adapter.Id_Info_Type := Commands.Get_Id_Info (Network_Device_Name => Network_Device_Name);
+
+   begin
+
+      Ada.Text_IO.Put (Item => "HomePlug AV Version:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Ada.Text_IO.Put_Line (Item => Image (HPAV_Version => Id_Info.Homeplug_AV_Version));
+      Ada.Text_IO.Put (Item => "MCS:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Ada.Text_IO.Put_Line (Item => Id_Info.MCS'Image);
+
+   end Get_Id_Info;
+
    procedure Get_Network_Info (Network_Device_Name : String) is
 
       Column_2          : constant                                           := 36;
@@ -237,6 +253,17 @@ package body Console is
 
    end Get_PLA_MAC_Address;
 
+   function Image (HPAV_Version : Power_Line_Adapter.HPAV_Version_Type) return String is
+   begin
+
+      case HPAV_Version is
+         when Power_Line_Adapter.HPAV_1_1 => return "1.1";
+         when Power_Line_Adapter.HPAV_2_0 => return "2.0";
+         when Power_Line_Adapter.Not_HPAV => return "Not a HomePlug AV device";
+      end case;
+
+   end Image;
+
    procedure Process_Command_Line is
 
    begin
@@ -283,6 +310,14 @@ package body Console is
                end if;
 
                Get_HFID (Network_Device_Name => Network_Device_Name);
+
+            when Commands.Get_Id_Info =>
+
+               if Ada.Command_Line.Argument_Count < 2 then
+                  raise Syntax_Error with Message_Too_Few_Arguments;
+               end if;
+
+               Get_Id_Info (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_Network_Info =>
 
@@ -343,6 +378,7 @@ package body Console is
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> restart <pla-mac-address>");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid manufacturer");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid user");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-id-info");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info member");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info any");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-stats");
