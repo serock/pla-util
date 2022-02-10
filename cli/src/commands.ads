@@ -24,6 +24,7 @@ package Commands is
    type Command_Type is (Check_DAK,
                          Check_NMK,
                          Discover,
+                         Get_Capabilities,
                          Get_HFID,
                          Get_Id_Info,
                          Get_Network_Info,
@@ -48,6 +49,8 @@ package Commands is
                        Pass_Phrase         : String) return Boolean;
 
    function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set;
+
+   function Get_Capabilities (Network_Device_Name : String) return Power_Line_Adapter.Capabilities_Type;
 
    function Get_HFID (Network_Device_Name : String;
                       HFID_Level          : HFID_Level_Type) return HFID_String.Bounded_String;

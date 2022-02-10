@@ -28,6 +28,8 @@ package body Commands is
 
    function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set is separate;
 
+   function Get_Capabilities (Network_Device_Name : String) return Power_Line_Adapter.Capabilities_Type is separate;
+
    function Get_HFID (Network_Device_Name : String;
                       HFID_Level          : HFID_Level_Type) return HFID_String.Bounded_String is separate;
 

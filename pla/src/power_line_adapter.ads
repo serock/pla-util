@@ -25,18 +25,32 @@ use MAC_Addresses;
 
 package Power_Line_Adapter is
 
-   type Adapter_Type is tagged private;
+   type Adapter_Type                is tagged private;
+   type Capable_Type                is (Not_Capable, Capable);
+   type Data_Rate_Type              is mod 2048;
+   type HPAV_Version_Type           is (HPAV_1_1, HPAV_2_0, Not_HPAV);
+   type Implementation_Version_Type is mod 65536;
+   type MCS_Type                    is (MIMO_Not_Supported, Selection_Diversity, MIMO_With_Beam_Forming);
+   type Network_Kind_Type           is (In_Home_Network, Access_Network);
+   type Networks_Type               is mod 256;
+   type NID_Type                    is mod 16#40_0000_0000_0000#;
+   type OUI_Type                    is mod 16#100_0000#;
+   type SNID_Type                   is mod 16;
+   type Station_Role_Type           is (Unassoc_STA, Unassoc_CCo, STA, CCo, Backup_CCo);
+   type Status_Type                 is (Joined, Not_Joined_Have_NMK, Not_Joined_No_NMK);
+   type TEI_Type                    is mod 256;
 
-   type Data_Rate_Type    is mod 2048;
-   type HPAV_Version_Type is (HPAV_1_1, HPAV_2_0, Not_HPAV);
-   type MCS_Type          is (MIMO_Not_Supported, Selection_Diversity, MIMO_With_Beam_Forming);
-   type Network_Kind_Type is (In_Home_Network, Access_Network);
-   type Networks_Type     is mod 256;
-   type NID_Type          is mod 16#40_0000_0000_0000#;
-   type SNID_Type         is mod 16;
-   type Station_Role_Type is (Unassoc_STA, Unassoc_CCo, STA, CCo, Backup_CCo);
-   type Status_Type       is (Joined, Not_Joined_Have_NMK, Not_Joined_No_NMK);
-   type TEI_Type          is mod 256;
+   subtype AV_Version_Type is HPAV_Version_Type range HPAV_1_1 .. HPAV_2_0;
+
+   type Capabilities_Type is
+      record
+         AV_Version             : AV_Version_Type;
+         MAC_Address            : MAC_Address_Type;
+         OUI                    : OUI_Type;
+         Backup_CCo             : Capable_Type;
+         Proxy                  : Capable_Type;
+         Implementation_Version : Implementation_Version_Type;
+      end record;
 
    type Id_Info_Type is
       record
@@ -88,6 +102,9 @@ package Power_Line_Adapter is
 
    function Get_Any_Network_Info (Self                : Adapter_Type;
                                   Network_Device_Name : String) return Network_Info_List_Type;
+
+   function Get_Capabilities (Self                : Adapter_Type;
+                              Network_Device_Name : String) return Capabilities_Type;
 
    function Get_Id_Info (Self                : Adapter_Type;
                          Network_Device_Name : String) return Id_Info_Type;

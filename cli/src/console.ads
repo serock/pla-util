@@ -27,6 +27,7 @@ private
    procedure Check_DAK (Network_Device_Name : String);
    procedure Check_NMK (Network_Device_Name : String);
    procedure Discover (Network_Device_Name : String);
+   procedure Get_Capabilities (Network_Device_Name : String);
    procedure Get_HFID (Network_Device_Name : String);
    function Get_HFID_Level return Commands.HFID_Level_Type;
    procedure Get_Id_Info (Network_Device_Name : String);

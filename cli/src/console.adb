@@ -27,6 +27,7 @@ with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
 
 use GNAT.Formatted_String;
+use type Ada.Text_IO.Count;
 use type Power_Line_Adapter.NID_Type;
 
 package body Console is
@@ -34,11 +35,15 @@ package body Console is
    package Data_Rate_Text_IO is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.Data_Rate_Type);
    package Networks_Text_IO  is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.Networks_Type);
    package NID_Text_IO       is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.NID_Type);
+   package OUI_Text_IO       is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.OUI_Type);
    package SNID_Text_IO      is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.SNID_Type);
    package TEI_Text_IO       is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.TEI_Type);
 
    function NID_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapter.NID_Type,
                                                                 Put => NID_Text_IO.Put);
+
+   function OUI_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapter.OUI_Type,
+                                                                Put => OUI_Text_IO.Put);
 
    Message_Too_Few_Arguments   : constant String                             := "Too few arguments";
    Separator_Character_Mapping : constant Ada.Strings.Maps.Character_Mapping := Ada.Strings.Maps.To_Mapping (From => "-",
@@ -91,6 +96,35 @@ package body Console is
       end loop;
 
    end Discover;
+
+   procedure Get_Capabilities (Network_Device_Name : String) is
+
+      Column_2     : constant                                      := 25;
+      Capabilities : constant Power_Line_Adapter.Capabilities_Type := Commands.Get_Capabilities (Network_Device_Name => Network_Device_Name);
+
+   begin
+
+      Ada.Text_IO.Put (Item => "AV Version:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Ada.Text_IO.Put_Line (Item => Image (HPAV_Version => Capabilities.AV_Version));
+      Ada.Text_IO.Put (Item => "MAC Address:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Ada.Text_IO.Put_Line (Item => Capabilities.MAC_Address.Image);
+      Ada.Text_IO.Put (Item => "OUI:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Ada.Text_IO.Put (Item => -(OUI_Format (Format => +"%06x", Var => Capabilities.OUI)));
+      Ada.Text_IO.New_Line (Spacing => 1);
+      Ada.Text_IO.Put (Item => "Backup CCo:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Ada.Text_IO.Put_Line (Item => Capabilities.Backup_CCo'Image);
+      Ada.Text_IO.Put (Item => "Proxy:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Ada.Text_IO.Put_Line (Item => Capabilities.Proxy'Image);
+      Ada.Text_IO.Put (Item => "Implementation Version:");
+      Ada.Text_IO.Set_Col (To => Column_2 - 1);
+      Ada.Text_IO.Put_Line (Item => Capabilities.Implementation_Version'Image);
+
+   end Get_Capabilities;
 
    procedure Get_HFID (Network_Device_Name : String) is
 
@@ -302,6 +336,14 @@ package body Console is
             when Commands.Discover =>
 
                Discover (Network_Device_Name => Network_Device_Name);
+
+            when Commands.Get_Capabilities =>
+
+               if Ada.Command_Line.Argument_Count < 2 then
+                  raise Syntax_Error with Message_Too_Few_Arguments;
+               end if;
+
+               Get_Capabilities (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_HFID =>
 
