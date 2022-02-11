@@ -302,9 +302,16 @@ package body Console is
 
    begin
 
-      if Ada.Command_Line.Argument_Count < 2 then
-         raise Syntax_Error with Message_Too_Few_Arguments;
-      end if;
+      case Ada.Command_Line.Argument_Count is
+         when 0 =>
+            Show_Version;
+            Show_Help;
+            return;
+         when 1 =>
+            raise Syntax_Error with Message_Too_Few_Arguments;
+         when others =>
+            null;
+      end case;
 
       declare
 
@@ -339,10 +346,6 @@ package body Console is
 
             when Commands.Get_Capabilities =>
 
-               if Ada.Command_Line.Argument_Count < 2 then
-                  raise Syntax_Error with Message_Too_Few_Arguments;
-               end if;
-
                Get_Capabilities (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_HFID =>
@@ -354,10 +357,6 @@ package body Console is
                Get_HFID (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_Id_Info =>
-
-               if Ada.Command_Line.Argument_Count < 2 then
-                  raise Syntax_Error with Message_Too_Few_Arguments;
-               end if;
 
                Get_Id_Info (Network_Device_Name => Network_Device_Name);
 
@@ -413,23 +412,7 @@ package body Console is
       when Error : Syntax_Error =>
          Ada.Text_IO.Put_Line (Item => "Error: " & Ada.Exceptions.Exception_Message (X => Error));
          Ada.Text_IO.New_Line (Spacing => 1);
-         Ada.Text_IO.Put_Line (Item => "Try one of the following commands:");
-         Ada.Text_IO.New_Line (Spacing => 1);
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> discover");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> reset <pla-mac-address>");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> restart <pla-mac-address>");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid manufacturer");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid user");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-id-info");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info member");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info any");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-stats");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-hfid <id>");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-nmk <pass-phrase>");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-nmk <pass-phrase>");
-         Ada.Text_IO.New_Line (Spacing => 1);
-         Ada.Text_IO.Put_Line (Item => "where <NIC> is the name of an ethernet network device");
+         Show_Help;
       when Error : Commands.Command_Error | Power_Line_Adapter.Adapter_Error =>
          Ada.Text_IO.Put_Line (Item => "Error: " & Ada.Exceptions.Exception_Message (X => Error));
 
@@ -485,6 +468,34 @@ package body Console is
       Ada.Text_IO.Put_Line (Item => "Network Membership Key set");
 
    end Set_NMK;
+
+   procedure Show_Help is
+   begin
+         Ada.Text_IO.Put_Line (Item => "Try one of the following commands:");
+         Ada.Text_IO.New_Line (Spacing => 1);
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> discover");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> reset <pla-mac-address>");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> restart <pla-mac-address>");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-capabilities");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid manufacturer");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid user");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-id-info");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info member");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info any");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-stats");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-hfid <id>");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-nmk <pass-phrase>");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-nmk <pass-phrase>");
+         Ada.Text_IO.New_Line (Spacing => 1);
+         Ada.Text_IO.Put_Line (Item => "where <NIC> is the name of an ethernet network device");
+   end Show_Help;
+
+   procedure Show_Version is
+   begin
+         Ada.Text_IO.Put_Line (Item => "pla-util version 1.1.0");
+         Ada.Text_IO.New_Line (Spacing => 1);
+   end Show_Version;
 
    function To_Command (Source : String) return Commands.Command_Type is
 

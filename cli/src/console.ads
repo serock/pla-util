@@ -40,6 +40,8 @@ private
    procedure Restart (Network_Device_Name : String);
    procedure Set_HFID (Network_Device_Name : String);
    procedure Set_NMK (Network_Device_Name : String);
+   procedure Show_Help;
+   procedure Show_Version;
    function To_Command (Source : String) return Commands.Command_Type;
 
 end Console;
