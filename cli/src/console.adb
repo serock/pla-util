@@ -189,7 +189,7 @@ package body Console is
          Ada.Text_IO.Put (Item => "  NID:");
          Ada.Text_IO.Set_Col (To => Column_2);
          Ada.Text_IO.Put (Item => -(NID_Format (Format => +"%014x", Var => Network_Info.NID)));
-         if (Network_Info.NID and 16#01_0000_0000_0000#) = 0 then
+         if (Network_Info.NID and 16#10_0000_0000_0000#) = 0 then
             Ada.Text_IO.Put_Line (Item => " (SL-SC)");
          else
             Ada.Text_IO.Put_Line (Item => " (SL-HS)");
