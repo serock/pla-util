@@ -16,6 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with HFID_String;
+with MAC_Addresses;
 with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
 
@@ -60,18 +61,23 @@ package Commands is
    function Get_Network_Info (Network_Device_Name : String;
                               Network_Scope       : Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type;
 
-   function Get_Network_Stats (Network_Device_Name : String) return Power_Line_Adapter.Network_Stats_List_Type;
+   function Get_Network_Stats (Network_Device_Name : String;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Network_Stats_List_Type;
 
    procedure Reset (Network_Device_Name : String;
-                    PLA_MAC_Address     : String);
+                    PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
    procedure Restart (Network_Device_Name : String;
-                      PLA_MAC_Address     : String);
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
    procedure Set_HFID (Network_Device_Name : String;
                        HFID                : HFID_String.Bounded_String);
 
    procedure Set_NMK (Network_Device_Name : String;
                       Pass_Phrase         : String);
+
+private
+
+   No_MAC_Address : constant String := "00:00:00:00:00:00";
 
 end Commands;

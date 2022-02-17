@@ -16,6 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 private with Commands;
+private with MAC_Addresses;
 private with Power_Line_Adapter;
 
 package Console is
@@ -34,7 +35,7 @@ private
    procedure Get_Network_Info (Network_Device_Name : String);
    function Get_Network_Scope return Commands.Network_Scope_Type;
    procedure Get_Network_Stats (Network_Device_Name : String);
-   function Get_PLA_MAC_Address return String;
+   function Get_PLA_MAC_Address (Image : String) return MAC_Addresses.MAC_Address_Type;
    function Image (HPAV_Version : Power_Line_Adapter.HPAV_Version_Type) return String;
    procedure Reset (Network_Device_Name : String);
    procedure Restart (Network_Device_Name : String);

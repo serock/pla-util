@@ -131,10 +131,10 @@ package body Power_Line_Adapter is
    end Get_Octets;
 
    function Has_MAC_Address (Self        : Adapter_Type;
-                             MAC_Address : String) return Boolean is
+                             MAC_Address : MAC_Addresses.MAC_Address_Type) return Boolean is
    begin
 
-      return Self.MAC_Address.Image = MAC_Address;
+      return Self.MAC_Address = MAC_Address;
 
    end Has_MAC_Address;
 

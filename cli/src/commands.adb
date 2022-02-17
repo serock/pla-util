@@ -38,13 +38,14 @@ package body Commands is
    function Get_Network_Info (Network_Device_Name : String;
                               Network_Scope       : Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
 
-   function Get_Network_Stats (Network_Device_Name : String) return Power_Line_Adapter.Network_Stats_List_Type is separate;
+   function Get_Network_Stats (Network_Device_Name : String;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Network_Stats_List_Type is separate;
 
    procedure Reset (Network_Device_Name : String;
-                    PLA_MAC_Address     : String) is separate;
+                    PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is separate;
 
    procedure Restart (Network_Device_Name : String;
-                      PLA_MAC_Address     : String) is separate;
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is separate;
 
    procedure Set_HFID (Network_Device_Name : String;
                        HFID                : HFID_String.Bounded_String) is separate;

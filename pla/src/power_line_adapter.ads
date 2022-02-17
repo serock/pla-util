@@ -122,7 +122,7 @@ package Power_Line_Adapter is
                            Network_Device_Name : String) return HFID_String.Bounded_String;
 
    function Has_MAC_Address (Self        : Adapter_Type;
-                             MAC_Address : String) return Boolean;
+                             MAC_Address : MAC_Addresses.MAC_Address_Type) return Boolean;
 
    function Image (Self : Adapter_Type) return String;
 
@@ -144,8 +144,8 @@ private
 
    use Octets;
 
-   Default_Receive_Timeout     : constant        := 250;
-   Default_Send_Timeout        : constant        := 250;
+   Default_Receive_Timeout     : constant        := 500;
+   Default_Send_Timeout        : constant        := 500;
    Message_No_Response         : constant String := "No response received from adapter";
    Message_Unexpected_Response : constant String := "Unexpected response received from adapter";
 

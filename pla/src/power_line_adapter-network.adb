@@ -22,13 +22,14 @@ use type Packet_Sockets.Thin.Payload_Type;
 
 package body Power_Line_Adapter.Network is
 
-   function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set is
+   function Discover (Network_Device_Name : String;
+                      MAC_Address         : MAC_Address_Type := Broadcast_MAC_Address) return Power_Line_Adapter_Sets.Set is
 
       Adapter           : Adapter_Type;
       Adapters          : Power_Line_Adapter_Sets.Set (Capacity => Max_Adapters);
       Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#71#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
-      MAC_Address       : MAC_Address_Type;
       Network_Interface : Network_Interface_Type;
+      PLA_MAC_Address   : MAC_Address_Type;
       Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
       Response          : Packet_Sockets.Thin.Payload_Type (1 .. 75);
       Response_Length   : Natural;
@@ -47,12 +48,12 @@ package body Power_Line_Adapter.Network is
                       Send_Timeout    => Default_Send_Timeout);
 
          Socket.Send (Payload => Request,
-                      To      => Broadcast_MAC_Address);
+                      To      => MAC_Address);
 
          loop
             Socket.Receive (Payload        => Response,
                             Payload_Length => Response_Length,
-                            From           => MAC_Address);
+                            From           => PLA_MAC_Address);
 
             if Response_Length = 0 then
                exit;
@@ -72,7 +73,7 @@ package body Power_Line_Adapter.Network is
             end case;
 
             Adapter.Create (Network_Interface => Network_Interface,
-                            MAC_Address       => MAC_Address,
+                            MAC_Address       => PLA_MAC_Address,
                             HFID              => Packet_Sockets.Thin.To_HFID_String (Payload => Response (12 .. Response_Length)));
 
             Adapters.Include (New_Item => Adapter);

@@ -249,41 +249,57 @@ package body Console is
 
    procedure Get_Network_Stats (Network_Device_Name : String) is
 
-      Column_2           : constant                                            := 30;
-      Network_Stats_List : constant Power_Line_Adapter.Network_Stats_List_Type := Commands.Get_Network_Stats (Network_Device_Name => Network_Device_Name);
+      Column_2        : constant                       := 30;
+      PLA_MAC_Address : MAC_Addresses.MAC_Address_Type := MAC_Addresses.Null_MAC_Address;
 
    begin
 
-      Ada.Text_IO.Put_Line (Item => "Number of stations:" & Integer'Image (Network_Stats_List'Length));
+      if Ada.Command_Line.Argument_Count = 3 then
+         PLA_MAC_Address := Get_PLA_MAC_Address (Image => Ada.Command_Line.Argument (Number => 3));
+      end if;
 
-      for I in 1 .. Network_Stats_List'Length loop
-         Ada.Text_IO.Put_Line (Item => "Station" & Integer'Image (I) & ":");
-         Ada.Text_IO.Put (Item => "  Destination Address (DA):");
-         Ada.Text_IO.Set_Col (To => Column_2);
-         Ada.Text_IO.Put_Line (Item => Network_Stats_List (I).Destination_Address.Image);
-         Ada.Text_IO.Put (Item => "  Avg PHY Data Rate to DA:");
-         Ada.Text_IO.Set_Col (To => Column_2);
-         Data_Rate_Text_IO.Put (Item  => Network_Stats_List (I).Average_Rate_To_Dest,
-                                Width => 3,
-                                Base  => 10);
-         Ada.Text_IO.Put_Line (Item => " Mbps");
-         Ada.Text_IO.Put (Item => "  Avg PHY Data Rate from DA:");
-         Ada.Text_IO.Set_Col (To => Column_2);
-         Data_Rate_Text_IO.Put (Item  => Network_Stats_List (I).Average_Rate_From_Dest,
-                                Width => 3,
-                                Base  => 10);
-         Ada.Text_IO.Put_Line (Item => " Mbps");
-      end loop;
+      declare
+
+         Network_Stats_List : constant Power_Line_Adapter.Network_Stats_List_Type := Commands.Get_Network_Stats (Network_Device_Name => Network_Device_Name,
+                                                                                                                 PLA_MAC_Address     => PLA_MAC_Address);
+
+      begin
+
+         Ada.Text_IO.Put_Line (Item => "Number of stations:" & Integer'Image (Network_Stats_List'Length));
+
+         for I in 1 .. Network_Stats_List'Length loop
+            Ada.Text_IO.Put_Line (Item => "Station" & Integer'Image (I) & ":");
+            Ada.Text_IO.Put (Item => "  Destination Address (DA):");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Ada.Text_IO.Put_Line (Item => Network_Stats_List (I).Destination_Address.Image);
+            Ada.Text_IO.Put (Item => "  Avg PHY Data Rate to DA:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Data_Rate_Text_IO.Put (Item  => Network_Stats_List (I).Average_Rate_To_Dest,
+                                   Width => 3,
+                                   Base  => 10);
+            Ada.Text_IO.Put_Line (Item => " Mbps");
+            Ada.Text_IO.Put (Item => "  Avg PHY Data Rate from DA:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Data_Rate_Text_IO.Put (Item  => Network_Stats_List (I).Average_Rate_From_Dest,
+                                   Width => 3,
+                                   Base  => 10);
+            Ada.Text_IO.Put_Line (Item => " Mbps");
+         end loop;
+
+      end;
 
    end Get_Network_Stats;
 
-   function Get_PLA_MAC_Address return String is
-
-      PLA_MAC_Address_Arg : constant String := Ada.Command_Line.Argument (Number => 3);
-
+   function Get_PLA_MAC_Address (Image : String) return MAC_Addresses.MAC_Address_Type is
    begin
 
-      return PLA_MAC_Address_Arg;
+      return MAC_Addresses.Value (Image => Image);
+
+   exception
+
+      when Constraint_Error =>
+
+         raise MAC_Addresses.MAC_Address_Error with "Invalid MAC address format " & Image;
 
    end Get_PLA_MAC_Address;
 
@@ -410,17 +426,20 @@ package body Console is
    exception
 
       when Error : Syntax_Error =>
+
          Ada.Text_IO.Put_Line (Item => "Error: " & Ada.Exceptions.Exception_Message (X => Error));
          Ada.Text_IO.New_Line (Spacing => 1);
          Show_Help;
-      when Error : Commands.Command_Error | Power_Line_Adapter.Adapter_Error =>
+
+      when Error : Commands.Command_Error | Power_Line_Adapter.Adapter_Error | MAC_Addresses.MAC_Address_Error =>
+
          Ada.Text_IO.Put_Line (Item => "Error: " & Ada.Exceptions.Exception_Message (X => Error));
 
    end Process_Command_Line;
 
    procedure Reset (Network_Device_Name : String) is
 
-      PLA_MAC_Address : constant String := Get_PLA_MAC_Address;
+      PLA_MAC_Address : constant MAC_Addresses.MAC_Address_Type := Get_PLA_MAC_Address (Image => Ada.Command_Line.Argument (Number => 3));
 
    begin
 
@@ -433,7 +452,7 @@ package body Console is
 
    procedure Restart (Network_Device_Name : String) is
 
-      PLA_MAC_Address : constant String := Get_PLA_MAC_Address;
+      PLA_MAC_Address : constant MAC_Addresses.MAC_Address_Type := Get_PLA_MAC_Address (Image => Ada.Command_Line.Argument (Number => 3));
 
    begin
 
@@ -482,7 +501,7 @@ package body Console is
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-id-info");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info member");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info any");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-stats");
+         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-stats [pla-mac-address]");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-hfid <id>");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-nmk <pass-phrase>");
          Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
@@ -493,7 +512,7 @@ package body Console is
 
    procedure Show_Version is
    begin
-         Ada.Text_IO.Put_Line (Item => "pla-util version 1.1.0");
+         Ada.Text_IO.Put_Line (Item => "pla-util version 1.1.1");
          Ada.Text_IO.New_Line (Spacing => 1);
    end Show_Version;
 

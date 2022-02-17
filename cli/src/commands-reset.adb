@@ -24,31 +24,22 @@ use type Ada.Containers.Count_Type;
 separate (Commands)
 
 procedure Reset (Network_Device_Name : String;
-                 PLA_MAC_Address     : String) is
+                 PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is
 
+   Adapter  : Power_Line_Adapter.Adapter_Type;
    Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
-   Found    : Boolean := False;
 
 begin
 
-   Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
+   Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name,
+                                                    MAC_Address         => PLA_MAC_Address);
 
    if Adapters.Length = 0 then
-      raise Command_Error with Message_No_Adapters;
-   end if;
-
-   for E of Adapters loop
-
-      if E.Has_MAC_Address (MAC_Address => PLA_MAC_Address) then
-         E.Reset (Network_Device_Name => Network_Device_Name);
-         Found := True;
-         exit;
-      end if;
-
-   end loop;
-
-   if not Found then
       raise Command_Error with Message_Not_Found;
    end if;
+
+   Adapter := Adapters.First_Element;
+
+   Adapter.Reset (Network_Device_Name => Network_Device_Name);
 
 end Reset;

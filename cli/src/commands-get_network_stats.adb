@@ -16,33 +16,44 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Containers;
+with MAC_Addresses;
 with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
 
 use type Ada.Containers.Count_Type;
+use type MAC_Addresses.MAC_Address_Type;
 
 separate (Commands)
 
-function Get_Network_Stats (Network_Device_Name : String) return Power_Line_Adapter.Network_Stats_List_Type is
+function Get_Network_Stats (Network_Device_Name : String;
+                            PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Network_Stats_List_Type is
 
+   Adapter  : Power_Line_Adapter.Adapter_Type;
    Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
 
 begin
 
-   Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
+   if PLA_MAC_Address = MAC_Addresses.Null_MAC_Address then
 
-   if Adapters.Length = 0 then
-      raise Command_Error with Message_No_Adapters;
+      Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
+
+      if Adapters.Length = 0 then
+         raise Command_Error with Message_No_Adapters;
+      end if;
+
+   else
+
+      Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name,
+                                                       MAC_Address         => PLA_MAC_Address);
+
+      if Adapters.Length = 0 then
+         raise Command_Error with Message_Not_Found;
+      end if;
+
    end if;
 
-   declare
+   Adapter := Adapters.First_Element;
 
-      Network_Stats_List : constant Power_Line_Adapter.Network_Stats_List_Type := Adapters.First_Element.Get_Network_Stats (Network_Device_Name => Network_Device_Name);
-
-   begin
-
-      return Network_Stats_List;
-
-   end;
+   return Adapter.Get_Network_Stats (Network_Device_Name => Network_Device_Name);
 
 end Get_Network_Stats;

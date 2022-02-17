@@ -25,6 +25,8 @@ package MAC_Addresses is
 
    type MAC_Address_Type is tagged private;
 
+   subtype MAC_Address_Image_Type is String (1 .. 17);
+
    function "<" (Left  : MAC_Address_Type;
                  Right : MAC_Address_Type) return Boolean;
 
@@ -32,11 +34,14 @@ package MAC_Addresses is
 
    function Get_Octets (Self : MAC_Address_Type) return MAC_Address_Octets_Type;
 
-   function Image (Self      : MAC_Address_Type;
-                   Separator : Character := ':') return String;
+   function Image (Self : MAC_Address_Type) return MAC_Address_Image_Type;
+
+   function Value (Image : MAC_Address_Image_Type) return MAC_Address_Type;
 
    Broadcast_MAC_Address : constant MAC_Address_Type;
    Null_MAC_Address      : constant MAC_Address_Type;
+
+   MAC_Address_Error : exception;
 
 private
 
