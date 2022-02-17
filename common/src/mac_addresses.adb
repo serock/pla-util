@@ -15,7 +15,7 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with GNAT.Case_Util;
+with Ada.Characters.Handling;
 with GNAT.Formatted_String;
 
 use GNAT.Formatted_String;
@@ -98,7 +98,7 @@ package body MAC_Addresses is
 
       declare
 
-         Lower_Image : constant MAC_Address_Image_Type := GNAT.Case_Util.To_Lower (A => Image);
+         Lower_Image : constant MAC_Address_Image_Type := Ada.Characters.Handling.To_Lower (Item => Image);
          Octets      : MAC_Address_Octets_Type;
 
       begin
