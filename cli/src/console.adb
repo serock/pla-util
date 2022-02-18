@@ -32,12 +32,12 @@ use type Power_Line_Adapter.NID_Type;
 
 package body Console is
 
-   package Data_Rate_Text_IO is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.Data_Rate_Type);
-   package Networks_Text_IO  is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.Networks_Type);
-   package NID_Text_IO       is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.NID_Type);
-   package OUI_Text_IO       is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.OUI_Type);
-   package SNID_Text_IO      is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.SNID_Type);
-   package TEI_Text_IO       is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.TEI_Type);
+   package Data_Rate_Text_IO     is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.Data_Rate_Type);
+   package Network_Count_Text_IO is new Ada.Text_IO.Integer_IO (Num => Power_Line_Adapter.Network_Count_Type);
+   package NID_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.NID_Type);
+   package OUI_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.OUI_Type);
+   package SNID_Text_IO          is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.SNID_Type);
+   package TEI_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.TEI_Type);
 
    function NID_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapter.NID_Type,
                                                                 Put => NID_Text_IO.Put);
@@ -126,6 +126,80 @@ package body Console is
 
    end Get_Capabilities;
 
+   procedure Get_Discover_List (Network_Device_Name : String) is
+
+      Column_2        : constant                       := 24;
+      PLA_MAC_Address : MAC_Addresses.MAC_Address_Type := MAC_Addresses.Null_MAC_Address;
+
+   begin
+
+      if Ada.Command_Line.Argument_Count = 3 then
+         PLA_MAC_Address := Get_PLA_MAC_Address (Image => Ada.Command_Line.Argument (Number => 3));
+      end if;
+
+      declare
+
+         Discover_List : constant Power_Line_Adapter.Discover_List_Type := Commands.Get_Discover_List (Network_Device_Name => Network_Device_Name,
+                                                                                                       PLA_MAC_Address     => PLA_MAC_Address);
+
+      begin
+
+         Ada.Text_IO.Put_Line (Item => "Number of stations:" & Discover_List.Number_Of_Stations'Image);
+
+         for I in 1 .. Discover_List.Stations'Length loop
+            Ada.Text_IO.Put (Item => "  MAC Address:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Ada.Text_IO.Put_Line (Item => Discover_List.Stations (I).MAC_Address.Image);
+            Ada.Text_IO.Put (Item => "  TEI:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            TEI_Text_IO.Put (Item  => Discover_List.Stations (I).TEI,
+                             Width => 1,
+                             Base  => 10);
+            Ada.Text_IO.New_Line (Spacing => 1);
+            Ada.Text_IO.Put (Item => "  Same Network:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Ada.Text_IO.Put_Line (Item  => Discover_List.Stations (I).Same_Network'Image);
+            Ada.Text_IO.Put (Item => "  SNID:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            SNID_Text_IO.Put (Item  => Discover_List.Stations (I).SNID,
+                              Width => 1,
+                              Base  => 10);
+            Ada.Text_IO.New_Line (Spacing => 1);
+            Ada.Text_IO.Put (Item => "  CCo:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Ada.Text_IO.Put_Line (Item => Discover_List.Stations (I).CCo'Image);
+            Ada.Text_IO.Put (Item => "  PCo:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Ada.Text_IO.Put_Line (Item => Discover_List.Stations (I).PCo'Image);
+            Ada.Text_IO.Put (Item => "  Backup CCo:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Ada.Text_IO.Put_Line (Item => Discover_List.Stations (I).Backup_CCo'Image);
+            Ada.Text_IO.Put (Item => "  Signal Level:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Ada.Text_IO.Put_Line (Item => Image (Signal_Level => Discover_List.Stations (I).Signal_Level));
+         end loop;
+
+         Ada.Text_IO.Put_Line (Item => "Number of Networks:" & Discover_List.Number_Of_Networks'Image);
+
+         for I in 1 .. Discover_List.Networks'Length loop
+            Ada.Text_IO.Put (Item => "  NID:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Ada.Text_IO.Put_Line (Item => Image (NID => Discover_List.Networks (I).NID));
+            Ada.Text_IO.Put (Item => "  SNID:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            SNID_Text_IO.Put (Item  => Discover_List.Networks (I).SNID,
+                              Width => 1,
+                              Base  => 10);
+            Ada.Text_IO.New_Line (Spacing => 1);
+            Ada.Text_IO.Put (Item => "  Coordinating Status:");
+            Ada.Text_IO.Set_Col (To => Column_2);
+            Ada.Text_IO.Put_Line (Item  => Discover_List.Networks (I).Coordinating_Status'Image);
+         end loop;
+
+      end;
+
+   end Get_Discover_List;
+
    procedure Get_HFID (Network_Device_Name : String) is
 
       HFID_Level : constant Commands.HFID_Level_Type := Get_HFID_Level;
@@ -188,12 +262,7 @@ package body Console is
          Ada.Text_IO.Put_Line (Item => "Network" & Integer'Image (I) & ":");
          Ada.Text_IO.Put (Item => "  NID:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Ada.Text_IO.Put (Item => -(NID_Format (Format => +"%014x", Var => Network_Info.NID)));
-         if (Network_Info.NID and 16#10_0000_0000_0000#) = 0 then
-            Ada.Text_IO.Put_Line (Item => " (SL-SC)");
-         else
-            Ada.Text_IO.Put_Line (Item => " (SL-HS)");
-         end if;
+         Ada.Text_IO.Put_Line (Item => Image (NID => Network_Info.NID));
          Ada.Text_IO.Put (Item => "  SNID:");
          Ada.Text_IO.Set_Col (To => Column_2);
          SNID_Text_IO.Put (Item  => Network_Info.SNID,
@@ -214,9 +283,9 @@ package body Console is
          Ada.Text_IO.Put_Line (Item => Network_Info.BCCo_MAC_Address.Image);
          Ada.Text_IO.Put (Item => "  Number of Coordinating Networks:");
          Ada.Text_IO.Set_Col (To => Column_2);
-         Networks_Text_IO.Put (Item  => Network_Info.Num_Coord_Networks,
-                               Width => 1,
-                               Base  => 10);
+         Network_Count_Text_IO.Put (Item  => Network_Info.Num_Coord_Networks,
+                                    Width => 1,
+                                    Base  => 10);
          Ada.Text_IO.New_Line (Spacing => 1);
          Ada.Text_IO.Put (Item => "  Station Role:");
          Ada.Text_IO.Set_Col (To => Column_2);
@@ -314,6 +383,24 @@ package body Console is
 
    end Image;
 
+   function Image (NID : Power_Line_Adapter.NID_Type) return String is
+   begin
+
+      return -(NID_Format (Format => +"%014x", Var => NID)) & " (" & Security_Level (NID => NID) & ')';
+
+   end Image;
+
+   function Image (Signal_Level : Power_Line_Adapter.Signal_Level_Type) return String is
+   begin
+      case Signal_Level is
+         when 0 =>      return "not available";
+         when 1 =>      return Integer'((Integer (Signal_Level) + 1) * (-5))'Image & " dB < SL <= 0 dB";
+         when 15 =>     return "SL <= -75 dB";
+         when others => return Integer'((Integer (Signal_Level) + 1) * (-5))'Image & " dB < SL <= " & Integer'(Integer (Signal_Level) * (-5))'Image & " dB";
+      end case;
+
+   end Image;
+
    procedure Process_Command_Line is
 
    begin
@@ -363,6 +450,10 @@ package body Console is
             when Commands.Get_Capabilities =>
 
                Get_Capabilities (Network_Device_Name => Network_Device_Name);
+
+            when Commands.Get_Discover_List =>
+
+               Get_Discover_List (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_HFID =>
 
@@ -463,6 +554,13 @@ package body Console is
 
    end Restart;
 
+   function Security_Level (NID : Power_Line_Adapter.NID_Type) return String is
+   begin
+
+      return (if (NID and 16#10_0000_0000_0000#) = 0 then "SL-SC" else "SL-HS");
+
+   end Security_Level;
+
    procedure Set_HFID (Network_Device_Name : String) is
 
       HFID : constant HFID_String.Bounded_String := HFID_String.To_Bounded_String (Source => Ada.Command_Line.Argument (Number => 3),
@@ -490,30 +588,31 @@ package body Console is
 
    procedure Show_Help is
    begin
-         Ada.Text_IO.Put_Line (Item => "Try one of the following commands:");
-         Ada.Text_IO.New_Line (Spacing => 1);
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> discover");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> reset <pla-mac-address>");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> restart <pla-mac-address>");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-capabilities");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid manufacturer");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid user");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-id-info");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info member");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info any");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-stats [pla-mac-address]");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-hfid <id>");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-nmk <pass-phrase>");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
-         Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-nmk <pass-phrase>");
-         Ada.Text_IO.New_Line (Spacing => 1);
-         Ada.Text_IO.Put_Line (Item => "where <NIC> is the name of an ethernet network device");
+      Ada.Text_IO.Put_Line (Item => "Try one of the following commands:");
+      Ada.Text_IO.New_Line (Spacing => 1);
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> discover");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> reset <pla-mac-address>");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> restart <pla-mac-address>");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-capabilities");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-discover-list [pla-mac-address]");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid manufacturer");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-hfid user");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-id-info");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info member");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-info any");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> get-network-stats [pla-mac-address]");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-hfid <id>");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> set-nmk <pass-phrase>");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-dak <plc-pass-phrase>");
+      Ada.Text_IO.Put_Line (Item => "pla-util <NIC> check-nmk <pass-phrase>");
+      Ada.Text_IO.New_Line (Spacing => 1);
+      Ada.Text_IO.Put_Line (Item => "where <NIC> is the name of an ethernet network device");
    end Show_Help;
 
    procedure Show_Version is
    begin
-         Ada.Text_IO.Put_Line (Item => "pla-util version 1.1.1");
-         Ada.Text_IO.New_Line (Spacing => 1);
+      Ada.Text_IO.Put_Line (Item => "pla-util version 1.2.0");
+      Ada.Text_IO.New_Line (Spacing => 1);
    end Show_Version;
 
    function To_Command (Source : String) return Commands.Command_Type is

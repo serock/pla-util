@@ -29,6 +29,7 @@ private
    procedure Check_NMK (Network_Device_Name : String);
    procedure Discover (Network_Device_Name : String);
    procedure Get_Capabilities (Network_Device_Name : String);
+   procedure Get_Discover_List (Network_Device_Name : String);
    procedure Get_HFID (Network_Device_Name : String);
    function Get_HFID_Level return Commands.HFID_Level_Type;
    procedure Get_Id_Info (Network_Device_Name : String);
@@ -37,8 +38,11 @@ private
    procedure Get_Network_Stats (Network_Device_Name : String);
    function Get_PLA_MAC_Address (Image : String) return MAC_Addresses.MAC_Address_Type;
    function Image (HPAV_Version : Power_Line_Adapter.HPAV_Version_Type) return String;
+   function Image (NID : Power_Line_Adapter.NID_Type) return String;
+   function Image (Signal_Level : Power_Line_Adapter.Signal_Level_Type) return String;
    procedure Reset (Network_Device_Name : String);
    procedure Restart (Network_Device_Name : String);
+   function Security_Level (NID : Power_Line_Adapter.NID_Type) return String;
    procedure Set_HFID (Network_Device_Name : String);
    procedure Set_NMK (Network_Device_Name : String);
    procedure Show_Help;

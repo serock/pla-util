@@ -27,20 +27,24 @@ package Power_Line_Adapter is
 
    type Adapter_Type                is tagged private;
    type Capable_Type                is (Not_Capable, Capable);
+   type Coordinating_Status_Type    is (Unknown, Non_Coordinating_Network, Coordinating_Network, Coordinating_Network_In_Same_Group, Coordinating_Network_In_Different_Group);
    type Data_Rate_Type              is mod 2048;
    type HPAV_Version_Type           is (HPAV_1_1, HPAV_2_0, Not_HPAV);
    type Implementation_Version_Type is mod 65536;
    type MCS_Type                    is (MIMO_Not_Supported, Selection_Diversity, MIMO_With_Beam_Forming);
    type Network_Kind_Type           is (In_Home_Network, Access_Network);
-   type Networks_Type               is mod 256;
    type NID_Type                    is mod 16#40_0000_0000_0000#;
+   type No_Yes_Type                 is (No, Yes);
    type OUI_Type                    is mod 16#100_0000#;
+   type Signal_Level_Type           is mod 16;
    type SNID_Type                   is mod 16;
    type Station_Role_Type           is (Unassoc_STA, Unassoc_CCo, STA, CCo, Backup_CCo);
    type Status_Type                 is (Joined, Not_Joined_Have_NMK, Not_Joined_No_NMK);
    type TEI_Type                    is mod 256;
 
-   subtype AV_Version_Type is HPAV_Version_Type range HPAV_1_1 .. HPAV_2_0;
+   subtype AV_Version_Type    is HPAV_Version_Type range HPAV_1_1 .. HPAV_2_0;
+   subtype Network_Count_Type is Natural range 0 .. 6;
+   subtype Station_Count_Type is Natural range 0 .. 16;
 
    type Capabilities_Type is
       record
@@ -65,13 +69,22 @@ package Power_Line_Adapter is
          TEI                : TEI_Type;
          CCo_MAC_Address    : MAC_Address_Type;
          BCCo_MAC_Address   : MAC_Address_Type;
-         Num_Coord_Networks : Networks_Type;
+         Num_Coord_Networks : Network_Count_Type;
          Station_Role       : Station_Role_Type;
          Network_Kind       : Network_Kind_Type;
          Status             : Status_Type;
       end record;
 
    type Network_Info_List_Type is array (Positive range <>) of Network_Info_Type;
+
+   type Network_Type is
+      record
+         NID                 : NID_Type;
+         SNID                : SNID_Type;
+         Coordinating_Status : Coordinating_Status_Type;
+      end record;
+
+   type Network_List_Type is array (Positive range <>) of Network_Type;
 
    type Network_Stats_Type is
       record
@@ -81,6 +94,25 @@ package Power_Line_Adapter is
       end record;
 
    type Network_Stats_List_Type is array (Positive range <>) of Network_Stats_Type;
+
+   type Station_Type is
+      record
+         MAC_Address  : MAC_Address_Type;
+         TEI          : TEI_Type;
+         Same_Network : No_Yes_Type;
+         SNID         : SNID_Type;
+         CCo          : No_Yes_Type;
+         PCo          : No_Yes_Type;
+         Backup_CCo   : No_Yes_Type;
+         Signal_Level : Signal_Level_Type;
+      end record;
+
+   type Station_List_Type is array (Positive range <>) of Station_Type;
+
+   type Discover_List_Type (Number_Of_Stations : Station_Count_Type; Number_Of_Networks : Network_Count_Type) is record
+      Stations : Station_List_Type (1 .. Number_Of_Stations);
+      Networks : Network_List_Type (1 .. Number_Of_Networks);
+   end record;
 
    Max_Adapters : constant := 16;
 
@@ -105,6 +137,9 @@ package Power_Line_Adapter is
 
    function Get_Capabilities (Self                : Adapter_Type;
                               Network_Device_Name : String) return Capabilities_Type;
+
+   function Get_Discover_List (Self                : Adapter_Type;
+                               Network_Device_Name : String) return Discover_List_Type;
 
    function Get_Id_Info (Self                : Adapter_Type;
                          Network_Device_Name : String) return Id_Info_Type;

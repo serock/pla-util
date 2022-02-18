@@ -30,6 +30,9 @@ package body Commands is
 
    function Get_Capabilities (Network_Device_Name : String) return Power_Line_Adapter.Capabilities_Type is separate;
 
+   function Get_Discover_List (Network_Device_Name : String;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Discover_List_Type is separate;
+
    function Get_HFID (Network_Device_Name : String;
                       HFID_Level          : HFID_Level_Type) return HFID_String.Bounded_String is separate;
 

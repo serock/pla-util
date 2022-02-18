@@ -262,6 +262,9 @@ package body Power_Line_Adapter is
    function Get_Capabilities (Self                : Adapter_Type;
                               Network_Device_Name : String) return Capabilities_Type is separate;
 
+   function Get_Discover_List (Self                : Adapter_Type;
+                               Network_Device_Name : String) return Discover_List_Type is separate;
+
    function Get_HFID (Self                : Adapter_Type;
                       Kind                : HFID_Kind_Type;
                       Network_Device_Name : String) return HFID_String.Bounded_String is separate;
