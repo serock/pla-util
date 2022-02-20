@@ -147,6 +147,7 @@ package body Console is
          Ada.Text_IO.Put_Line (Item => "Number of stations:" & Discover_List.Number_Of_Stations'Image);
 
          for I in 1 .. Discover_List.Stations'Length loop
+            Ada.Text_IO.Put_Line (Item => "Station" & Integer'Image (I) & ":");
             Ada.Text_IO.Put (Item => "  MAC Address:");
             Ada.Text_IO.Set_Col (To => Column_2);
             Ada.Text_IO.Put_Line (Item => Discover_List.Stations (I).MAC_Address.Image);
@@ -182,6 +183,7 @@ package body Console is
          Ada.Text_IO.Put_Line (Item => "Number of Networks:" & Discover_List.Number_Of_Networks'Image);
 
          for I in 1 .. Discover_List.Networks'Length loop
+            Ada.Text_IO.Put_Line (Item => "Network" & Integer'Image (I) & ":");
             Ada.Text_IO.Put (Item => "  NID:");
             Ada.Text_IO.Set_Col (To => Column_2);
             Ada.Text_IO.Put_Line (Item => Image (NID => Discover_List.Networks (I).NID));
