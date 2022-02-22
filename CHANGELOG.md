@@ -1,3 +1,12 @@
+# 1.2.0 (2022-02-22)
+
+* Fix the security level displayed by `get-network-info` command.
+* Change the implementation of the `get-network-stats` command because the first implementation did not work with TL-PA7017 adapters.
+* Add an optional power line adapter MAC address parameter to commands.
+* Increase timeouts from 250 ms to 500 ms.
+* Add `get-discover-list` command.
+* Check for too many command line arguments.
+
 # 1.1.0 (2022-02-11)
 
 * Add `get-network-stats` command (Issue [#7](https://github.com/serock/pla-util/issues/7)).

@@ -46,6 +46,7 @@ package body Console is
                                                                 Put => OUI_Text_IO.Put);
 
    Message_Too_Few_Arguments   : constant String                             := "Too few arguments";
+   Message_Too_Many_Arguments  : constant String                             := "Too many arguments";
    Separator_Character_Mapping : constant Ada.Strings.Maps.Character_Mapping := Ada.Strings.Maps.To_Mapping (From => "-",
                                                                                                              To   => "_");
    Syntax_Error                : exception;
@@ -498,6 +499,8 @@ package body Console is
 
                if Ada.Command_Line.Argument_Count < 3 then
                   raise Syntax_Error with Message_Too_Few_Arguments;
+               elsif Ada.Command_Line.Argument_Count > 4 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
                end if;
 
                Check_DAK (Network_Device_Name => Network_Device_Name);
@@ -506,19 +509,33 @@ package body Console is
 
                if Ada.Command_Line.Argument_Count < 3 then
                   raise Syntax_Error with Message_Too_Few_Arguments;
+               elsif Ada.Command_Line.Argument_Count > 4 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
                end if;
 
                Check_NMK (Network_Device_Name => Network_Device_Name);
 
             when Commands.Discover =>
 
+               if Ada.Command_Line.Argument_Count > 2 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
+               end if;
+
                Discover (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_Capabilities =>
 
+               if Ada.Command_Line.Argument_Count > 3 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
+               end if;
+
                Get_Capabilities (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_Discover_List =>
+
+               if Ada.Command_Line.Argument_Count > 3 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
+               end if;
 
                Get_Discover_List (Network_Device_Name => Network_Device_Name);
 
@@ -526,11 +543,17 @@ package body Console is
 
                if Ada.Command_Line.Argument_Count < 3 then
                   raise Syntax_Error with Message_Too_Few_Arguments;
+               elsif Ada.Command_Line.Argument_Count > 4 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
                end if;
 
                Get_HFID (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_Id_Info =>
+
+               if Ada.Command_Line.Argument_Count > 3 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
+               end if;
 
                Get_Id_Info (Network_Device_Name => Network_Device_Name);
 
@@ -538,11 +561,17 @@ package body Console is
 
                if Ada.Command_Line.Argument_Count < 3 then
                   raise Syntax_Error with Message_Too_Few_Arguments;
+               elsif Ada.Command_Line.Argument_Count > 4 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
                end if;
 
                Get_Network_Info (Network_Device_Name => Network_Device_Name);
 
             when Commands.Get_Network_Stats =>
+
+               if Ada.Command_Line.Argument_Count > 3 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
+               end if;
 
                Get_Network_Stats (Network_Device_Name => Network_Device_Name);
 
@@ -550,6 +579,8 @@ package body Console is
 
                if Ada.Command_Line.Argument_Count < 3 then
                   raise Syntax_Error with Message_Too_Few_Arguments;
+               elsif Ada.Command_Line.Argument_Count > 3 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
                end if;
 
                Reset (Network_Device_Name => Network_Device_Name);
@@ -558,6 +589,8 @@ package body Console is
 
                if Ada.Command_Line.Argument_Count < 3 then
                   raise Syntax_Error with Message_Too_Few_Arguments;
+               elsif Ada.Command_Line.Argument_Count > 3 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
                end if;
 
                Restart (Network_Device_Name => Network_Device_Name);
@@ -566,6 +599,8 @@ package body Console is
 
                if Ada.Command_Line.Argument_Count < 3 then
                   raise Syntax_Error with Message_Too_Few_Arguments;
+               elsif Ada.Command_Line.Argument_Count > 4 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
                end if;
 
                Set_HFID (Network_Device_Name => Network_Device_Name);
@@ -574,6 +609,8 @@ package body Console is
 
                if Ada.Command_Line.Argument_Count < 3 then
                   raise Syntax_Error with Message_Too_Few_Arguments;
+               elsif Ada.Command_Line.Argument_Count > 4 then
+                  raise Syntax_Error with Message_Too_Many_Arguments;
                end if;
 
                Set_NMK (Network_Device_Name => Network_Device_Name);

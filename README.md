@@ -59,19 +59,19 @@ sudo setcap cap_net_raw+ep pla-util
 To run the program, use one of the following commands:
 
 ```
-./pla-util <nic> discover
-./pla-util <nic> reset <pla-mac-address>
-./pla-util <nic> restart <pla-mac-address>
-./pla-util <nic> get-hfid manufacturer
-./pla-util <nic> get-hfid user
-./pla-util <nic> get-id-info
-./pla-util <nic> get-network-info member
-./pla-util <nic> get-network-info any
-./pla-util <nic> get-network-stats
-./pla-util <nic> set-hfid <id>
-./pla-util <nic> set-nmk <pass-phrase>
-./pla-util <nic> check-dak <plc-pass-phrase>
-./pla-util <nic> check-nmk <pass-phrase>
+./pla-util <NIC> discover
+./pla-util <NIC> reset <pla-mac-address>
+./pla-util <NIC> restart <pla-mac-address>
+./pla-util <NIC> get-capabilities [pla-mac-address]
+./pla-util <NIC> get-discover-list [pla-mac-address]
+./pla-util <NIC> get-hfid {manufacturer|user} [pla-mac-address]
+./pla-util <NIC> get-id-info [pla-mac-address]
+./pla-util <NIC> get-network-info {member|any} [pla-mac-address]
+./pla-util <NIC> get-network-stats [pla-mac-address]
+./pla-util <NIC> set-hfid <id> [pla-mac-address]
+./pla-util <NIC> set-nmk <pass-phrase> [pla-mac-address]
+./pla-util <NIC> check-dak <plc-pass-phrase> [pla-mac-address]
+./pla-util <NIC> check-nmk <pass-phrase> [pla-mac-address]
 ```
 
 where
