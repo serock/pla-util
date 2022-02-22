@@ -16,50 +16,38 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Containers;
+with MAC_Addresses;
 with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
 
 use type Ada.Containers.Count_Type;
+use type MAC_Addresses.MAC_Address_Type;
 
 separate (Commands)
 
 function Get_Network_Info (Network_Device_Name : String;
-                           Network_Scope       : Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is
+                           Network_Scope       : Network_Scope_Type;
+                           PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Network_Info_List_Type is
 
-   Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
+   Adapters : constant Power_Line_Adapter_Sets.Set := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name,
+                                                                                           MAC_Address         => PLA_MAC_Address);
 
 begin
 
-   Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
-
    if Adapters.Length = 0 then
-      raise Command_Error with Message_No_Adapters;
+      raise Command_Error with (if PLA_MAC_Address = MAC_Addresses.Broadcast_MAC_Address then Message_No_Adapters else Message_Not_Found);
    end if;
 
    case Network_Scope is
+
       when Member =>
 
-         declare
-
-            Network_Info_List : constant Power_Line_Adapter.Network_Info_List_Type := Adapters.First_Element.Get_Member_Network_Info (Network_Device_Name => Network_Device_Name);
-
-         begin
-
-            return Network_Info_List;
-
-         end;
+         return Adapters.First_Element.Get_Member_Network_Info (Network_Device_Name => Network_Device_Name);
 
       when Any =>
 
-         declare
+         return Adapters.First_Element.Get_Any_Network_Info (Network_Device_Name => Network_Device_Name);
 
-            Network_Info_List : constant Power_Line_Adapter.Network_Info_List_Type := Adapters.First_Element.Get_Any_Network_Info (Network_Device_Name => Network_Device_Name);
-
-         begin
-
-            return Network_Info_List;
-
-         end;
    end case;
 
 end Get_Network_Info;

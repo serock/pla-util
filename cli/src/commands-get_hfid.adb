@@ -16,34 +16,38 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Containers;
+with MAC_Addresses;
 with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
 
 use type Ada.Containers.Count_Type;
+use type MAC_Addresses.MAC_Address_Type;
 
 separate (Commands)
 
 function Get_HFID (Network_Device_Name : String;
-                   HFID_Level          : HFID_Level_Type) return HFID_String.Bounded_String is
+                   HFID_Level          : HFID_Level_Type;
+                   PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return HFID_String.Bounded_String is
 
-   Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
-   HFID     : HFID_String.Bounded_String;
+   Adapters : constant Power_Line_Adapter_Sets.Set := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name,
+                                                                                           MAC_Address         => PLA_MAC_Address);
 
 begin
 
-   Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
-
    if Adapters.Length = 0 then
-      raise Command_Error with Message_No_Adapters;
+      raise Command_Error with (if PLA_MAC_Address = MAC_Addresses.Broadcast_MAC_Address then Message_No_Adapters else Message_Not_Found);
    end if;
 
    case HFID_Level is
-      when Manufacturer =>
-         HFID := Adapters.First_Element.Get_Manufacturer_HFID (Network_Device_Name => Network_Device_Name);
-      when User =>
-         HFID := Adapters.First_Element.Get_User_HFID (Network_Device_Name => Network_Device_Name);
-   end case;
 
-   return HFID;
+      when Manufacturer =>
+
+         return Adapters.First_Element.Get_Manufacturer_HFID (Network_Device_Name => Network_Device_Name);
+
+      when User =>
+
+         return Adapters.First_Element.Get_User_HFID (Network_Device_Name => Network_Device_Name);
+
+   end case;
 
 end Get_HFID;

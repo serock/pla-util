@@ -45,25 +45,31 @@ package Commands is
    Command_Error : exception;
 
    function Check_DAK (Network_Device_Name : String;
-                       Pass_Phrase         : String) return Boolean;
+                       Pass_Phrase         : String;
+                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Boolean;
 
    function Check_NMK (Network_Device_Name : String;
-                       Pass_Phrase         : String) return Boolean;
+                       Pass_Phrase         : String;
+                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Boolean;
 
    function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set;
 
-   function Get_Capabilities (Network_Device_Name : String) return Power_Line_Adapter.Capabilities_Type;
+   function Get_Capabilities (Network_Device_Name : String;
+                              PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Capabilities_Type;
 
    function Get_Discover_List (Network_Device_Name : String;
                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Discover_List_Type;
 
    function Get_HFID (Network_Device_Name : String;
-                      HFID_Level          : HFID_Level_Type) return HFID_String.Bounded_String;
+                      HFID_Level          : HFID_Level_Type;
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return HFID_String.Bounded_String;
 
-   function Get_Id_Info (Network_Device_Name : String) return Power_Line_Adapter.Id_Info_Type;
+   function Get_Id_Info (Network_Device_Name : String;
+                         PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Id_Info_Type;
 
    function Get_Network_Info (Network_Device_Name : String;
-                              Network_Scope       : Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type;
+                              Network_Scope       : Network_Scope_Type;
+                              PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Network_Info_List_Type;
 
    function Get_Network_Stats (Network_Device_Name : String;
                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Network_Stats_List_Type;
@@ -75,10 +81,12 @@ package Commands is
                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
    procedure Set_HFID (Network_Device_Name : String;
-                       HFID                : HFID_String.Bounded_String);
+                       HFID                : HFID_String.Bounded_String;
+                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
    procedure Set_NMK (Network_Device_Name : String;
-                      Pass_Phrase         : String);
+                      Pass_Phrase         : String;
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
 private
 

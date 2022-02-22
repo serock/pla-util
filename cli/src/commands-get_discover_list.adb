@@ -28,37 +28,15 @@ separate (Commands)
 function Get_Discover_List (Network_Device_Name : String;
                             PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Discover_List_Type is
 
-   Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
+   Adapters : constant Power_Line_Adapter_Sets.Set := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name,
+                                                                                           MAC_Address         => PLA_MAC_Address);
 
 begin
 
-   if PLA_MAC_Address = MAC_Addresses.Null_MAC_Address then
-
-      Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
-
-      if Adapters.Length = 0 then
-         raise Command_Error with Message_No_Adapters;
-      end if;
-
-   else
-
-      Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name,
-                                                       MAC_Address         => PLA_MAC_Address);
-
-      if Adapters.Length = 0 then
-         raise Command_Error with Message_Not_Found;
-      end if;
-
+   if Adapters.Length = 0 then
+      raise Command_Error with (if PLA_MAC_Address = MAC_Addresses.Broadcast_MAC_Address then Message_No_Adapters else Message_Not_Found);
    end if;
 
-   declare
-
-      Discover_List : constant Power_Line_Adapter.Discover_List_Type := Adapters.First_Element.Get_Discover_List (Network_Device_Name => Network_Device_Name);
-
-   begin
-
-      return Discover_List;
-
-   end;
+   return Adapters.First_Element.Get_Discover_List (Network_Device_Name => Network_Device_Name);
 
 end Get_Discover_List;

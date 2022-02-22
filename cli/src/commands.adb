@@ -21,25 +21,31 @@ package body Commands is
    Message_Not_Found   : constant String := "Failed to find adapter with matching MAC address";
 
    function Check_DAK (Network_Device_Name : String;
-                       Pass_Phrase         : String) return Boolean is separate;
+                       Pass_Phrase         : String;
+                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Boolean is separate;
 
    function Check_NMK (Network_Device_Name : String;
-                       Pass_Phrase         : String) return Boolean is separate;
+                       Pass_Phrase         : String;
+                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Boolean is separate;
 
    function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set is separate;
 
-   function Get_Capabilities (Network_Device_Name : String) return Power_Line_Adapter.Capabilities_Type is separate;
+   function Get_Capabilities (Network_Device_Name : String;
+                              PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Capabilities_Type is separate;
 
    function Get_Discover_List (Network_Device_Name : String;
                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Discover_List_Type is separate;
 
    function Get_HFID (Network_Device_Name : String;
-                      HFID_Level          : HFID_Level_Type) return HFID_String.Bounded_String is separate;
+                      HFID_Level          : HFID_Level_Type;
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return HFID_String.Bounded_String is separate;
 
-   function Get_Id_Info (Network_Device_Name : String) return Power_Line_Adapter.Id_Info_Type is separate;
+   function Get_Id_Info (Network_Device_Name : String;
+                         PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Id_Info_Type is separate;
 
    function Get_Network_Info (Network_Device_Name : String;
-                              Network_Scope       : Network_Scope_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
+                              Network_Scope       : Network_Scope_Type;
+                              PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
 
    function Get_Network_Stats (Network_Device_Name : String;
                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Network_Stats_List_Type is separate;
@@ -51,9 +57,11 @@ package body Commands is
                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is separate;
 
    procedure Set_HFID (Network_Device_Name : String;
-                       HFID                : HFID_String.Bounded_String) is separate;
+                       HFID                : HFID_String.Bounded_String;
+                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is separate;
 
    procedure Set_NMK (Network_Device_Name : String;
-                      Pass_Phrase         : String) is separate;
+                      Pass_Phrase         : String;
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is separate;
 
 end Commands;

@@ -22,12 +22,8 @@ separate (Commands)
 
 function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set is
 
-   Adapters : Power_Line_Adapter_Sets.Set (Capacity => Power_Line_Adapter.Max_Adapters);
-
 begin
 
-   Adapters := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
-
-   return Adapters;
+   return Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
 
 end Discover;
