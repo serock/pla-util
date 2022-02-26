@@ -46,7 +46,7 @@ package body Power_Line_Adapter is
    procedure Create (Adapter           : in out Adapter_Type;
                      Network_Interface :        Network_Interface_Type;
                      MAC_Address       :        MAC_Address_Type;
-                     HFID              :        HFID_String.Bounded_String) is
+                     HFID              :        HFID_Strings.Bounded_String) is
 
    begin
 
@@ -114,16 +114,16 @@ package body Power_Line_Adapter is
 
    end Generate_NMK;
 
-   function Get_Octets (HFID : HFID_String.Bounded_String) return HFID_Octets_Type is
+   function Get_Octets (HFID : HFID_Strings.Bounded_String) return HFID_Octets_Type is
 
-      Length : constant HFID_String.Length_Range := HFID_String.Length (Source => HFID);
-      Octets : HFID_Octets_Type                  := (others => 16#00#);
+      Length : constant HFID_Strings.Length_Range := HFID_Strings.Length (Source => HFID);
+      Octets : HFID_Octets_Type                   := (others => 16#00#);
 
    begin
 
       for I in 1 .. Length loop
-         Octets (I) := Character'Pos (HFID_String.Element (Source => HFID,
-                                                           Index  => I));
+         Octets (I) := Character'Pos (HFID_Strings.Element (Source => HFID,
+                                                            Index  => I));
       end loop;
 
       return Octets;
@@ -142,7 +142,7 @@ package body Power_Line_Adapter is
 
    begin
 
-      return Self.MAC_Address.Image & " via " & Self.Network_Interface'Image & " interface, HFID: " & HFID_String.To_String (Source => Self.HFID);
+      return Self.MAC_Address.Image & " via " & Self.Network_Interface'Image & " interface, HFID: " & HFID_Strings.To_String (Source => Self.HFID);
 
    end Image;
 
@@ -183,10 +183,10 @@ package body Power_Line_Adapter is
 
    end Validate_DAK_Pass_Phrase;
 
-   procedure Validate_HFID (HFID            : HFID_String.Bounded_String;
+   procedure Validate_HFID (HFID            : HFID_Strings.Bounded_String;
                             Min_HFID_Length : Positive := 1) is
 
-      Length : constant HFID_String.Length_Range := HFID_String.Length (HFID);
+      Length : constant HFID_Strings.Length_Range := HFID_Strings.Length (HFID);
       C      : Character;
 
    begin
@@ -197,8 +197,8 @@ package body Power_Line_Adapter is
 
       for I in 1 .. Length loop
 
-         C := HFID_String.Element (Source => HFID,
-                                   Index  => I);
+         C := HFID_Strings.Element (Source => HFID,
+                                    Index  => I);
 
          if C < ' ' or else C > Ada.Characters.Latin_1.DEL then
             raise Adapter_Error with "HFID contains one or more illegal characters";
@@ -267,13 +267,13 @@ package body Power_Line_Adapter is
 
    function Get_HFID (Self                : Adapter_Type;
                       Kind                : HFID_Kind_Type;
-                      Network_Device_Name : String) return HFID_String.Bounded_String is separate;
+                      Network_Device_Name : String) return HFID_Strings.Bounded_String is separate;
 
    function Get_Id_Info (Self                : Adapter_Type;
                          Network_Device_Name : String) return Id_Info_Type is separate;
 
    function Get_Manufacturer_HFID (Self                : Adapter_Type;
-                                   Network_Device_Name : String) return HFID_String.Bounded_String is separate;
+                                   Network_Device_Name : String) return HFID_Strings.Bounded_String is separate;
 
    function Get_Member_Network_Info (Self                : Adapter_Type;
                                      Network_Device_Name : String) return Network_Info_List_Type is separate;
@@ -286,7 +286,7 @@ package body Power_Line_Adapter is
                                Network_Device_Name : String) return Network_Stats_List_Type is separate;
 
    function Get_User_HFID (Self                : Adapter_Type;
-                           Network_Device_Name : String) return HFID_String.Bounded_String is separate;
+                           Network_Device_Name : String) return HFID_Strings.Bounded_String is separate;
 
    procedure Reset (Self                : Adapter_Type;
                     Network_Device_Name : String) is separate;
@@ -295,7 +295,7 @@ package body Power_Line_Adapter is
                       Network_Device_Name : String) is separate;
 
    procedure Set_HFID (Self                : Adapter_Type;
-                       HFID                : HFID_String.Bounded_String;
+                       HFID                : HFID_Strings.Bounded_String;
                        Network_Device_Name : String) is separate;
 
    procedure Set_NMK (Self                : Adapter_Type;

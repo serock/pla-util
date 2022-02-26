@@ -22,7 +22,7 @@ with Ada.Strings.Fixed;
 with Ada.Strings.Maps;
 with Ada.Text_IO;
 with GNAT.Formatted_String;
-with HFID_String;
+with HFID_Strings;
 with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
 
@@ -239,8 +239,8 @@ package body Console is
    procedure Get_HFID (Network_Device_Name : String) is
 
       HFID_Level      : constant Commands.HFID_Level_Type := Get_HFID_Level;
-      HFID            : HFID_String.Bounded_String;
-      PLA_MAC_Address : MAC_Addresses.MAC_Address_Type := MAC_Addresses.Broadcast_MAC_Address;
+      HFID            : HFID_Strings.Bounded_String;
+      PLA_MAC_Address : MAC_Addresses.MAC_Address_Type    := MAC_Addresses.Broadcast_MAC_Address;
 
    begin
 
@@ -252,7 +252,7 @@ package body Console is
                                  HFID_Level          => HFID_Level,
                                  PLA_MAC_Address     => PLA_MAC_Address);
 
-      Ada.Text_IO.Put_Line (Item => HFID_String.To_String (Source => HFID));
+      Ada.Text_IO.Put_Line (Item => HFID_Strings.To_String (Source => HFID));
 
    end Get_HFID;
 
@@ -667,9 +667,9 @@ package body Console is
 
    procedure Set_HFID (Network_Device_Name : String) is
 
-      HFID            : constant HFID_String.Bounded_String := HFID_String.To_Bounded_String (Source => Ada.Command_Line.Argument (Number => 3),
-                                                                                              Drop   => Ada.Strings.Error);
-      PLA_MAC_Address : MAC_Addresses.MAC_Address_Type      := MAC_Addresses.Broadcast_MAC_Address;
+      HFID            : constant HFID_Strings.Bounded_String := HFID_Strings.To_Bounded_String (Source => Ada.Command_Line.Argument (Number => 3),
+                                                                                                Drop   => Ada.Strings.Error);
+      PLA_MAC_Address : MAC_Addresses.MAC_Address_Type       := MAC_Addresses.Broadcast_MAC_Address;
 
    begin
 

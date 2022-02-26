@@ -26,7 +26,7 @@ use type MAC_Addresses.MAC_Address_Type;
 separate (Commands)
 
 procedure Set_HFID (Network_Device_Name : String;
-                    HFID                : HFID_String.Bounded_String;
+                    HFID                : HFID_Strings.Bounded_String;
                     PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is
 
    Adapters : constant Power_Line_Adapter_Sets.Set := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name,

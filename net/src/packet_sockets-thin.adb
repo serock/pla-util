@@ -436,11 +436,11 @@ package body Packet_Sockets.Thin is
 
    end Set_Socket_Timeout_Option;
 
-   function To_HFID_String (Payload : Payload_Type) return HFID_String.Bounded_String is
+   function To_HFID_String (Payload : Payload_Type) return HFID_Strings.Bounded_String is
 
       C    : Character;
       P    : Natural := Payload'First;
-      HFID : HFID_String.Bounded_String;
+      HFID : HFID_Strings.Bounded_String;
 
    begin
 
@@ -452,9 +452,9 @@ package body Packet_Sockets.Thin is
             exit;
          end if;
 
-         HFID_String.Append (Source   => HFID,
-                             New_Item => C,
-                             Drop     => Ada.Strings.Error);
+         HFID_Strings.Append (Source   => HFID,
+                              New_Item => C,
+                              Drop     => Ada.Strings.Error);
          P := P + 1;
 
       end loop;

@@ -17,4 +17,4 @@
 ------------------------------------------------------------------------
 with Ada.Strings.Bounded;
 
-package HFID_String is new Ada.Strings.Bounded.Generic_Bounded_Length (Max => 64);
+package HFID_Strings is new Ada.Strings.Bounded.Generic_Bounded_Length (Max => 64);

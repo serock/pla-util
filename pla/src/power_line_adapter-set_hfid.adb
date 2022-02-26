@@ -23,7 +23,7 @@ use type Packet_Sockets.Thin.Payload_Type;
 separate (Power_Line_Adapter)
 
 procedure Set_HFID (Self                : Adapter_Type;
-                    HFID                : HFID_String.Bounded_String;
+                    HFID                : HFID_Strings.Bounded_String;
                     Network_Device_Name : String) is
 
    Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#59#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#00#);

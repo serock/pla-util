@@ -24,7 +24,7 @@ separate (Power_Line_Adapter)
 
 function Get_HFID (Self                : Adapter_Type;
                    Kind                : HFID_Kind_Type;
-                   Network_Device_Name : String) return HFID_String.Bounded_String is
+                   Network_Device_Name : String) return HFID_Strings.Bounded_String is
 
    Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#40#, 16#00#);
    MAC_Address       : MAC_Address_Type;

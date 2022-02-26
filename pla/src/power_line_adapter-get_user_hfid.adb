@@ -18,7 +18,7 @@
 separate (Power_Line_Adapter)
 
 function Get_User_HFID (Self                : Adapter_Type;
-                        Network_Device_Name : String) return HFID_String.Bounded_String is
+                        Network_Device_Name : String) return HFID_Strings.Bounded_String is
 
 begin
 

@@ -15,7 +15,7 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with HFID_String;
+with HFID_Strings;
 with MAC_Addresses;
 private with Ada.Streams;
 private with Octets;
@@ -145,7 +145,7 @@ package Power_Line_Adapter is
                          Network_Device_Name : String) return Id_Info_Type;
 
    function Get_Manufacturer_HFID (Self                : Adapter_Type;
-                                   Network_Device_Name : String) return HFID_String.Bounded_String;
+                                   Network_Device_Name : String) return HFID_Strings.Bounded_String;
 
    function Get_Member_Network_Info (Self                : Adapter_Type;
                                      Network_Device_Name : String) return Network_Info_List_Type;
@@ -154,7 +154,7 @@ package Power_Line_Adapter is
                                Network_Device_Name : String) return Network_Stats_List_Type;
 
    function Get_User_HFID (Self                : Adapter_Type;
-                           Network_Device_Name : String) return HFID_String.Bounded_String;
+                           Network_Device_Name : String) return HFID_Strings.Bounded_String;
 
    function Has_MAC_Address (Self        : Adapter_Type;
                              MAC_Address : MAC_Addresses.MAC_Address_Type) return Boolean;
@@ -168,7 +168,7 @@ package Power_Line_Adapter is
                       Network_Device_Name : String);
 
    procedure Set_HFID (Self                : Adapter_Type;
-                       HFID                : HFID_String.Bounded_String;
+                       HFID                : HFID_Strings.Bounded_String;
                        Network_Device_Name : String);
 
    procedure Set_NMK (Self                : Adapter_Type;
@@ -192,7 +192,7 @@ private
       record
          Network_Interface : Network_Interface_Type;
          MAC_Address       : MAC_Address_Type;
-         HFID              : HFID_String.Bounded_String;
+         HFID              : HFID_Strings.Bounded_String;
       end record;
 
    subtype HFID_Octets_Type is Octets_Type (1 .. 64);
@@ -201,7 +201,7 @@ private
    procedure Create (Adapter           : in out Adapter_Type;
                      Network_Interface :        Network_Interface_Type;
                      MAC_Address       :        MAC_Address_Type;
-                     HFID              :        HFID_String.Bounded_String);
+                     HFID              :        HFID_Strings.Bounded_String);
 
    function Generate_DAK (Pass_Phrase : String) return Key_Type;
 
@@ -212,13 +212,13 @@ private
 
    function Get_HFID (Self                : Adapter_Type;
                       Kind                : HFID_Kind_Type;
-                      Network_Device_Name : String) return HFID_String.Bounded_String;
+                      Network_Device_Name : String) return HFID_Strings.Bounded_String;
 
    function Get_Network_Info (Self                : Adapter_Type;
                               Scope               : Network_Scope_Type;
                               Network_Device_Name : String) return Network_Info_List_Type;
 
-   function Get_Octets (HFID : HFID_String.Bounded_String) return HFID_Octets_Type;
+   function Get_Octets (HFID : HFID_Strings.Bounded_String) return HFID_Octets_Type;
 
    procedure Process (Self             :     Adapter_Type;
                       Request          :     Packet_Sockets.Thin.Payload_Type;
@@ -230,7 +230,7 @@ private
    procedure Validate_DAK_Pass_Phrase (Pass_Phrase      : String;
                                        Check_Min_Length : Boolean := True);
 
-   procedure Validate_HFID (HFID            : HFID_String.Bounded_String;
+   procedure Validate_HFID (HFID            : HFID_Strings.Bounded_String;
                             Min_HFID_Length : Positive := 1);
 
    procedure Validate_NMK_Pass_Phrase (Pass_Phrase      : String;

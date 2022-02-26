@@ -15,7 +15,7 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with HFID_String;
+with HFID_Strings;
 with MAC_Addresses;
 with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
@@ -62,7 +62,7 @@ package Commands is
 
    function Get_HFID (Network_Device_Name : String;
                       HFID_Level          : HFID_Level_Type;
-                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return HFID_String.Bounded_String;
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return HFID_Strings.Bounded_String;
 
    function Get_Id_Info (Network_Device_Name : String;
                          PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Id_Info_Type;
@@ -81,7 +81,7 @@ package Commands is
                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
    procedure Set_HFID (Network_Device_Name : String;
-                       HFID                : HFID_String.Bounded_String;
+                       HFID                : HFID_Strings.Bounded_String;
                        PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
    procedure Set_NMK (Network_Device_Name : String;

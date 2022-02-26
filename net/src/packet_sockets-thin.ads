@@ -15,7 +15,7 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with HFID_String;
+with HFID_Strings;
 with Interfaces;
 private with Interfaces.C;
 with MAC_Addresses;
@@ -55,7 +55,7 @@ package Packet_Sockets.Thin is
                    Payload : Payload_Type;
                    To      : MAC_Address_Type);
 
-   function To_HFID_String (Payload : Payload_Type) return HFID_String.Bounded_String;
+   function To_HFID_String (Payload : Payload_Type) return HFID_Strings.Bounded_String;
 
 private
 
