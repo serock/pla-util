@@ -20,25 +20,27 @@ with Packet_Sockets.Thin;
 
 use type Packet_Sockets.Thin.Payload_Type;
 
-separate (Power_Line_Adapter)
+separate (Power_Line_Adapters)
 
-procedure Set_HFID (Self                : Adapter_Type;
-                    HFID                : HFID_Strings.Bounded_String;
-                    Network_Device_Name : String) is
+procedure Set_NMK (Self                : Adapter_Type;
+                   Pass_Phrase         : String;
+                   Network_Device_Name : String) is
 
-   Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#59#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#00#);
+   Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#19#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
    MAC_Address       : MAC_Address_Type;
-   Request           : Packet_Sockets.Thin.Payload_Type (1 .. 78);
+   Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;
    Socket            : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Validate_HFID (HFID => HFID);
+   Validate_NMK_Pass_Phrase (Pass_Phrase      => Pass_Phrase,
+                             Check_Min_Length => True);
 
-   Request                      := (16#02#, 16#58#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#25#, 16#00#, 16#01#, 16#40#, 16#00#, others => 16#00#);
-   Request (15 .. Request'Last) := Get_Octets (HFID => HFID);
+   Request            := (16#02#, 16#18#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, others => 16#00#);
+   Request (10 .. 25) := Generate_NMK (Pass_Phrase => Pass_Phrase);
+   Request (27)       := 16#01#;
 
    begin
 
@@ -72,4 +74,4 @@ exception
    when Error : Packet_Sockets.Thin.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
-end Set_HFID;
+end Set_NMK;

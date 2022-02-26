@@ -23,26 +23,26 @@ with Ada.Strings.Maps;
 with Ada.Text_IO;
 with GNAT.Formatted_String;
 with HFID_Strings;
-with Power_Line_Adapter;
 with Power_Line_Adapter_Sets;
+with Power_Line_Adapters;
 
 use GNAT.Formatted_String;
 use type Ada.Text_IO.Count;
-use type Power_Line_Adapter.NID_Type;
+use type Power_Line_Adapters.NID_Type;
 
 package body Console is
 
-   package Data_Rate_Text_IO     is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.Data_Rate_Type);
-   package Network_Count_Text_IO is new Ada.Text_IO.Integer_IO (Num => Power_Line_Adapter.Network_Count_Type);
-   package NID_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.NID_Type);
-   package OUI_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.OUI_Type);
-   package SNID_Text_IO          is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.SNID_Type);
-   package TEI_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapter.TEI_Type);
+   package Data_Rate_Text_IO     is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.Data_Rate_Type);
+   package Network_Count_Text_IO is new Ada.Text_IO.Integer_IO (Num => Power_Line_Adapters.Network_Count_Type);
+   package NID_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.NID_Type);
+   package OUI_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.OUI_Type);
+   package SNID_Text_IO          is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.SNID_Type);
+   package TEI_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.TEI_Type);
 
-   function NID_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapter.NID_Type,
+   function NID_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapters.NID_Type,
                                                                 Put => NID_Text_IO.Put);
 
-   function OUI_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapter.OUI_Type,
+   function OUI_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapters.OUI_Type,
                                                                 Put => OUI_Text_IO.Put);
 
    Message_Too_Few_Arguments   : constant String                             := "Too few arguments";
@@ -131,8 +131,8 @@ package body Console is
 
       declare
 
-         Capabilities : constant Power_Line_Adapter.Capabilities_Type := Commands.Get_Capabilities (Network_Device_Name => Network_Device_Name,
-                                                                                                    PLA_MAC_Address     => PLA_MAC_Address);
+         Capabilities : constant Power_Line_Adapters.Capabilities_Type := Commands.Get_Capabilities (Network_Device_Name => Network_Device_Name,
+                                                                                                     PLA_MAC_Address     => PLA_MAC_Address);
 
       begin
 
@@ -173,8 +173,8 @@ package body Console is
 
       declare
 
-         Discover_List : constant Power_Line_Adapter.Discover_List_Type := Commands.Get_Discover_List (Network_Device_Name => Network_Device_Name,
-                                                                                                       PLA_MAC_Address     => PLA_MAC_Address);
+         Discover_List : constant Power_Line_Adapters.Discover_List_Type := Commands.Get_Discover_List (Network_Device_Name => Network_Device_Name,
+                                                                                                        PLA_MAC_Address     => PLA_MAC_Address);
 
       begin
 
@@ -284,8 +284,8 @@ package body Console is
 
       declare
 
-         Id_Info : constant Power_Line_Adapter.Id_Info_Type := Commands.Get_Id_Info (Network_Device_Name => Network_Device_Name,
-                                                                                     PLA_MAC_Address     => PLA_MAC_Address);
+         Id_Info : constant Power_Line_Adapters.Id_Info_Type := Commands.Get_Id_Info (Network_Device_Name => Network_Device_Name,
+                                                                                      PLA_MAC_Address     => PLA_MAC_Address);
 
       begin
 
@@ -304,7 +304,7 @@ package body Console is
 
       Column_2        : constant                             := 36;
       Network_Scope   : constant Commands.Network_Scope_Type := Get_Network_Scope;
-      Network_Info    : Power_Line_Adapter.Network_Info_Type;
+      Network_Info    : Power_Line_Adapters.Network_Info_Type;
       PLA_MAC_Address : MAC_Addresses.MAC_Address_Type       := MAC_Addresses.Broadcast_MAC_Address;
 
    begin
@@ -315,9 +315,9 @@ package body Console is
 
       declare
 
-         Network_Info_List : constant Power_Line_Adapter.Network_Info_List_Type := Commands.Get_Network_Info (Network_Device_Name => Network_Device_Name,
-                                                                                                              Network_Scope       => Network_Scope,
-                                                                                                              PLA_MAC_Address     => PLA_MAC_Address);
+         Network_Info_List : constant Power_Line_Adapters.Network_Info_List_Type := Commands.Get_Network_Info (Network_Device_Name => Network_Device_Name,
+                                                                                                               Network_Scope       => Network_Scope,
+                                                                                                               PLA_MAC_Address     => PLA_MAC_Address);
 
       begin
 
@@ -355,13 +355,13 @@ package body Console is
             Ada.Text_IO.New_Line (Spacing => 1);
             Ada.Text_IO.Put (Item => "  Station Role:");
             Ada.Text_IO.Set_Col (To => Column_2);
-            Ada.Text_IO.Put_Line (Item => Power_Line_Adapter.Station_Role_Type'Image (Network_Info_List (I).Station_Role));
+            Ada.Text_IO.Put_Line (Item => Power_Line_Adapters.Station_Role_Type'Image (Network_Info_List (I).Station_Role));
             Ada.Text_IO.Put (Item => "  Network Kind:");
             Ada.Text_IO.Set_Col (To => Column_2);
-            Ada.Text_IO.Put_Line (Item => Power_Line_Adapter.Network_Kind_Type'Image (Network_Info_List (I).Network_Kind));
+            Ada.Text_IO.Put_Line (Item => Power_Line_Adapters.Network_Kind_Type'Image (Network_Info_List (I).Network_Kind));
             Ada.Text_IO.Put (Item => "  Status:");
             Ada.Text_IO.Set_Col (To => Column_2);
-            Ada.Text_IO.Put_Line (Item => Power_Line_Adapter.Status_Type'Image (Network_Info_List (I).Status));
+            Ada.Text_IO.Put_Line (Item => Power_Line_Adapters.Status_Type'Image (Network_Info_List (I).Status));
             Ada.Text_IO.New_Line (Spacing => 1);
          end loop;
 
@@ -397,8 +397,8 @@ package body Console is
 
       declare
 
-         Network_Stats_List : constant Power_Line_Adapter.Network_Stats_List_Type := Commands.Get_Network_Stats (Network_Device_Name => Network_Device_Name,
-                                                                                                                 PLA_MAC_Address     => PLA_MAC_Address);
+         Network_Stats_List : constant Power_Line_Adapters.Network_Stats_List_Type := Commands.Get_Network_Stats (Network_Device_Name => Network_Device_Name,
+                                                                                                                  PLA_MAC_Address     => PLA_MAC_Address);
 
       begin
 
@@ -440,25 +440,25 @@ package body Console is
 
    end Get_PLA_MAC_Address;
 
-   function Image (HPAV_Version : Power_Line_Adapter.HPAV_Version_Type) return String is
+   function Image (HPAV_Version : Power_Line_Adapters.HPAV_Version_Type) return String is
    begin
 
       case HPAV_Version is
-         when Power_Line_Adapter.HPAV_1_1 => return "1.1";
-         when Power_Line_Adapter.HPAV_2_0 => return "2.0";
-         when Power_Line_Adapter.Not_HPAV => return "Not a HomePlug AV device";
+         when Power_Line_Adapters.HPAV_1_1 => return "1.1";
+         when Power_Line_Adapters.HPAV_2_0 => return "2.0";
+         when Power_Line_Adapters.Not_HPAV => return "Not a HomePlug AV device";
       end case;
 
    end Image;
 
-   function Image (NID : Power_Line_Adapter.NID_Type) return String is
+   function Image (NID : Power_Line_Adapters.NID_Type) return String is
    begin
 
       return -(NID_Format (Format => +"%014x", Var => NID)) & " (" & Security_Level (NID => NID) & ')';
 
    end Image;
 
-   function Image (Signal_Level : Power_Line_Adapter.Signal_Level_Type) return String is
+   function Image (Signal_Level : Power_Line_Adapters.Signal_Level_Type) return String is
    begin
       case Signal_Level is
          when 0 =>      return "not available";
@@ -626,7 +626,7 @@ package body Console is
          Ada.Text_IO.New_Line (Spacing => 1);
          Show_Help;
 
-      when Error : Commands.Command_Error | Power_Line_Adapter.Adapter_Error | MAC_Addresses.MAC_Address_Error =>
+      when Error : Commands.Command_Error | Power_Line_Adapters.Adapter_Error | MAC_Addresses.MAC_Address_Error =>
 
          Ada.Text_IO.Put_Line (Item => "Error: " & Ada.Exceptions.Exception_Message (X => Error));
 
@@ -658,7 +658,7 @@ package body Console is
 
    end Restart;
 
-   function Security_Level (NID : Power_Line_Adapter.NID_Type) return String is
+   function Security_Level (NID : Power_Line_Adapters.NID_Type) return String is
    begin
 
       return (if (NID and 16#10_0000_0000_0000#) = 0 then "SL-SC" else "SL-HS");

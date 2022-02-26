@@ -31,24 +31,24 @@ package body Commands is
    function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set is separate;
 
    function Get_Capabilities (Network_Device_Name : String;
-                              PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Capabilities_Type is separate;
+                              PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Capabilities_Type is separate;
 
    function Get_Discover_List (Network_Device_Name : String;
-                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Discover_List_Type is separate;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Discover_List_Type is separate;
 
    function Get_HFID (Network_Device_Name : String;
                       HFID_Level          : HFID_Level_Type;
                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return HFID_Strings.Bounded_String is separate;
 
    function Get_Id_Info (Network_Device_Name : String;
-                         PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Id_Info_Type is separate;
+                         PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Id_Info_Type is separate;
 
    function Get_Network_Info (Network_Device_Name : String;
                               Network_Scope       : Network_Scope_Type;
-                              PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Network_Info_List_Type is separate;
+                              PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Network_Info_List_Type is separate;
 
    function Get_Network_Stats (Network_Device_Name : String;
-                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Network_Stats_List_Type is separate;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Network_Stats_List_Type is separate;
 
    procedure Reset (Network_Device_Name : String;
                     PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is separate;

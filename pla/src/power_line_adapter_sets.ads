@@ -16,8 +16,8 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Containers.Bounded_Ordered_Sets;
-with Power_Line_Adapter;
+with Power_Line_Adapters;
 
-package Power_Line_Adapter_Sets is new Ada.Containers.Bounded_Ordered_Sets (Element_Type => Power_Line_Adapter.Adapter_Type,
-                                                                            "<"          => Power_Line_Adapter."<",
-                                                                            "="          => Power_Line_Adapter."=");
+package Power_Line_Adapter_Sets is new Ada.Containers.Bounded_Ordered_Sets (Element_Type => Power_Line_Adapters.Adapter_Type,
+                                                                            "<"          => Power_Line_Adapters."<",
+                                                                            "="          => Power_Line_Adapters."=");

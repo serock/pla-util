@@ -16,8 +16,8 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Containers;
-with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
+with Power_Line_Adapters.Network;
 
 use type Ada.Containers.Count_Type;
 
@@ -26,8 +26,8 @@ separate (Commands)
 procedure Restart (Network_Device_Name : String;
                    PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is
 
-   Adapters : constant Power_Line_Adapter_Sets.Set := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name,
-                                                                                           MAC_Address         => PLA_MAC_Address);
+   Adapters : constant Power_Line_Adapter_Sets.Set := Power_Line_Adapters.Network.Discover (Network_Device_Name => Network_Device_Name,
+                                                                                            MAC_Address         => PLA_MAC_Address);
 
 begin
 

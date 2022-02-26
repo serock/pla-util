@@ -15,8 +15,8 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
+with Power_Line_Adapters.Network;
 
 separate (Commands)
 
@@ -24,6 +24,6 @@ function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.
 
 begin
 
-   return Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name);
+   return Power_Line_Adapters.Network.Discover (Network_Device_Name => Network_Device_Name);
 
 end Discover;

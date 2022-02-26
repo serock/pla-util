@@ -20,7 +20,7 @@ with Packet_Sockets.Thin;
 
 use type Packet_Sockets.Thin.Payload_Type;
 
-package body Power_Line_Adapter.Network is
+package body Power_Line_Adapters.Network is
 
    function Discover (Network_Device_Name : String;
                       MAC_Address         : MAC_Address_Type := Broadcast_MAC_Address) return Power_Line_Adapter_Sets.Set is
@@ -98,4 +98,4 @@ package body Power_Line_Adapter.Network is
 
    end Discover;
 
-end Power_Line_Adapter.Network;
+end Power_Line_Adapters.Network;

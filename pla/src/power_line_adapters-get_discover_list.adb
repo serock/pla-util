@@ -20,33 +20,30 @@ with Packet_Sockets.Thin;
 
 use type Packet_Sockets.Thin.Payload_Type;
 
-separate (Power_Line_Adapter)
+separate (Power_Line_Adapters)
 
-function Get_Network_Info (Self                : Adapter_Type;
-                           Scope               : Network_Scope_Type;
-                           Network_Device_Name : String) return Network_Info_List_Type is
+function Get_Discover_List (Self                : Adapter_Type;
+                            Network_Device_Name : String) return Discover_List_Type is
 
-   Expected_Response  : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#29#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
+   Expected_Response  : constant Packet_Sockets.Thin.Payload_Type := (16#01#, 16#15#, 16#00#, 16#00#, 16#00#);
    MAC_Address        : MAC_Address_Type;
-   No_Network         : Network_Info_List_Type (1 .. 0);
-   Number_Of_Networks : Natural;
+   Number_Of_Networks : Network_Count_Type;
+   Number_Of_Stations : Station_Count_Type;
+   Octets_Per_Network : constant := 13;
+   Octets_Per_Station : constant := 12;
    Request            : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response           : Packet_Sockets.Thin.Payload_Type (1 .. 385);
    Response_Length    : Natural;
    Socket             : Packet_Sockets.Thin.Socket_Type;
+   X                  : Positive;
 
 begin
 
-   Request := (16#02#, 16#28#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#, others => 16#00#);
-
-   case Scope is
-      when MEMBER => null;
-      when ANY    => Request (11) := 16#01#;
-   end case;
+   Request := (16#01#, 16#14#, 16#00#, 16#00#, 16#00#, others => 16#00#);
 
    begin
 
-      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
+      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_HomePlug,
                    Device_Name     => Network_Device_Name,
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
@@ -57,7 +54,7 @@ begin
                     Response_Length  => Response_Length,
                     From_MAC_Address => MAC_Address);
 
-      if Response_Length < 26 or else Response (Expected_Response'Range) /= Expected_Response then
+      if Response_Length < 7 or else Response (Expected_Response'Range) /= Expected_Response then
          raise Adapter_Error with Message_Unexpected_Response;
       end if;
 
@@ -71,22 +68,37 @@ begin
 
    Socket.Close;
 
-   Number_Of_Networks := Natural (Response (10));
-
-   if Number_Of_Networks = 0 then
-      return No_Network;
-   end if;
+   X                  := 6;
+   Number_Of_Stations := Natural (Response (X));
+   X                  := X + 1;
+   Number_Of_Networks := Natural (Response (X + Number_Of_Stations * Octets_Per_Station));
 
    declare
 
-      Network_Info : Network_Info_List_Type (1 .. Number_Of_Networks);
-      NID          : NID_Type;
-      X            : Positive;
+      Discovered_List : Discover_List_Type (Number_Of_Stations => Number_Of_Stations,
+                                            Number_Of_Networks => Number_Of_Networks);
+      NID             : NID_Type;
 
    begin
 
-      X := 11;
+      for I in 1 .. Number_Of_Stations loop
+
+         Discovered_List.Stations (I).MAC_Address  := Create_MAC_Address (Octets => Response (X .. X + 5));
+         Discovered_List.Stations (I).TEI          := TEI_Type (Response (X + 6));
+         Discovered_List.Stations (I).Same_Network := No_Yes_Type'Val (Response (X + 7));
+         Discovered_List.Stations (I).SNID         := SNID_Type (Response (X + 8) and 16#0f#);
+         Discovered_List.Stations (I).CCo          := (if (Response (X + 9) and 16#20#) = 0 then No else Yes);
+         Discovered_List.Stations (I).PCo          := (if (Response (X + 9) and 16#40#) = 0 then No else Yes);
+         Discovered_List.Stations (I).Backup_CCo   := (if (Response (X + 9) and 16#80#) = 0 then No else Yes);
+         Discovered_List.Stations (I).Signal_Level := Signal_Level_Type (Response (X + 10));
+         X                                         := X + Octets_Per_Station;
+
+      end loop;
+
+      X := X + 1;
+
       for I in 1 .. Number_Of_Networks loop
+
          NID := NID_Type (Response (X));
          NID := NID + NID_Type (Response (X + 1)) * 16#00_0000_0000_0100#;
          NID := NID + NID_Type (Response (X + 2)) * 16#00_0000_0001_0000#;
@@ -95,22 +107,14 @@ begin
          NID := NID + NID_Type (Response (X + 5)) * 16#00_0100_0000_0000#;
          NID := NID + NID_Type (Response (X + 6)) * 16#01_0000_0000_0000#;
 
-         Network_Info (I).NID                := NID;                                                  X := X + 7;
-         Network_Info (I).SNID               := SNID_Type (Response (X) and 16#0f#);                  X := X + 1;
-         Network_Info (I).TEI                := TEI_Type (Response (X));                              X := X + 1;
-         Network_Info (I).Station_Role       := Station_Role_Type'Val (Response (X));                 X := X + 1;
-         Network_Info (I).CCo_MAC_Address    := Create_MAC_Address (Octets => Response (X .. X + 5)); X := X + 6;
-         Network_Info (I).Network_Kind       := Network_Kind_Type'Val (Response (X));                 X := X + 1;
-         Network_Info (I).Num_Coord_Networks := Network_Count_Type (Response (X));                    X := X + 1;
-         Network_Info (I).Status             := Status_Type'Val (Response (X));                       X := X + 1;
+         Discovered_List.Networks (I).NID                 := NID;
+         Discovered_List.Networks (I).SNID                := SNID_Type (Response (X + 7) and 16#0f#);
+         Discovered_List.Networks (I).Coordinating_Status := Coordinating_Status_Type'Val (Response (X + 10));
+         X                                                := X + Octets_Per_Network;
+
       end loop;
 
-      for I in 1 .. Number_Of_Networks loop
-         Network_Info (I).BCCo_MAC_Address := Create_MAC_Address (Octets => Response (X .. X + 5));
-         X                                 := X + 6;
-      end loop;
-
-      return Network_Info;
+      return Discovered_List;
 
    end;
 
@@ -119,4 +123,4 @@ exception
    when Error : Packet_Sockets.Thin.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
-end Get_Network_Info;
+end Get_Discover_List;

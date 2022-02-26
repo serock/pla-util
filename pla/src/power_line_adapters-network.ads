@@ -17,9 +17,9 @@
 ------------------------------------------------------------------------
 with Power_Line_Adapter_Sets;
 
-package Power_Line_Adapter.Network is
+package Power_Line_Adapters.Network is
 
    function Discover (Network_Device_Name : String;
                       MAC_Address         : MAC_Address_Type := Broadcast_MAC_Address) return Power_Line_Adapter_Sets.Set;
 
-end Power_Line_Adapter.Network;
+end Power_Line_Adapters.Network;

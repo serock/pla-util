@@ -15,14 +15,14 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-separate (Power_Line_Adapter)
+separate (Power_Line_Adapters)
 
-function Get_User_HFID (Self                : Adapter_Type;
-                        Network_Device_Name : String) return HFID_Strings.Bounded_String is
+function Get_Member_Network_Info (Self                : Adapter_Type;
+                                  Network_Device_Name : String) return Network_Info_List_Type is
 
 begin
 
-   return Self.Get_HFID (Kind                => USER,
-                         Network_Device_Name => Network_Device_Name);
+   return Self.Get_Network_Info (Scope               => MEMBER,
+                                 Network_Device_Name => Network_Device_Name);
 
-end Get_User_HFID;
+end Get_Member_Network_Info;

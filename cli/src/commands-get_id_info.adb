@@ -17,8 +17,8 @@
 ------------------------------------------------------------------------
 with Ada.Containers;
 with MAC_Addresses;
-with Power_Line_Adapter.Network;
 with Power_Line_Adapter_Sets;
+with Power_Line_Adapters.Network;
 
 use type Ada.Containers.Count_Type;
 use type MAC_Addresses.MAC_Address_Type;
@@ -26,10 +26,10 @@ use type MAC_Addresses.MAC_Address_Type;
 separate (Commands)
 
 function Get_Id_Info (Network_Device_Name : String;
-                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter.Id_Info_Type is
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Id_Info_Type is
 
-   Adapters : constant Power_Line_Adapter_Sets.Set := Power_Line_Adapter.Network.Discover (Network_Device_Name => Network_Device_Name,
-                                                                                           MAC_Address         => PLA_MAC_Address);
+   Adapters : constant Power_Line_Adapter_Sets.Set := Power_Line_Adapters.Network.Discover (Network_Device_Name => Network_Device_Name,
+                                                                                            MAC_Address         => PLA_MAC_Address);
 
 begin
 

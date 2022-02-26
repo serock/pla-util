@@ -17,7 +17,7 @@
 ------------------------------------------------------------------------
 private with Commands;
 private with MAC_Addresses;
-private with Power_Line_Adapter;
+private with Power_Line_Adapters;
 
 package Console is
 
@@ -37,12 +37,12 @@ private
    function Get_Network_Scope return Commands.Network_Scope_Type;
    procedure Get_Network_Stats (Network_Device_Name : String);
    function Get_PLA_MAC_Address (Image : String) return MAC_Addresses.MAC_Address_Type;
-   function Image (HPAV_Version : Power_Line_Adapter.HPAV_Version_Type) return String;
-   function Image (NID : Power_Line_Adapter.NID_Type) return String;
-   function Image (Signal_Level : Power_Line_Adapter.Signal_Level_Type) return String;
+   function Image (HPAV_Version : Power_Line_Adapters.HPAV_Version_Type) return String;
+   function Image (NID : Power_Line_Adapters.NID_Type) return String;
+   function Image (Signal_Level : Power_Line_Adapters.Signal_Level_Type) return String;
    procedure Reset (Network_Device_Name : String);
    procedure Restart (Network_Device_Name : String);
-   function Security_Level (NID : Power_Line_Adapter.NID_Type) return String;
+   function Security_Level (NID : Power_Line_Adapters.NID_Type) return String;
    procedure Set_HFID (Network_Device_Name : String);
    procedure Set_NMK (Network_Device_Name : String);
    procedure Show_Help;

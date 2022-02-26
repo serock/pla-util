@@ -18,7 +18,7 @@
 with Ada.Exceptions;
 with Packet_Sockets.Thin;
 
-separate (Power_Line_Adapter)
+separate (Power_Line_Adapters)
 
 function Get_Network_Stats (Self                : Adapter_Type;
                             Network_Device_Name : String) return Network_Stats_List_Type is

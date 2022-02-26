@@ -20,26 +20,32 @@ with Packet_Sockets.Thin;
 
 use type Packet_Sockets.Thin.Payload_Type;
 
-separate (Power_Line_Adapter)
+separate (Power_Line_Adapters)
 
-function Get_Capabilities (Self                : Adapter_Type;
-                           Network_Device_Name : String) return Capabilities_Type is
+function Check_NMK (Self                : Adapter_Type;
+                    Pass_Phrase         : String;
+                    Network_Device_Name : String) return Boolean is
 
-   Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#01#, 16#35#, 16#60#, 16#00#, 16#00#);
-   Capabilities      : Capabilities_Type;
+   I                 : constant Positive := 13;
+   Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#10#, 16#00#);
+   Generated_NMK     : Key_Type;
    MAC_Address       : MAC_Address_Type;
+   NMK               : Key_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response          : Packet_Sockets.Thin.Payload_Type (1 .. 30);
+   Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;
    Socket            : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Request := (16#01#, 16#34#, 16#60#, others => 16#00#);
+   Validate_NMK_Pass_Phrase (Pass_Phrase      => Pass_Phrase,
+                             Check_Min_Length => False);
+
+   Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#24#, others => 16#00#);
 
    begin
 
-      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_HomePlug,
+      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
                    Device_Name     => Network_Device_Name,
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
@@ -50,7 +56,7 @@ begin
                     Response_Length  => Response_Length,
                     From_MAC_Address => MAC_Address);
 
-      if Response_Length < 30 or else Response (Expected_Response'Range) /= Expected_Response then
+      if Response_Length < 28 or else Response (Expected_Response'Range) /= Expected_Response then
          raise Adapter_Error with Message_Unexpected_Response;
       end if;
 
@@ -64,18 +70,14 @@ begin
 
    Socket.Close;
 
-   Capabilities.AV_Version             := AV_Version_Type'Val (Response (6));
-   Capabilities.MAC_Address            := Create_MAC_Address (Octets => Response (7 .. 12));
-   Capabilities.OUI                    := 65536 * OUI_Type (Response (13)) + 256 * OUI_Type (Response (14)) + OUI_Type (Response (15));
-   Capabilities.Proxy                  := Capable_Type'Val (Response (19));
-   Capabilities.Backup_CCo             := Capable_Type'Val (Response (20));
-   Capabilities.Implementation_Version := Implementation_Version_Type (Response (29)) + 256 * Implementation_Version_Type (Response (30));
+   NMK           := Response (I .. I + Key_Type'Length - 1);
+   Generated_NMK := Generate_NMK (Pass_Phrase => Pass_Phrase);
 
-   return Capabilities;
+   return Generated_NMK = NMK;
 
 exception
 
    when Error : Packet_Sockets.Thin.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
-end Get_Capabilities;
+end Check_NMK;

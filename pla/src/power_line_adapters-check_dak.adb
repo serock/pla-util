@@ -20,7 +20,7 @@ with Packet_Sockets.Thin;
 
 use type Packet_Sockets.Thin.Payload_Type;
 
-separate (Power_Line_Adapter)
+separate (Power_Line_Adapters)
 
 function Check_DAK (Self                : Adapter_Type;
                     Pass_Phrase         : String;

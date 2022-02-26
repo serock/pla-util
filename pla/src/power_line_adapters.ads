@@ -23,7 +23,7 @@ private with Packet_Sockets.Thin;
 
 use MAC_Addresses;
 
-package Power_Line_Adapter is
+package Power_Line_Adapters is
 
    type Adapter_Type                is tagged private;
    type Capable_Type                is (Not_Capable, Capable);
@@ -241,4 +241,4 @@ private
                                    Max_Pass_Phrase_Length : Positive;
                                    Check_Min_Length       : Boolean := True);
 
-end Power_Line_Adapter;
+end Power_Line_Adapters;

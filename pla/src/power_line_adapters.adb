@@ -21,7 +21,7 @@ with GNAT.SHA256;
 
 use type Ada.Streams.Stream_Element_Offset;
 
-package body Power_Line_Adapter is
+package body Power_Line_Adapters is
 
    function "<" (Left  : Adapter_Type;
                  Right : Adapter_Type) return Boolean is
@@ -302,4 +302,4 @@ package body Power_Line_Adapter is
                       Pass_Phrase         : String;
                       Network_Device_Name : String) is separate;
 
-end Power_Line_Adapter;
+end Power_Line_Adapters;
