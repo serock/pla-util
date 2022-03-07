@@ -24,7 +24,7 @@ function Get_Network_Stats (Self                : Adapter_Type;
                             Network_Device_Name : String) return Network_Stats_List_Type is
 
    Expected_Response  : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#2d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
-   MAC_Address        : MAC_Address_Type;
+   MAC_Address        : MAC_Addresses.MAC_Address_Type;
    No_Stats           : Network_Stats_List_Type (1 .. 0);
    Number_Of_Stations : Natural;
    Request            : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
@@ -35,6 +35,10 @@ function Get_Network_Stats (Self                : Adapter_Type;
 begin
 
    Request := (16#02#, 16#2c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#, 16#b0#, 16#f2#, 16#e6#, 16#95#, 16#66#, 16#6b#, 16#03#, others => 16#00#);
+
+   declare
+
+      use type Octets.Octets_Type;
 
    begin
 
@@ -71,6 +75,8 @@ begin
 
    declare
 
+      use type Octets.Octet_Type;
+
       Network_Stats : Network_Stats_List_Type (1 .. Number_Of_Stations);
       X             : Positive;
 
@@ -79,7 +85,7 @@ begin
       X := 11;
       for I in 1 .. Number_Of_Stations loop
 
-         Network_Stats (I).Destination_Address    := Create_MAC_Address (Octets => Response (X .. X + 5));
+         Network_Stats (I).Destination_Address    := MAC_Addresses.Create_MAC_Address (Octets => Response (X .. X + 5));
          X := X + 6;
          Network_Stats (I).Average_Rate_To_Dest   := Data_Rate_Type (Response (X)) + 256 * (Data_Rate_Type (Response (X + 1) and 16#07#));
          X := X + 2;

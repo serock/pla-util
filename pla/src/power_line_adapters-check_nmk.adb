@@ -18,18 +18,18 @@
 with Ada.Exceptions;
 with Packet_Sockets.Thin;
 
-use type Packet_Sockets.Thin.Payload_Type;
-
 separate (Power_Line_Adapters)
 
 function Check_NMK (Self                : Adapter_Type;
                     Pass_Phrase         : String;
                     Network_Device_Name : String) return Boolean is
 
+   use type Octets.Octets_Type;
+
    I                 : constant Positive := 13;
    Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#10#, 16#00#);
    Generated_NMK     : Key_Type;
-   MAC_Address       : MAC_Address_Type;
+   MAC_Address       : MAC_Addresses.MAC_Address_Type;
    NMK               : Key_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);

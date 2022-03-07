@@ -20,7 +20,7 @@ project Cli is
    end Binder;
 
    package Linker is
-      for Default_Switches ("ada") use ("-g");
+      for Default_Switches ("ada") use ("-g", "-lpcap");
    end Linker;
 
 end Cli;

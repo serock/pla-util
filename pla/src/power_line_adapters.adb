@@ -16,15 +16,15 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Characters.Latin_1;
-with Ada.Streams;
 with GNAT.SHA256;
-
-use type Ada.Streams.Stream_Element_Offset;
 
 package body Power_Line_Adapters is
 
    function "<" (Left  : Adapter_Type;
                  Right : Adapter_Type) return Boolean is
+
+      use type MAC_Addresses.MAC_Address_Type;
+
    begin
 
       if Left.Network_Interface = Right.Network_Interface then
@@ -37,6 +37,9 @@ package body Power_Line_Adapters is
 
    overriding function "=" (Left  : Adapter_Type;
                             Right : Adapter_Type) return Boolean is
+
+      use type MAC_Addresses.MAC_Address_Type;
+
    begin
 
       return Left.Network_Interface = Right.Network_Interface and then Left.MAC_Address = Right.MAC_Address;
@@ -45,7 +48,7 @@ package body Power_Line_Adapters is
 
    procedure Create (Adapter           : in out Adapter_Type;
                      Network_Interface :        Network_Interface_Type;
-                     MAC_Address       :        MAC_Address_Type;
+                     MAC_Address       :        MAC_Addresses.MAC_Address_Type;
                      HFID              :        HFID_Strings.Bounded_String) is
 
    begin
@@ -55,6 +58,16 @@ package body Power_Line_Adapters is
       Adapter.HFID              := HFID;
 
    end Create;
+
+   function Derive_Protocol (Payload : Packets.Payload_Type) return Packets.Protocol_Type is
+
+      use type Octets.Octet_Type;
+
+   begin
+
+      return (if Payload (3) = 16#a0# then Power_Line_Adapters.Protocol_Mediaxtream else Power_Line_Adapters.Protocol_Homeplug);
+
+   end Derive_Protocol;
 
    function Generate_DAK (Pass_Phrase : String) return Key_Type is
 
@@ -69,6 +82,8 @@ package body Power_Line_Adapters is
 
    function Generate_Key (Pass_Phrase : String;
                           Salt        : Ada.Streams.Stream_Element_Array) return Key_Type is
+
+      use type Ada.Streams.Stream_Element_Offset;
 
       Key    : Key_Type;
       J      : Ada.Streams.Stream_Element_Offset;
@@ -95,7 +110,7 @@ package body Power_Line_Adapters is
 
       J := 1;
       for I in Key_Type'Range loop
-         Key (I) := Octet_Type (Digest (J));
+         Key (I) := Octets.Octet_Type (Digest (J));
          J       := J + 1;
       end loop;
 
@@ -132,6 +147,9 @@ package body Power_Line_Adapters is
 
    function Has_MAC_Address (Self        : Adapter_Type;
                              MAC_Address : MAC_Addresses.MAC_Address_Type) return Boolean is
+
+      use type MAC_Addresses.MAC_Address_Type;
+
    begin
 
       return Self.MAC_Address = MAC_Address;
@@ -151,7 +169,7 @@ package body Power_Line_Adapters is
                       Socket           :     Packet_Sockets.Thin.Socket_Type;
                       Response         : out Packet_Sockets.Thin.Payload_Type;
                       Response_Length  : out Natural;
-                      From_MAC_Address : out MAC_Address_Type) is
+                      From_MAC_Address : out MAC_Addresses.MAC_Address_Type) is
 
    begin
 

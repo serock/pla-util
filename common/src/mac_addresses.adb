@@ -25,6 +25,8 @@ package body MAC_Addresses is
    function "<" (Left  : MAC_Address_Type;
                  Right : MAC_Address_Type) return Boolean is
 
+      use type Octets.Octet_Type;
+
    begin
 
       for I in MAC_Address_Octets_Type'Range loop
@@ -67,12 +69,12 @@ package body MAC_Addresses is
    begin
 
       for I in Self.Octets'First .. Self.Octets'Last - 1 loop
-         Hex_Format := Octet_Format (Format => Hex_Format,
-                                     Var    => Self.Octets (I)) & ':';
+         Hex_Format := Octets.Octet_Format (Format => Hex_Format,
+                                            Var    => Self.Octets (I)) & ':';
       end loop;
 
-      Hex_Format := Octet_Format (Format => Hex_Format,
-                                  Var    => Self.Octets (Self.Octets'Last));
+      Hex_Format := Octets.Octet_Format (Format => Hex_Format,
+                                         Var    => Self.Octets (Self.Octets'Last));
 
       S := -Hex_Format;
 
@@ -98,8 +100,8 @@ package body MAC_Addresses is
 
       declare
 
-         Lower_Image : constant MAC_Address_Image_Type := Ada.Characters.Handling.To_Lower (Item => Image);
-         Octets      : MAC_Address_Octets_Type;
+         Lower_Image        : constant MAC_Address_Image_Type := Ada.Characters.Handling.To_Lower (Item => Image);
+         MAC_Address_Octets : MAC_Address_Octets_Type;
 
       begin
 
@@ -107,14 +109,14 @@ package body MAC_Addresses is
             return Broadcast_MAC_Address;
          end if;
 
-         Octets (1) := Octet_Type'Value ("16#" & Lower_Image (1 .. 2) & '#');
-         Octets (2) := Octet_Type'Value ("16#" & Lower_Image (4 .. 5) & '#');
-         Octets (3) := Octet_Type'Value ("16#" & Lower_Image (7 .. 8) & '#');
-         Octets (4) := Octet_Type'Value ("16#" & Lower_Image (10 .. 11) & '#');
-         Octets (5) := Octet_Type'Value ("16#" & Lower_Image (13 .. 14) & '#');
-         Octets (6) := Octet_Type'Value ("16#" & Lower_Image (16 .. 17) & '#');
+         MAC_Address_Octets (1) := Octets.Octet_Type'Value ("16#" & Lower_Image (1 .. 2) & '#');
+         MAC_Address_Octets (2) := Octets.Octet_Type'Value ("16#" & Lower_Image (4 .. 5) & '#');
+         MAC_Address_Octets (3) := Octets.Octet_Type'Value ("16#" & Lower_Image (7 .. 8) & '#');
+         MAC_Address_Octets (4) := Octets.Octet_Type'Value ("16#" & Lower_Image (10 .. 11) & '#');
+         MAC_Address_Octets (5) := Octets.Octet_Type'Value ("16#" & Lower_Image (13 .. 14) & '#');
+         MAC_Address_Octets (6) := Octets.Octet_Type'Value ("16#" & Lower_Image (16 .. 17) & '#');
 
-         return Create_MAC_Address (Octets => Octets);
+         return Create_MAC_Address (Octets => MAC_Address_Octets);
 
       exception
 

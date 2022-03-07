@@ -18,16 +18,16 @@
 with Ada.Exceptions;
 with Packet_Sockets.Thin;
 
-use type Packet_Sockets.Thin.Payload_Type;
-
 separate (Power_Line_Adapters)
 
 function Get_Capabilities (Self                : Adapter_Type;
                            Network_Device_Name : String) return Capabilities_Type is
 
+   use type Octets.Octets_Type;
+
    Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#01#, 16#35#, 16#60#, 16#00#, 16#00#);
    Capabilities      : Capabilities_Type;
-   MAC_Address       : MAC_Address_Type;
+   MAC_Address       : MAC_Addresses.MAC_Address_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. 30);
    Response_Length   : Natural;
@@ -65,7 +65,7 @@ begin
    Socket.Close;
 
    Capabilities.AV_Version             := AV_Version_Type'Val (Response (6));
-   Capabilities.MAC_Address            := Create_MAC_Address (Octets => Response (7 .. 12));
+   Capabilities.MAC_Address            := MAC_Addresses.Create_MAC_Address (Octets => Response (7 .. 12));
    Capabilities.OUI                    := 65536 * OUI_Type (Response (13)) + 256 * OUI_Type (Response (14)) + OUI_Type (Response (15));
    Capabilities.Proxy                  := Capable_Type'Val (Response (19));
    Capabilities.Backup_CCo             := Capable_Type'Val (Response (20));

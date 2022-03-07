@@ -18,8 +18,6 @@
 with Ada.Exceptions;
 with Packet_Sockets.Thin;
 
-use type Packet_Sockets.Thin.Payload_Type;
-
 separate (Power_Line_Adapters)
 
 function Get_Network_Info (Self                : Adapter_Type;
@@ -27,7 +25,7 @@ function Get_Network_Info (Self                : Adapter_Type;
                            Network_Device_Name : String) return Network_Info_List_Type is
 
    Expected_Response  : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#29#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
-   MAC_Address        : MAC_Address_Type;
+   MAC_Address        : MAC_Addresses.MAC_Address_Type;
    No_Network         : Network_Info_List_Type (1 .. 0);
    Number_Of_Networks : Natural;
    Request            : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
@@ -43,6 +41,10 @@ begin
       when MEMBER => null;
       when ANY    => Request (11) := 16#01#;
    end case;
+
+   declare
+
+      use type Octets.Octets_Type;
 
    begin
 
@@ -79,6 +81,8 @@ begin
 
    declare
 
+      use type Octets.Octet_Type;
+
       Network_Info : Network_Info_List_Type (1 .. Number_Of_Networks);
       NID          : NID_Type;
       X            : Positive;
@@ -99,14 +103,14 @@ begin
          Network_Info (I).SNID               := SNID_Type (Response (X) and 16#0f#);                  X := X + 1;
          Network_Info (I).TEI                := TEI_Type (Response (X));                              X := X + 1;
          Network_Info (I).Station_Role       := Station_Role_Type'Val (Response (X));                 X := X + 1;
-         Network_Info (I).CCo_MAC_Address    := Create_MAC_Address (Octets => Response (X .. X + 5)); X := X + 6;
+         Network_Info (I).CCo_MAC_Address    := MAC_Addresses.Create_MAC_Address (Octets => Response (X .. X + 5)); X := X + 6;
          Network_Info (I).Network_Kind       := Network_Kind_Type'Val (Response (X));                 X := X + 1;
          Network_Info (I).Num_Coord_Networks := Network_Count_Type (Response (X));                    X := X + 1;
          Network_Info (I).Status             := Status_Type'Val (Response (X));                       X := X + 1;
       end loop;
 
       for I in 1 .. Number_Of_Networks loop
-         Network_Info (I).BCCo_MAC_Address := Create_MAC_Address (Octets => Response (X .. X + 5));
+         Network_Info (I).BCCo_MAC_Address := MAC_Addresses.Create_MAC_Address (Octets => Response (X .. X + 5));
          X                                 := X + 6;
       end loop;
 

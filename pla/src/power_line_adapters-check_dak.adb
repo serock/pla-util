@@ -18,18 +18,18 @@
 with Ada.Exceptions;
 with Packet_Sockets.Thin;
 
-use type Packet_Sockets.Thin.Payload_Type;
-
 separate (Power_Line_Adapters)
 
 function Check_DAK (Self                : Adapter_Type;
                     Pass_Phrase         : String;
                     Network_Device_Name : String) return Boolean is
 
+   use type Octets.Octets_Type;
+
    DAK               : Key_Type;
    Expected_Response : Packet_Sockets.Thin.Payload_Type (1 .. 12);
    Generated_DAK     : Key_Type;
-   MAC_Address       : MAC_Address_Type;
+   MAC_Address       : MAC_Addresses.MAC_Address_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;

@@ -17,11 +17,9 @@
 ------------------------------------------------------------------------
 with Octets;
 
-use Octets;
-
 package MAC_Addresses is
 
-   subtype MAC_Address_Octets_Type is Octets_Type (1 .. 6);
+   subtype MAC_Address_Octets_Type is Octets.Octets_Type (1 .. 6);
 
    type MAC_Address_Type is tagged private;
 

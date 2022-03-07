@@ -18,15 +18,13 @@
 with Ada.Exceptions;
 with Packet_Sockets.Thin;
 
-use type Packet_Sockets.Thin.Payload_Type;
-
 separate (Power_Line_Adapters)
 
 procedure Restart (Self                : Adapter_Type;
                    Network_Device_Name : String) is
 
    Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#21#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
-   MAC_Address       : MAC_Address_Type;
+   MAC_Address       : MAC_Addresses.MAC_Address_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response_Length   : Natural;
@@ -35,6 +33,10 @@ procedure Restart (Self                : Adapter_Type;
 begin
 
    Request := (16#02#, 16#20#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#01#, others => 16#00#);
+
+   declare
+
+      use type Octets.Octets_Type;
 
    begin
 

@@ -5,7 +5,7 @@ A power line adapter utility
 The purpose of this program is to allow Linux users to manage HomePlug AV2 compliant power line adapters that use a Broadcom system-on-a-chip (SoC) such as the BCM60500 or BCM60333.
 
 ### Compatible Power Line Adapters
-This program has been used with the following power line adapters:
+The following power line adapters have been used with `pla-util`:
 
 * D-Link DHP-700AV (uses BCM60500)
 * NETGEAR PLP1000 (uses BCM60333)
@@ -15,14 +15,20 @@ This program has been used with the following power line adapters:
 * TP-Link TL-PA9020 (uses BCM60500)
 
 ## Development Environment
-This program is being developed using:
+The following software is being used to develop `pla-util`:
 
-* [openSUSE Leap](https://www.opensuse.org/)
 * [GNAT Community Edition](https://www.adacore.com/download), which includes the GNAT Studio IDE and the GPRbuild tool
 * [Git](https://git-scm.com/)
+* [libpcap](https://www.tcpdump.org/)
+* [openSUSE Leap](https://www.opensuse.org/)
 
-### Test Hardware
-During development, this program is tested on D-Link DHP-700AV adapters from a D-Link DHP-701AV PowerLine AV2 2000 Gigabit Starter Kit.
+### Software
+The following library is required to build and run `pla-util`:
+
+* libpcap (version 1.9.1 is used during development)
+
+### Hardware
+During development, `pla-util` is tested with D-Link DHP-700AV adapters from a *D-Link DHP-701AV PowerLine AV2 2000 Gigabit Starter Kit*.
 
 ## How to Build the Program with GNAT Studio
 1. Use git to clone this repository.

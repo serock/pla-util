@@ -15,21 +15,16 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Ada.Text_IO;
-with GNAT.Formatted_String;
-with Interfaces.C;
+with Interfaces.C.Strings;
+with Packets.Pcap;
 
-package Octets is
+package body Packets is
 
-   type Octet_Type is new Interfaces.C.unsigned_char;
+   function Library_Version return String is
+   begin
 
-   type Octets_Type is array (Positive range <>) of aliased Octet_Type
-     with
-       Convention => C;
+      return Interfaces.C.Strings.Value (Item => Pcap.Library_Version);
 
-   package Octet_Text_IO is new Ada.Text_IO.Modular_IO (Num => Octet_Type);
+   end Library_Version;
 
-   function Octet_Format is new GNAT.Formatted_String.Mod_Format (Int => Octet_Type,
-                                                                  Put => Octet_Text_IO.Put);
-
-end Octets;
+end Packets;

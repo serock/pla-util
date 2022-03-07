@@ -726,7 +726,7 @@ package body Console is
 
    procedure Show_Version is
    begin
-      Ada.Text_IO.Put_Line (Item => "pla-util 1.2.0");
+      Ada.Text_IO.Put_Line (Item => "pla-util 2.0.0-dev");
       Ada.Text_IO.New_Line (Spacing => 1);
    end Show_Version;
 

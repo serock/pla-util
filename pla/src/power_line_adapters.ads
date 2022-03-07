@@ -20,8 +20,7 @@ with MAC_Addresses;
 private with Ada.Streams;
 private with Octets;
 private with Packet_Sockets.Thin;
-
-use MAC_Addresses;
+private with Packets;
 
 package Power_Line_Adapters is
 
@@ -49,7 +48,7 @@ package Power_Line_Adapters is
    type Capabilities_Type is
       record
          AV_Version             : AV_Version_Type;
-         MAC_Address            : MAC_Address_Type;
+         MAC_Address            : MAC_Addresses.MAC_Address_Type;
          OUI                    : OUI_Type;
          Backup_CCo             : Capable_Type;
          Proxy                  : Capable_Type;
@@ -67,8 +66,8 @@ package Power_Line_Adapters is
          NID                : NID_Type;
          SNID               : SNID_Type;
          TEI                : TEI_Type;
-         CCo_MAC_Address    : MAC_Address_Type;
-         BCCo_MAC_Address   : MAC_Address_Type;
+         CCo_MAC_Address    : MAC_Addresses.MAC_Address_Type;
+         BCCo_MAC_Address   : MAC_Addresses.MAC_Address_Type;
          Num_Coord_Networks : Network_Count_Type;
          Station_Role       : Station_Role_Type;
          Network_Kind       : Network_Kind_Type;
@@ -88,7 +87,7 @@ package Power_Line_Adapters is
 
    type Network_Stats_Type is
       record
-         Destination_Address    : MAC_Address_Type;
+         Destination_Address    : MAC_Addresses.MAC_Address_Type;
          Average_Rate_To_Dest   : Data_Rate_Type;
          Average_Rate_From_Dest : Data_Rate_Type;
       end record;
@@ -97,7 +96,7 @@ package Power_Line_Adapters is
 
    type Station_Type is
       record
-         MAC_Address  : MAC_Address_Type;
+         MAC_Address  : MAC_Addresses.MAC_Address_Type;
          TEI          : TEI_Type;
          Same_Network : No_Yes_Type;
          SNID         : SNID_Type;
@@ -177,12 +176,12 @@ package Power_Line_Adapters is
 
 private
 
-   use Octets;
-
-   Default_Receive_Timeout     : constant        := 500;
-   Default_Send_Timeout        : constant        := 500;
-   Message_No_Response         : constant String := "No response received from adapter";
-   Message_Unexpected_Response : constant String := "Unexpected response received from adapter";
+   Default_Receive_Timeout     : constant                       := 500;
+   Default_Send_Timeout        : constant                       := 500;
+   Message_No_Response         : constant String                := "No response received from adapter";
+   Message_Unexpected_Response : constant String                := "Unexpected response received from adapter";
+   Protocol_Homeplug           : constant Packets.Protocol_Type := (16#88#, 16#e1#);
+   Protocol_Mediaxtream        : constant Packets.Protocol_Type := (16#89#, 16#12#);
 
    type HFID_Kind_Type         is (MANUFACTURER, USER);
    type Network_Interface_Type is (MII0, MII1, PLC, SDR);
@@ -191,17 +190,19 @@ private
    type Adapter_Type is tagged
       record
          Network_Interface : Network_Interface_Type;
-         MAC_Address       : MAC_Address_Type;
+         MAC_Address       : MAC_Addresses.MAC_Address_Type;
          HFID              : HFID_Strings.Bounded_String;
       end record;
 
-   subtype HFID_Octets_Type is Octets_Type (1 .. 64);
-   subtype Key_Type         is Octets_Type (1 .. 16);
+   subtype HFID_Octets_Type is Octets.Octets_Type (1 .. 64);
+   subtype Key_Type         is Octets.Octets_Type (1 .. 16);
 
    procedure Create (Adapter           : in out Adapter_Type;
                      Network_Interface :        Network_Interface_Type;
-                     MAC_Address       :        MAC_Address_Type;
+                     MAC_Address       :        MAC_Addresses.MAC_Address_Type;
                      HFID              :        HFID_Strings.Bounded_String);
+
+   function Derive_Protocol (Payload : Packets.Payload_Type) return Packets.Protocol_Type;
 
    function Generate_DAK (Pass_Phrase : String) return Key_Type;
 
@@ -225,7 +226,7 @@ private
                       Socket           :     Packet_Sockets.Thin.Socket_Type;
                       Response         : out Packet_Sockets.Thin.Payload_Type;
                       Response_Length  : out Natural;
-                      From_MAC_Address : out MAC_Address_Type);
+                      From_MAC_Address : out MAC_Addresses.MAC_Address_Type);
 
    procedure Validate_DAK_Pass_Phrase (Pass_Phrase      : String;
                                        Check_Min_Length : Boolean := True);

@@ -17,38 +17,48 @@
 ------------------------------------------------------------------------
 with Ada.Exceptions;
 with Packet_Sockets.Thin;
-
-use type Packet_Sockets.Thin.Payload_Type;
+with Packets.Network_Devices;
 
 package body Power_Line_Adapters.Network is
 
    function Discover (Network_Device_Name : String;
-                      MAC_Address         : MAC_Address_Type := Broadcast_MAC_Address) return Power_Line_Adapter_Sets.Set is
+                      MAC_Address         : MAC_Addresses.MAC_Address_Type := MAC_Addresses.Broadcast_MAC_Address) return Power_Line_Adapter_Sets.Set is
+
+      use type Octets.Octets_Type;
 
       Adapter           : Adapter_Type;
       Adapters          : Power_Line_Adapter_Sets.Set (Capacity => Max_Adapters);
+      Device            : Packets.Network_Devices.Network_Device_Type;
       Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#71#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
       Network_Interface : Network_Interface_Type;
-      PLA_MAC_Address   : MAC_Address_Type;
-      Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
+      PLA_MAC_Address   : MAC_Addresses.MAC_Address_Type;
+      Request_Payload   : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
       Response          : Packet_Sockets.Thin.Payload_Type (1 .. 75);
       Response_Length   : Natural;
       Socket            : Packet_Sockets.Thin.Socket_Type;
 
    begin
 
-      Request := (16#01#, 16#70#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#a3#, 16#97#, 16#a2#, 16#55#, 16#53#, 16#be#, 16#f1#,
-                  16#fc#, 16#f9#, 16#79#, 16#6b#, 16#52#, 16#14#, 16#13#, 16#e9#, 16#e2#, others => 16#00#);
+      Request_Payload := (16#01#,
+                          16#70#, 16#a0#,
+                          16#00#, 16#00#,
+                          16#00#, 16#1f#, 16#84#,
+                          16#01#,
+                          16#a3#, 16#97#, 16#a2#, 16#55#, 16#53#, 16#be#, 16#f1#, 16#fc#, 16#f9#, 16#79#, 16#6b#, 16#52#, 16#14#, 16#13#, 16#e9#, 16#e2#,
+                          others => 16#00#);
 
       begin
+
+         Device.Open (Name => Network_Device_Name);
 
          Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
                       Device_Name     => Network_Device_Name,
                       Receive_Timeout => Default_Receive_Timeout,
                       Send_Timeout    => Default_Send_Timeout);
 
-         Socket.Send (Payload => Request,
-                      To      => MAC_Address);
+         Device.Send (Payload     => Request_Payload,
+                      Protocol    => Derive_Protocol (Payload => Request_Payload),
+                      Destination => MAC_Address);
 
          loop
             Socket.Receive (Payload        => Response,
@@ -93,7 +103,7 @@ package body Power_Line_Adapters.Network is
 
    exception
 
-      when Error : Packet_Sockets.Thin.Packet_Error =>
+      when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
          raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
    end Discover;

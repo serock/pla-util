@@ -20,6 +20,6 @@ with Power_Line_Adapter_Sets;
 package Power_Line_Adapters.Network is
 
    function Discover (Network_Device_Name : String;
-                      MAC_Address         : MAC_Address_Type := Broadcast_MAC_Address) return Power_Line_Adapter_Sets.Set;
+                      MAC_Address         : MAC_Addresses.MAC_Address_Type := MAC_Addresses.Broadcast_MAC_Address) return Power_Line_Adapter_Sets.Set;
 
 end Power_Line_Adapters.Network;

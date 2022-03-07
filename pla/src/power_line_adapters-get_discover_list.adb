@@ -18,15 +18,15 @@
 with Ada.Exceptions;
 with Packet_Sockets.Thin;
 
-use type Packet_Sockets.Thin.Payload_Type;
-
 separate (Power_Line_Adapters)
 
 function Get_Discover_List (Self                : Adapter_Type;
                             Network_Device_Name : String) return Discover_List_Type is
 
+   use type Octets.Octets_Type;
+
    Expected_Response  : constant Packet_Sockets.Thin.Payload_Type := (16#01#, 16#15#, 16#00#, 16#00#, 16#00#);
-   MAC_Address        : MAC_Address_Type;
+   MAC_Address        : MAC_Addresses.MAC_Address_Type;
    Number_Of_Networks : Network_Count_Type;
    Number_Of_Stations : Station_Count_Type;
    Octets_Per_Network : constant := 13;
@@ -75,6 +75,8 @@ begin
 
    declare
 
+      use type Octets.Octet_Type;
+
       Discovered_List : Discover_List_Type (Number_Of_Stations => Number_Of_Stations,
                                             Number_Of_Networks => Number_Of_Networks);
       NID             : NID_Type;
@@ -83,7 +85,7 @@ begin
 
       for I in 1 .. Number_Of_Stations loop
 
-         Discovered_List.Stations (I).MAC_Address  := Create_MAC_Address (Octets => Response (X .. X + 5));
+         Discovered_List.Stations (I).MAC_Address  := MAC_Addresses.Create_MAC_Address (Octets => Response (X .. X + 5));
          Discovered_List.Stations (I).TEI          := TEI_Type (Response (X + 6));
          Discovered_List.Stations (I).Same_Network := No_Yes_Type'Val (Response (X + 7));
          Discovered_List.Stations (I).SNID         := SNID_Type (Response (X + 8) and 16#0f#);

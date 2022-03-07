@@ -18,16 +18,16 @@
 with Ada.Exceptions;
 with Packet_Sockets.Thin;
 
-use type Packet_Sockets.Thin.Payload_Type;
-
 separate (Power_Line_Adapters)
 
 function Get_HFID (Self                : Adapter_Type;
                    Kind                : HFID_Kind_Type;
                    Network_Device_Name : String) return HFID_Strings.Bounded_String is
 
+   use type Octets.Octets_Type;
+
    Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#40#, 16#00#);
-   MAC_Address       : MAC_Address_Type;
+   MAC_Address       : MAC_Addresses.MAC_Address_Type;
    Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
    Response          : Packet_Sockets.Thin.Payload_Type (1 .. 76);
    Response_Length   : Natural;
