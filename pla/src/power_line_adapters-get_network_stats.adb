@@ -23,18 +23,18 @@ separate (Power_Line_Adapters)
 function Get_Network_Stats (Self                : Adapter_Type;
                             Network_Device_Name : String) return Network_Stats_List_Type is
 
-   Expected_Response  : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#2d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
-   MAC_Address        : MAC_Addresses.MAC_Address_Type;
-   No_Stats           : Network_Stats_List_Type (1 .. 0);
-   Number_Of_Stations : Natural;
-   Request            : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response           : Packet_Sockets.Thin.Payload_Type (1 .. 170);
-   Response_Length    : Natural;
-   Socket             : Packet_Sockets.Thin.Socket_Type;
+   Confirmation          : Packets.Payload_Type (1 .. 170);
+   Confirmation_Length   : Natural;
+   Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#2d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
+   MAC_Address           : MAC_Addresses.MAC_Address_Type;
+   No_Stats              : Network_Stats_List_Type (1 .. 0);
+   Number_Of_Stations    : Natural;
+   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Request := (16#02#, 16#2c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#, 16#b0#, 16#f2#, 16#e6#, 16#95#, 16#66#, 16#6b#, 16#03#, others => 16#00#);
+   Request_Payload := (16#02#, 16#2c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#, 16#b0#, 16#f2#, 16#e6#, 16#95#, 16#66#, 16#6b#, 16#03#, others => 16#00#);
 
    declare
 
@@ -47,14 +47,14 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+      Self.Process (Request             => Request_Payload,
+                    Socket              => Socket,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
-      if Response_Length < 10 or else Response (Expected_Response'Range) /= Expected_Response then
-         raise Adapter_Error with Message_Unexpected_Response;
+      if Confirmation_Length < 10 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+         raise Adapter_Error with Message_Unexpected_Confirmation;
       end if;
 
    exception
@@ -67,7 +67,7 @@ begin
 
    Socket.Close;
 
-   Number_Of_Stations := Natural (Response (10));
+   Number_Of_Stations := Natural (Confirmation (10));
 
    if Number_Of_Stations = 0 then
       return No_Stats;
@@ -85,11 +85,11 @@ begin
       X := 11;
       for I in 1 .. Number_Of_Stations loop
 
-         Network_Stats (I).Destination_Address    := MAC_Addresses.Create_MAC_Address (Octets => Response (X .. X + 5));
+         Network_Stats (I).Destination_Address    := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X .. X + 5));
          X := X + 6;
-         Network_Stats (I).Average_Rate_To_Dest   := Data_Rate_Type (Response (X)) + 256 * (Data_Rate_Type (Response (X + 1) and 16#07#));
+         Network_Stats (I).Average_Rate_To_Dest   := Data_Rate_Type (Confirmation (X)) + 256 * (Data_Rate_Type (Confirmation (X + 1) and 16#07#));
          X := X + 2;
-         Network_Stats (I).Average_Rate_From_Dest := Data_Rate_Type (Response (X)) + 256 * (Data_Rate_Type (Response (X + 1) and 16#07#));
+         Network_Stats (I).Average_Rate_From_Dest := Data_Rate_Type (Confirmation (X)) + 256 * (Data_Rate_Type (Confirmation (X + 1) and 16#07#));
          X := X + 2;
 
       end loop;

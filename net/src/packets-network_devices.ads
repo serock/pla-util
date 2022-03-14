@@ -29,12 +29,8 @@ package Packets.Network_Devices is
 
    function Name (Self : Network_Device_Type) return String;
 
-   procedure Open (Self : in out Network_Device_Type;
-                   Name :        String)
-     with
-       Pre => Self.Is_Available;
-
-   procedure Open (Self : in out Network_Device_Type)
+   procedure Open (Self                : in out Network_Device_Type;
+                   Network_Device_Name :        String)
      with
        Pre => Self.Is_Available;
 

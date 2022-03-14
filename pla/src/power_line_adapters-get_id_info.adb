@@ -25,17 +25,17 @@ function Get_Id_Info (Self                : Adapter_Type;
 
    use type Octets.Octets_Type;
 
-   Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#01#, 16#61#, 16#60#, 16#00#, 16#00#);
-   Id_Info           : Id_Info_Type;
-   MAC_Address       : MAC_Addresses.MAC_Address_Type;
-   Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response          : Packet_Sockets.Thin.Payload_Type (1 .. 266);
-   Response_Length   : Natural;
-   Socket            : Packet_Sockets.Thin.Socket_Type;
+   Confirmation          : Packets.Payload_Type (1 .. 266);
+   Confirmation_Length   : Natural;
+   Expected_Confirmation : constant Packets.Payload_Type := (16#01#, 16#61#, 16#60#, 16#00#, 16#00#);
+   Id_Info               : Id_Info_Type;
+   MAC_Address           : MAC_Addresses.MAC_Address_Type;
+   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Request := (16#01#, 16#60#, 16#60#, others => 16#00#);
+   Request_Payload := (16#01#, 16#60#, 16#60#, others => 16#00#);
 
    begin
 
@@ -44,14 +44,14 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+      Self.Process (Request             => Request_Payload,
+                    Socket              => Socket,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
-      if Response_Length < 11 or else Response (Expected_Response'Range) /= Expected_Response then
-         raise Adapter_Error with Message_Unexpected_Response;
+      if Confirmation_Length < 11 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+         raise Adapter_Error with Message_Unexpected_Confirmation;
       end if;
 
    exception
@@ -64,17 +64,17 @@ begin
 
    Socket.Close;
 
-   case Response (10) is
+   case Confirmation (10) is
       when 16#00# => Id_Info.Homeplug_AV_Version := HPAV_1_1;
       when 16#01# => Id_Info.Homeplug_AV_Version := HPAV_2_0;
       when 16#ff# => Id_Info.Homeplug_AV_Version := Not_HPAV;
       when others =>
-         raise Adapter_Error with Message_Unexpected_Response;
+         raise Adapter_Error with Message_Unexpected_Confirmation;
    end case;
 
    if Id_Info.Homeplug_AV_Version = HPAV_2_0 then
 
-      Id_Info.MCS := MCS_Type'Val (Response (12));
+      Id_Info.MCS := MCS_Type'Val (Confirmation (12));
 
    else
 

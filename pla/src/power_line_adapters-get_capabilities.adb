@@ -25,17 +25,17 @@ function Get_Capabilities (Self                : Adapter_Type;
 
    use type Octets.Octets_Type;
 
-   Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#01#, 16#35#, 16#60#, 16#00#, 16#00#);
-   Capabilities      : Capabilities_Type;
-   MAC_Address       : MAC_Addresses.MAC_Address_Type;
-   Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response          : Packet_Sockets.Thin.Payload_Type (1 .. 30);
-   Response_Length   : Natural;
-   Socket            : Packet_Sockets.Thin.Socket_Type;
+   Capabilities          : Capabilities_Type;
+   Confirmation          : Packets.Payload_Type (1 .. 30);
+   Confirmation_Length   : Natural;
+   Expected_Confirmation : constant Packets.Payload_Type := (16#01#, 16#35#, 16#60#, 16#00#, 16#00#);
+   MAC_Address           : MAC_Addresses.MAC_Address_Type;
+   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Request := (16#01#, 16#34#, 16#60#, others => 16#00#);
+   Request_Payload := (16#01#, 16#34#, 16#60#, others => 16#00#);
 
    begin
 
@@ -44,14 +44,14 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+      Self.Process (Request             => Request_Payload,
+                    Socket              => Socket,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
-      if Response_Length < 30 or else Response (Expected_Response'Range) /= Expected_Response then
-         raise Adapter_Error with Message_Unexpected_Response;
+      if Confirmation_Length < 30 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+         raise Adapter_Error with Message_Unexpected_Confirmation;
       end if;
 
    exception
@@ -64,12 +64,12 @@ begin
 
    Socket.Close;
 
-   Capabilities.AV_Version             := AV_Version_Type'Val (Response (6));
-   Capabilities.MAC_Address            := MAC_Addresses.Create_MAC_Address (Octets => Response (7 .. 12));
-   Capabilities.OUI                    := 65536 * OUI_Type (Response (13)) + 256 * OUI_Type (Response (14)) + OUI_Type (Response (15));
-   Capabilities.Proxy                  := Capable_Type'Val (Response (19));
-   Capabilities.Backup_CCo             := Capable_Type'Val (Response (20));
-   Capabilities.Implementation_Version := Implementation_Version_Type (Response (29)) + 256 * Implementation_Version_Type (Response (30));
+   Capabilities.AV_Version             := AV_Version_Type'Val (Confirmation (6));
+   Capabilities.MAC_Address            := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (7 .. 12));
+   Capabilities.OUI                    := 65536 * OUI_Type (Confirmation (13)) + 256 * OUI_Type (Confirmation (14)) + OUI_Type (Confirmation (15));
+   Capabilities.Proxy                  := Capable_Type'Val (Confirmation (19));
+   Capabilities.Backup_CCo             := Capable_Type'Val (Confirmation (20));
+   Capabilities.Implementation_Version := Implementation_Version_Type (Confirmation (29)) + 256 * Implementation_Version_Type (Confirmation (30));
 
    return Capabilities;
 

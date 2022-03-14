@@ -32,6 +32,7 @@ package Power_Line_Adapters is
    type Implementation_Version_Type is mod 65536;
    type MCS_Type                    is (MIMO_Not_Supported, Selection_Diversity, MIMO_With_Beam_Forming);
    type Network_Kind_Type           is (In_Home_Network, Access_Network);
+   type Network_Interface_Type      is (MII0, MII1, PLC, SDR);
    type NID_Type                    is mod 16#40_0000_0000_0000#;
    type No_Yes_Type                 is (No, Yes);
    type OUI_Type                    is mod 16#100_0000#;
@@ -176,16 +177,30 @@ package Power_Line_Adapters is
 
 private
 
-   Default_Receive_Timeout     : constant                       := 500;
-   Default_Send_Timeout        : constant                       := 500;
-   Message_No_Response         : constant String                := "No response received from adapter";
-   Message_Unexpected_Response : constant String                := "Unexpected response received from adapter";
-   Protocol_Homeplug           : constant Packets.Protocol_Type := (16#88#, 16#e1#);
-   Protocol_Mediaxtream        : constant Packets.Protocol_Type := (16#89#, 16#12#);
+   Default_Receive_Timeout         : constant                       := 500;
+   Default_Send_Timeout            : constant                       := 500;
+   Message_No_Confirmation         : constant String                := "No confirmation received from adapter";
+   Message_Unexpected_Confirmation : constant String                := "Unexpected confirmation received from adapter";
+   Protocol_Homeplug               : constant Packets.Protocol_Type := (16#88#, 16#e1#);
+   Protocol_Mediaxtream            : constant Packets.Protocol_Type := (16#89#, 16#12#);
 
-   type HFID_Kind_Type         is (MANUFACTURER, USER);
-   type Network_Interface_Type is (MII0, MII1, PLC, SDR);
-   type Network_Scope_Type     is (MEMBER, ANY);
+   type HFID_Kind_Type     is (MANUFACTURER, USER);
+   type Network_Scope_Type is (MEMBER, ANY);
+
+   subtype HFID_Octets_Type is Octets.Octets_Type (1 .. 64);
+   subtype Key_Type         is Octets.Octets_Type (1 .. 16);
+
+   function Generate_DAK (Pass_Phrase : String) return Key_Type;
+
+   function Generate_Key (Pass_Phrase : String;
+                          Salt        : Ada.Streams.Stream_Element_Array) return Key_Type;
+
+   function Generate_NMK (Pass_Phrase : String) return Key_Type;
+
+   function Get_Octets (HFID : HFID_Strings.Bounded_String) return HFID_Octets_Type;
+
+   procedure Validate_HFID (HFID            : HFID_Strings.Bounded_String;
+                            Min_HFID_Length : Positive := 1);
 
    type Adapter_Type is tagged
       record
@@ -194,22 +209,10 @@ private
          HFID              : HFID_Strings.Bounded_String;
       end record;
 
-   subtype HFID_Octets_Type is Octets.Octets_Type (1 .. 64);
-   subtype Key_Type         is Octets.Octets_Type (1 .. 16);
-
-   procedure Create (Adapter           : in out Adapter_Type;
-                     Network_Interface :        Network_Interface_Type;
-                     MAC_Address       :        MAC_Addresses.MAC_Address_Type;
-                     HFID              :        HFID_Strings.Bounded_String);
-
-   function Derive_Protocol (Payload : Packets.Payload_Type) return Packets.Protocol_Type;
-
-   function Generate_DAK (Pass_Phrase : String) return Key_Type;
-
-   function Generate_Key (Pass_Phrase : String;
-                          Salt        : Ada.Streams.Stream_Element_Array) return Key_Type;
-
-   function Generate_NMK (Pass_Phrase : String) return Key_Type;
+   procedure Initialize (Adapter           : in out Adapter_Type;
+                         Network_Interface :        Network_Interface_Type;
+                         MAC_Address       :        MAC_Addresses.MAC_Address_Type;
+                         HFID              :        HFID_Strings.Bounded_String);
 
    function Get_HFID (Self                : Adapter_Type;
                       Kind                : HFID_Kind_Type;
@@ -219,20 +222,15 @@ private
                               Scope               : Network_Scope_Type;
                               Network_Device_Name : String) return Network_Info_List_Type;
 
-   function Get_Octets (HFID : HFID_Strings.Bounded_String) return HFID_Octets_Type;
-
-   procedure Process (Self             :     Adapter_Type;
-                      Request          :     Packet_Sockets.Thin.Payload_Type;
-                      Socket           :     Packet_Sockets.Thin.Socket_Type;
-                      Response         : out Packet_Sockets.Thin.Payload_Type;
-                      Response_Length  : out Natural;
-                      From_MAC_Address : out MAC_Addresses.MAC_Address_Type);
+   procedure Process (Self                :     Adapter_Type;
+                      Request             :     Packets.Payload_Type;
+                      Socket              :     Packet_Sockets.Thin.Socket_Type;
+                      Confirmation        : out Packets.Payload_Type;
+                      Confirmation_Length : out Natural;
+                      From_MAC_Address    : out MAC_Addresses.MAC_Address_Type);
 
    procedure Validate_DAK_Pass_Phrase (Pass_Phrase      : String;
                                        Check_Min_Length : Boolean := True);
-
-   procedure Validate_HFID (HFID            : HFID_Strings.Bounded_String;
-                            Min_HFID_Length : Positive := 1);
 
    procedure Validate_NMK_Pass_Phrase (Pass_Phrase      : String;
                                        Check_Min_Length : Boolean := True);

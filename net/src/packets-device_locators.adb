@@ -19,6 +19,31 @@ with Interfaces.C.Strings;
 
 package body Packets.Device_Locators is
 
+   function Create return Basic_Search_Type is
+
+      Algorithm : Basic_Search_Type;
+
+   begin
+
+      return Algorithm;
+
+   end Create;
+
+   function Create (Device_Name : String) return Named_Search_Type is
+
+      Algorithm    : Named_Search_Type;
+      Target_Count : Interfaces.C.size_t;
+
+   begin
+
+      Interfaces.C.To_C (Item   => Device_Name,
+                         Target => Algorithm.Network_Device_Name,
+                         Count  => Target_Count);
+
+      return Algorithm;
+
+   end Create;
+
    overriding procedure Finalize (Self : in out Device_Locator_Type) is
    begin
 
@@ -36,13 +61,13 @@ package body Packets.Device_Locators is
                   Device_Name :        String) return MAC_Addresses.MAC_Address_Type is
 
       use type Interfaces.C.int;
-      use type Interfaces.C.unsigned_short;
       use type Pcap.Devices.Address_Access_Type;
 
-      Address_Access : Pcap.Devices.Address_Access_Type   := null;
-      Device         : Pcap.Devices.Interface_Access_Type := null;
-      Error_Buffer   : aliased Pcap.Error_Buffer_Type;
-      Return_Code    : Interfaces.C.int;
+      Address_Access   : Pcap.Devices.Address_Access_Type    := null;
+      Device           : Pcap.Devices.Interface_Access_Type  := null;
+      Error_Buffer     : aliased Pcap.Error_Buffer_Type;
+      Return_Code      : Interfaces.C.int;
+      Search_Algorithm : Search_Type'Class := (if Device_Name = "" then Create else Create (Device_Name => Device_Name));
 
    begin
 
@@ -57,28 +82,62 @@ package body Packets.Device_Locators is
          raise Packet_Error with "No devices found";
       end if;
 
-      Device := Self.Devices_Access;
-
-      while Device /= null and then Interfaces.C.Strings.Value (Item => Device.Name) /= Device_Name loop
-         Device := Device.Next;
-      end loop;
-
-      if Device = null then
-         raise Packet_Error with "Device " & Device_Name & " not found";
-      end if;
-
+      Device         := Search_Algorithm.Run (Network_Device => Self.Devices_Access);
       Address_Access := Device.Addresses;
 
-      while Address_Access /= null and then Address_Access.Addr.SA_Family /= Pcap.Devices.AF_PACKET loop
+      while Address_Access /= null and then Pcap.Devices.Is_Not_Packet_Address (Socket_Address => Address_Access.Socket_Address) loop
          Address_Access := Address_Access.Next;
       end loop;
 
       if Address_Access = null then
-         raise Packet_Error with "MAC address of device " & Device_Name & " not found";
+         raise Packet_Error with "MAC address of device " & Interfaces.C.Strings.Value (Item => Device.Name) & " not found";
       end if;
 
-      return MAC_Addresses.Create_MAC_Address (Octets => Address_Access.Addr.SLL_Address (1 .. 6));
+      return MAC_Addresses.Create_MAC_Address (Octets => Address_Access.Socket_Address.SLL_Address (1 .. 6));
 
    end Find;
+
+   overriding function Run (Self           : Basic_Search_Type;
+                            Network_Device : Pcap.Devices.Interface_Access_Type) return Pcap.Devices.Interface_Access_Type is
+
+      Device : Pcap.Devices.Interface_Access_Type := Network_Device;
+
+   begin
+
+      while Device /= null and then
+        (Pcap.Devices.Is_Loopback (Device => Device) or else
+         Pcap.Devices.Is_Down (Device => Device) or else
+         Pcap.Devices.Is_Not_Running (Device => Device)) loop
+
+         Device := Device.Next;
+
+      end loop;
+
+      if Device = null then
+         raise Packet_Error with "No up and running non-loopback network device found";
+      end if;
+
+      return Device;
+
+   end Run;
+
+   overriding function Run (Self           : Named_Search_Type;
+                            Network_Device : Pcap.Devices.Interface_Access_Type) return Pcap.Devices.Interface_Access_Type is
+
+      Device : Pcap.Devices.Interface_Access_Type := Network_Device;
+
+   begin
+
+      while Device /= null and then Interfaces.C.Strings.Value (Item => Device.Name) /= Interfaces.C.To_Ada (Item => Self.Network_Device_Name) loop
+         Device := Device.Next;
+      end loop;
+
+      if Device = null then
+         raise Packet_Error with "Device " & Interfaces.C.To_Ada (Item => Self.Network_Device_Name) & " not found";
+      end if;
+
+      return Device;
+
+   end Run;
 
 end Packets.Device_Locators;

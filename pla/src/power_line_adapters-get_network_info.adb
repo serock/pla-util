@@ -24,22 +24,22 @@ function Get_Network_Info (Self                : Adapter_Type;
                            Scope               : Network_Scope_Type;
                            Network_Device_Name : String) return Network_Info_List_Type is
 
-   Expected_Response  : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#29#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
-   MAC_Address        : MAC_Addresses.MAC_Address_Type;
-   No_Network         : Network_Info_List_Type (1 .. 0);
-   Number_Of_Networks : Natural;
-   Request            : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response           : Packet_Sockets.Thin.Payload_Type (1 .. 385);
-   Response_Length    : Natural;
-   Socket             : Packet_Sockets.Thin.Socket_Type;
+   Confirmation          : Packets.Payload_Type (1 .. 385);
+   Confirmation_Length   : Natural;
+   Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#29#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
+   MAC_Address           : MAC_Addresses.MAC_Address_Type;
+   No_Network            : Network_Info_List_Type (1 .. 0);
+   Number_Of_Networks    : Natural;
+   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Request := (16#02#, 16#28#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#, others => 16#00#);
+   Request_Payload := (16#02#, 16#28#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, others => 16#00#);
 
    case Scope is
       when MEMBER => null;
-      when ANY    => Request (11) := 16#01#;
+      when ANY    => Request_Payload (11) := 16#01#;
    end case;
 
    declare
@@ -53,14 +53,14 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+      Self.Process (Request             => Request_Payload,
+                    Socket              => Socket,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
-      if Response_Length < 26 or else Response (Expected_Response'Range) /= Expected_Response then
-         raise Adapter_Error with Message_Unexpected_Response;
+      if Confirmation_Length < 26 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+         raise Adapter_Error with Message_Unexpected_Confirmation;
       end if;
 
    exception
@@ -73,7 +73,7 @@ begin
 
    Socket.Close;
 
-   Number_Of_Networks := Natural (Response (10));
+   Number_Of_Networks := Natural (Confirmation (10));
 
    if Number_Of_Networks = 0 then
       return No_Network;
@@ -91,26 +91,26 @@ begin
 
       X := 11;
       for I in 1 .. Number_Of_Networks loop
-         NID := NID_Type (Response (X));
-         NID := NID + NID_Type (Response (X + 1)) * 16#00_0000_0000_0100#;
-         NID := NID + NID_Type (Response (X + 2)) * 16#00_0000_0001_0000#;
-         NID := NID + NID_Type (Response (X + 3)) * 16#00_0000_0100_0000#;
-         NID := NID + NID_Type (Response (X + 4)) * 16#00_0001_0000_0000#;
-         NID := NID + NID_Type (Response (X + 5)) * 16#00_0100_0000_0000#;
-         NID := NID + NID_Type (Response (X + 6)) * 16#01_0000_0000_0000#;
+         NID := NID_Type (Confirmation (X));
+         NID := NID + NID_Type (Confirmation (X + 1)) * 16#00_0000_0000_0100#;
+         NID := NID + NID_Type (Confirmation (X + 2)) * 16#00_0000_0001_0000#;
+         NID := NID + NID_Type (Confirmation (X + 3)) * 16#00_0000_0100_0000#;
+         NID := NID + NID_Type (Confirmation (X + 4)) * 16#00_0001_0000_0000#;
+         NID := NID + NID_Type (Confirmation (X + 5)) * 16#00_0100_0000_0000#;
+         NID := NID + NID_Type (Confirmation (X + 6)) * 16#01_0000_0000_0000#;
 
          Network_Info (I).NID                := NID;                                                  X := X + 7;
-         Network_Info (I).SNID               := SNID_Type (Response (X) and 16#0f#);                  X := X + 1;
-         Network_Info (I).TEI                := TEI_Type (Response (X));                              X := X + 1;
-         Network_Info (I).Station_Role       := Station_Role_Type'Val (Response (X));                 X := X + 1;
-         Network_Info (I).CCo_MAC_Address    := MAC_Addresses.Create_MAC_Address (Octets => Response (X .. X + 5)); X := X + 6;
-         Network_Info (I).Network_Kind       := Network_Kind_Type'Val (Response (X));                 X := X + 1;
-         Network_Info (I).Num_Coord_Networks := Network_Count_Type (Response (X));                    X := X + 1;
-         Network_Info (I).Status             := Status_Type'Val (Response (X));                       X := X + 1;
+         Network_Info (I).SNID               := SNID_Type (Confirmation (X) and 16#0f#);                  X := X + 1;
+         Network_Info (I).TEI                := TEI_Type (Confirmation (X));                              X := X + 1;
+         Network_Info (I).Station_Role       := Station_Role_Type'Val (Confirmation (X));                 X := X + 1;
+         Network_Info (I).CCo_MAC_Address    := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X .. X + 5)); X := X + 6;
+         Network_Info (I).Network_Kind       := Network_Kind_Type'Val (Confirmation (X));                 X := X + 1;
+         Network_Info (I).Num_Coord_Networks := Network_Count_Type (Confirmation (X));                    X := X + 1;
+         Network_Info (I).Status             := Status_Type'Val (Confirmation (X));                       X := X + 1;
       end loop;
 
       for I in 1 .. Number_Of_Networks loop
-         Network_Info (I).BCCo_MAC_Address := MAC_Addresses.Create_MAC_Address (Octets => Response (X .. X + 5));
+         Network_Info (I).BCCo_MAC_Address := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X .. X + 5));
          X                                 := X + 6;
       end loop;
 

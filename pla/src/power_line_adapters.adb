@@ -17,6 +17,7 @@
 ------------------------------------------------------------------------
 with Ada.Characters.Latin_1;
 with GNAT.SHA256;
+with Power_Line_Adapters.Network_Device;
 
 package body Power_Line_Adapters is
 
@@ -45,29 +46,6 @@ package body Power_Line_Adapters is
       return Left.Network_Interface = Right.Network_Interface and then Left.MAC_Address = Right.MAC_Address;
 
    end "=";
-
-   procedure Create (Adapter           : in out Adapter_Type;
-                     Network_Interface :        Network_Interface_Type;
-                     MAC_Address       :        MAC_Addresses.MAC_Address_Type;
-                     HFID              :        HFID_Strings.Bounded_String) is
-
-   begin
-
-      Adapter.Network_Interface := Network_Interface;
-      Adapter.MAC_Address       := MAC_Address;
-      Adapter.HFID              := HFID;
-
-   end Create;
-
-   function Derive_Protocol (Payload : Packets.Payload_Type) return Packets.Protocol_Type is
-
-      use type Octets.Octet_Type;
-
-   begin
-
-      return (if Payload (3) = 16#a0# then Power_Line_Adapters.Protocol_Mediaxtream else Power_Line_Adapters.Protocol_Homeplug);
-
-   end Derive_Protocol;
 
    function Generate_DAK (Pass_Phrase : String) return Key_Type is
 
@@ -164,24 +142,37 @@ package body Power_Line_Adapters is
 
    end Image;
 
-   procedure Process (Self             :     Adapter_Type;
-                      Request          :     Packet_Sockets.Thin.Payload_Type;
-                      Socket           :     Packet_Sockets.Thin.Socket_Type;
-                      Response         : out Packet_Sockets.Thin.Payload_Type;
-                      Response_Length  : out Natural;
-                      From_MAC_Address : out MAC_Addresses.MAC_Address_Type) is
+   procedure Initialize (Adapter           : in out Adapter_Type;
+                         Network_Interface :        Network_Interface_Type;
+                         MAC_Address       :        MAC_Addresses.MAC_Address_Type;
+                         HFID              :        HFID_Strings.Bounded_String) is
 
    begin
 
-      Socket.Send (Payload => Request,
-                   To      => Self.MAC_Address);
+      Adapter.Network_Interface := Network_Interface;
+      Adapter.MAC_Address       := MAC_Address;
+      Adapter.HFID              := HFID;
 
-      Socket.Receive (Payload        => Response,
-                      Payload_Length => Response_Length,
+   end Initialize;
+
+   procedure Process (Self                :     Adapter_Type;
+                      Request             :     Packets.Payload_Type;
+                      Socket              :     Packet_Sockets.Thin.Socket_Type;
+                      Confirmation        : out Packets.Payload_Type;
+                      Confirmation_Length : out Natural;
+                      From_MAC_Address    : out MAC_Addresses.MAC_Address_Type) is
+
+   begin
+
+      Network_Device.Send (Payload     => Request,
+                           Destination => Self.MAC_Address);
+
+      Socket.Receive (Payload        => Confirmation,
+                      Payload_Length => Confirmation_Length,
                       From           => From_MAC_Address);
 
-      if Response_Length = 0 then
-         raise Adapter_Error with Message_No_Response;
+      if Confirmation_Length = 0 then
+         raise Adapter_Error with Message_No_Confirmation;
       end if;
 
    end Process;

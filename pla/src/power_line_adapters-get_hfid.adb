@@ -26,19 +26,19 @@ function Get_HFID (Self                : Adapter_Type;
 
    use type Octets.Octets_Type;
 
-   Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#40#, 16#00#);
-   MAC_Address       : MAC_Addresses.MAC_Address_Type;
-   Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response          : Packet_Sockets.Thin.Payload_Type (1 .. 76);
-   Response_Length   : Natural;
-   Socket            : Packet_Sockets.Thin.Socket_Type;
+   Confirmation          : Packets.Payload_Type (1 .. 76);
+   Confirmation_Length   : Natural;
+   Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#40#, 16#00#);
+   MAC_Address           : MAC_Addresses.MAC_Address_Type;
+   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Request := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#25#, others => 16#00#);
+   Request_Payload := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#25#, others => 16#00#);
 
    case Kind is
-      when MANUFACTURER => Request (10) := 16#1b#;
+      when MANUFACTURER => Request_Payload (10) := 16#1b#;
       when USER         => null;
    end case;
 
@@ -49,14 +49,14 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+      Self.Process (Request             => Request_Payload,
+                    Socket              => Socket,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
-      if Response_Length < 13 or else Response (Expected_Response'Range) /= Expected_Response then
-         raise Adapter_Error with Message_Unexpected_Response;
+      if Confirmation_Length < 13 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+         raise Adapter_Error with Message_Unexpected_Confirmation;
       end if;
 
    exception
@@ -69,7 +69,7 @@ begin
 
    Socket.Close;
 
-   return Packet_Sockets.Thin.To_HFID_String (Payload => Response (13 .. Response_Length));
+   return Packet_Sockets.Thin.To_HFID_String (Payload => Confirmation (13 .. Confirmation_Length));
 
 exception
 

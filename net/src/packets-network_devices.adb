@@ -41,8 +41,8 @@ package body Packets.Network_Devices is
 
    end Name;
 
-   procedure Open (Self : in out Network_Device_Type;
-                   Name :        String) is
+   procedure Open (Self                : in out Network_Device_Type;
+                   Network_Device_Name :        String) is
 
       use type Interfaces.C.int;
 
@@ -59,11 +59,11 @@ package body Packets.Network_Devices is
 
       begin
 
-         Self.MAC_Address := Locator.Find (Device_Name => Name);
+         Self.MAC_Address := Locator.Find (Device_Name => Network_Device_Name);
 
       end;
 
-      Interfaces.C.To_C (Item   => Name,
+      Interfaces.C.To_C (Item   => Network_Device_Name,
                          Target => Self.Interface_Name,
                          Count  => Target_Count);
 
@@ -116,12 +116,6 @@ package body Packets.Network_Devices is
                           Handle     => Handle);
       end;
 
-   end Open;
-
-   procedure Open (Self : in out Network_Device_Type) is
-   begin
-      --  TODO implement
-      null;
    end Open;
 
    procedure Send (Self        : Network_Device_Type;

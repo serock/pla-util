@@ -24,21 +24,22 @@ procedure Set_NMK (Self                : Adapter_Type;
                    Pass_Phrase         : String;
                    Network_Device_Name : String) is
 
-   Expected_Response : constant Packet_Sockets.Thin.Payload_Type := (16#02#, 16#19#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
-   MAC_Address       : MAC_Addresses.MAC_Address_Type;
-   Request           : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response          : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response_Length   : Natural;
-   Socket            : Packet_Sockets.Thin.Socket_Type;
+   Confirmation          : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   Confirmation_Length   : Natural;
+   Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#19#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
+   MAC_Address           : MAC_Addresses.MAC_Address_Type;
+   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
    Validate_NMK_Pass_Phrase (Pass_Phrase      => Pass_Phrase,
                              Check_Min_Length => True);
 
-   Request            := (16#02#, 16#18#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, others => 16#00#);
-   Request (10 .. 25) := Generate_NMK (Pass_Phrase => Pass_Phrase);
-   Request (27)       := 16#01#;
+   Request_Payload (1 .. 9)                     := (16#02#, 16#18#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
+   Request_Payload (10 .. 25)                   := Generate_NMK (Pass_Phrase => Pass_Phrase);
+   Request_Payload (26 .. 27)                   := (16#00#, 16#01#);
+   Request_Payload (28 .. Request_Payload'Last) := (others => 16#00#);
 
    declare
 
@@ -51,14 +52,14 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+      Self.Process (Request             => Request_Payload,
+                    Socket              => Socket,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
-      if Response (Expected_Response'Range) /= Expected_Response then
-         raise Adapter_Error with Message_Unexpected_Response;
+      if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+         raise Adapter_Error with Message_Unexpected_Confirmation;
       end if;
 
    exception

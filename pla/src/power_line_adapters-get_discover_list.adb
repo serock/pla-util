@@ -25,21 +25,21 @@ function Get_Discover_List (Self                : Adapter_Type;
 
    use type Octets.Octets_Type;
 
-   Expected_Response  : constant Packet_Sockets.Thin.Payload_Type := (16#01#, 16#15#, 16#00#, 16#00#, 16#00#);
-   MAC_Address        : MAC_Addresses.MAC_Address_Type;
-   Number_Of_Networks : Network_Count_Type;
-   Number_Of_Stations : Station_Count_Type;
-   Octets_Per_Network : constant := 13;
-   Octets_Per_Station : constant := 12;
-   Request            : Packet_Sockets.Thin.Payload_Type (1 .. Packet_Sockets.Thin.Minimum_Payload_Size);
-   Response           : Packet_Sockets.Thin.Payload_Type (1 .. 385);
-   Response_Length    : Natural;
-   Socket             : Packet_Sockets.Thin.Socket_Type;
-   X                  : Positive;
+   Confirmation          : Packets.Payload_Type (1 .. 385);
+   Confirmation_Length   : Natural;
+   Expected_Confirmation : constant Packets.Payload_Type := (16#01#, 16#15#, 16#00#, 16#00#, 16#00#);
+   MAC_Address           : MAC_Addresses.MAC_Address_Type;
+   Number_Of_Networks    : Network_Count_Type;
+   Number_Of_Stations    : Station_Count_Type;
+   Octets_Per_Network    : constant := 13;
+   Octets_Per_Station    : constant := 12;
+   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   Socket                : Packet_Sockets.Thin.Socket_Type;
+   X                     : Positive;
 
 begin
 
-   Request := (16#01#, 16#14#, 16#00#, 16#00#, 16#00#, others => 16#00#);
+   Request_Payload := (16#01#, 16#14#, others => 16#00#);
 
    begin
 
@@ -48,14 +48,14 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request          => Request,
-                    Socket           => Socket,
-                    Response         => Response,
-                    Response_Length  => Response_Length,
-                    From_MAC_Address => MAC_Address);
+      Self.Process (Request             => Request_Payload,
+                    Socket              => Socket,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
-      if Response_Length < 7 or else Response (Expected_Response'Range) /= Expected_Response then
-         raise Adapter_Error with Message_Unexpected_Response;
+      if Confirmation_Length < 7 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+         raise Adapter_Error with Message_Unexpected_Confirmation;
       end if;
 
    exception
@@ -69,9 +69,9 @@ begin
    Socket.Close;
 
    X                  := 6;
-   Number_Of_Stations := Natural (Response (X));
+   Number_Of_Stations := Natural (Confirmation (X));
    X                  := X + 1;
-   Number_Of_Networks := Natural (Response (X + Number_Of_Stations * Octets_Per_Station));
+   Number_Of_Networks := Natural (Confirmation (X + Number_Of_Stations * Octets_Per_Station));
 
    declare
 
@@ -85,14 +85,14 @@ begin
 
       for I in 1 .. Number_Of_Stations loop
 
-         Discovered_List.Stations (I).MAC_Address  := MAC_Addresses.Create_MAC_Address (Octets => Response (X .. X + 5));
-         Discovered_List.Stations (I).TEI          := TEI_Type (Response (X + 6));
-         Discovered_List.Stations (I).Same_Network := No_Yes_Type'Val (Response (X + 7));
-         Discovered_List.Stations (I).SNID         := SNID_Type (Response (X + 8) and 16#0f#);
-         Discovered_List.Stations (I).CCo          := (if (Response (X + 9) and 16#20#) = 0 then No else Yes);
-         Discovered_List.Stations (I).PCo          := (if (Response (X + 9) and 16#40#) = 0 then No else Yes);
-         Discovered_List.Stations (I).Backup_CCo   := (if (Response (X + 9) and 16#80#) = 0 then No else Yes);
-         Discovered_List.Stations (I).Signal_Level := Signal_Level_Type (Response (X + 10));
+         Discovered_List.Stations (I).MAC_Address  := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X .. X + 5));
+         Discovered_List.Stations (I).TEI          := TEI_Type (Confirmation (X + 6));
+         Discovered_List.Stations (I).Same_Network := No_Yes_Type'Val (Confirmation (X + 7));
+         Discovered_List.Stations (I).SNID         := SNID_Type (Confirmation (X + 8) and 16#0f#);
+         Discovered_List.Stations (I).CCo          := (if (Confirmation (X + 9) and 16#20#) = 0 then No else Yes);
+         Discovered_List.Stations (I).PCo          := (if (Confirmation (X + 9) and 16#40#) = 0 then No else Yes);
+         Discovered_List.Stations (I).Backup_CCo   := (if (Confirmation (X + 9) and 16#80#) = 0 then No else Yes);
+         Discovered_List.Stations (I).Signal_Level := Signal_Level_Type (Confirmation (X + 10));
          X                                         := X + Octets_Per_Station;
 
       end loop;
@@ -101,17 +101,17 @@ begin
 
       for I in 1 .. Number_Of_Networks loop
 
-         NID := NID_Type (Response (X));
-         NID := NID + NID_Type (Response (X + 1)) * 16#00_0000_0000_0100#;
-         NID := NID + NID_Type (Response (X + 2)) * 16#00_0000_0001_0000#;
-         NID := NID + NID_Type (Response (X + 3)) * 16#00_0000_0100_0000#;
-         NID := NID + NID_Type (Response (X + 4)) * 16#00_0001_0000_0000#;
-         NID := NID + NID_Type (Response (X + 5)) * 16#00_0100_0000_0000#;
-         NID := NID + NID_Type (Response (X + 6)) * 16#01_0000_0000_0000#;
+         NID := NID_Type (Confirmation (X));
+         NID := NID + NID_Type (Confirmation (X + 1)) * 16#00_0000_0000_0100#;
+         NID := NID + NID_Type (Confirmation (X + 2)) * 16#00_0000_0001_0000#;
+         NID := NID + NID_Type (Confirmation (X + 3)) * 16#00_0000_0100_0000#;
+         NID := NID + NID_Type (Confirmation (X + 4)) * 16#00_0001_0000_0000#;
+         NID := NID + NID_Type (Confirmation (X + 5)) * 16#00_0100_0000_0000#;
+         NID := NID + NID_Type (Confirmation (X + 6)) * 16#01_0000_0000_0000#;
 
          Discovered_List.Networks (I).NID                 := NID;
-         Discovered_List.Networks (I).SNID                := SNID_Type (Response (X + 7) and 16#0f#);
-         Discovered_List.Networks (I).Coordinating_Status := Coordinating_Status_Type'Val (Response (X + 10));
+         Discovered_List.Networks (I).SNID                := SNID_Type (Confirmation (X + 7) and 16#0f#);
+         Discovered_List.Networks (I).Coordinating_Status := Coordinating_Status_Type'Val (Confirmation (X + 10));
          X                                                := X + Octets_Per_Network;
 
       end loop;
