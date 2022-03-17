@@ -64,7 +64,7 @@ package body Console is
       declare
 
          Is_Match : constant Boolean := Commands.Check_DAK (Network_Device_Name => Network_Device_Name,
-                                                            Pass_Phrase         => Ada.Command_Line.Argument (Number => 3),
+                                                            Passphrase          => Ada.Command_Line.Argument (Number => 3),
                                                             PLA_MAC_Address     => PLA_MAC_Address);
 
       begin
@@ -92,7 +92,7 @@ package body Console is
       declare
 
          Is_Match : constant Boolean := Commands.Check_NMK (Network_Device_Name => Network_Device_Name,
-                                                            Pass_Phrase         => Ada.Command_Line.Argument (Number => 3),
+                                                            Passphrase          => Ada.Command_Line.Argument (Number => 3),
                                                             PLA_MAC_Address     => PLA_MAC_Address);
       begin
 
@@ -696,7 +696,7 @@ package body Console is
       end if;
 
       Commands.Set_NMK (Network_Device_Name => Network_Device_Name,
-                        Pass_Phrase         => Ada.Command_Line.Argument (Number => 3),
+                        Passphrase          => Ada.Command_Line.Argument (Number => 3),
                         PLA_MAC_Address     => PLA_MAC_Address);
 
       Ada.Text_IO.Put_Line (Item => "Network Membership Key set");

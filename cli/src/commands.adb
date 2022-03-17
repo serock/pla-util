@@ -21,11 +21,11 @@ package body Commands is
    Message_Not_Found   : constant String := "Failed to find adapter with matching MAC address";
 
    function Check_DAK (Network_Device_Name : String;
-                       Pass_Phrase         : String;
+                       Passphrase          : String;
                        PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Boolean is separate;
 
    function Check_NMK (Network_Device_Name : String;
-                       Pass_Phrase         : String;
+                       Passphrase          : String;
                        PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Boolean is separate;
 
    function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set is separate;
@@ -61,7 +61,7 @@ package body Commands is
                        PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is separate;
 
    procedure Set_NMK (Network_Device_Name : String;
-                      Pass_Phrase         : String;
+                      Passphrase          : String;
                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is separate;
 
 end Commands;

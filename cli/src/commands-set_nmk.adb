@@ -26,7 +26,7 @@ use type MAC_Addresses.MAC_Address_Type;
 separate (Commands)
 
 procedure Set_NMK (Network_Device_Name : String;
-                   Pass_Phrase         : String;
+                   Passphrase          : String;
                    PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is
 
    Adapters : constant Power_Line_Adapter_Sets.Set := Power_Line_Adapters.Network.Discover (Network_Device_Name => Network_Device_Name,
@@ -38,7 +38,7 @@ begin
       raise Command_Error with (if PLA_MAC_Address = MAC_Addresses.Broadcast_MAC_Address then Message_No_Adapters else Message_Not_Found);
    end if;
 
-   Adapters.First_Element.Set_NMK (Pass_Phrase         => Pass_Phrase,
+   Adapters.First_Element.Set_NMK (Passphrase          => Passphrase,
                                    Network_Device_Name => Network_Device_Name);
 
 end Set_NMK;

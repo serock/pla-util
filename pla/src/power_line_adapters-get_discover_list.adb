@@ -16,6 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Exceptions;
+with Messages.Constructors;
 with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
@@ -33,13 +34,10 @@ function Get_Discover_List (Self                : Adapter_Type;
    Number_Of_Stations    : Station_Count_Type;
    Octets_Per_Network    : constant := 13;
    Octets_Per_Station    : constant := 12;
-   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
    Socket                : Packet_Sockets.Thin.Socket_Type;
    X                     : Positive;
 
 begin
-
-   Request_Payload := (16#01#, 16#14#, others => 16#00#);
 
    begin
 
@@ -48,11 +46,19 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request             => Request_Payload,
-                    Socket              => Socket,
-                    Confirmation        => Confirmation,
-                    Confirmation_Length => Confirmation_Length,
-                    From_MAC_Address    => MAC_Address);
+      declare
+
+         Request : constant Messages.Message_Type := Messages.Constructors.Create_Get_Discover_List_Request;
+
+      begin
+
+         Self.Process (Request             => Request,
+                       Socket              => Socket,
+                       Confirmation        => Confirmation,
+                       Confirmation_Length => Confirmation_Length,
+                       From_MAC_Address    => MAC_Address);
+
+      end;
 
       if Confirmation_Length < 7 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
          raise Adapter_Error with Message_Unexpected_Confirmation;
@@ -122,7 +128,7 @@ begin
 
 exception
 
-   when Error : Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Get_Discover_List;

@@ -16,6 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Exceptions;
+with Messages.Constructors;
 with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
@@ -30,17 +31,9 @@ function Get_Network_Info (Self                : Adapter_Type;
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
    No_Network            : Network_Info_List_Type (1 .. 0);
    Number_Of_Networks    : Natural;
-   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
    Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
-
-   Request_Payload := (16#02#, 16#28#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, others => 16#00#);
-
-   case Scope is
-      when MEMBER => null;
-      when ANY    => Request_Payload (11) := 16#01#;
-   end case;
 
    declare
 
@@ -53,11 +46,19 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request             => Request_Payload,
-                    Socket              => Socket,
-                    Confirmation        => Confirmation,
-                    Confirmation_Length => Confirmation_Length,
-                    From_MAC_Address    => MAC_Address);
+      declare
+
+         Request : constant Messages.Message_Type := (if Scope = ANY then Messages.Constructors.Create_Get_Any_Network_Info_Request else Messages.Constructors.Create_Get_Member_Network_Info_Request);
+
+      begin
+
+         Self.Process (Request             => Request,
+                       Socket              => Socket,
+                       Confirmation        => Confirmation,
+                       Confirmation_Length => Confirmation_Length,
+                       From_MAC_Address    => MAC_Address);
+
+      end;
 
       if Confirmation_Length < 26 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
          raise Adapter_Error with Message_Unexpected_Confirmation;
@@ -120,7 +121,7 @@ begin
 
 exception
 
-   when Error : Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Get_Network_Info;

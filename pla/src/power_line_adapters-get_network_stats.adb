@@ -16,6 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Exceptions;
+with Messages.Constructors;
 with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
@@ -29,12 +30,9 @@ function Get_Network_Stats (Self                : Adapter_Type;
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
    No_Stats              : Network_Stats_List_Type (1 .. 0);
    Number_Of_Stations    : Natural;
-   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
    Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
-
-   Request_Payload := (16#02#, 16#2c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#, 16#b0#, 16#f2#, 16#e6#, 16#95#, 16#66#, 16#6b#, 16#03#, others => 16#00#);
 
    declare
 
@@ -47,11 +45,19 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request             => Request_Payload,
-                    Socket              => Socket,
-                    Confirmation        => Confirmation,
-                    Confirmation_Length => Confirmation_Length,
-                    From_MAC_Address    => MAC_Address);
+      declare
+
+         Request : constant Messages.Message_Type := Messages.Constructors.Create_Get_Network_Stats_Request;
+
+      begin
+
+         Self.Process (Request             => Request,
+                       Socket              => Socket,
+                       Confirmation        => Confirmation,
+                       Confirmation_Length => Confirmation_Length,
+                       From_MAC_Address    => MAC_Address);
+
+      end;
 
       if Confirmation_Length < 10 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
          raise Adapter_Error with Message_Unexpected_Confirmation;
@@ -100,7 +106,7 @@ begin
 
 exception
 
-   when Error : Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Get_Network_Stats;

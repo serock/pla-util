@@ -16,6 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Exceptions;
+with Messages.Constructors;
 with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
@@ -30,17 +31,9 @@ function Get_HFID (Self                : Adapter_Type;
    Confirmation_Length   : Natural;
    Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#40#, 16#00#);
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
-   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
    Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
-
-   Request_Payload := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#25#, others => 16#00#);
-
-   case Kind is
-      when MANUFACTURER => Request_Payload (10) := 16#1b#;
-      when USER         => null;
-   end case;
 
    begin
 
@@ -49,11 +42,19 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request             => Request_Payload,
-                    Socket              => Socket,
-                    Confirmation        => Confirmation,
-                    Confirmation_Length => Confirmation_Length,
-                    From_MAC_Address    => MAC_Address);
+      declare
+
+         Request : constant Messages.Message_Type := (if Kind = MANUFACTURER then Messages.Constructors.Create_Get_Manufacturer_HFID_Request else Messages.Constructors.Create_Get_User_HFID_Request);
+
+      begin
+
+         Self.Process (Request             => Request,
+                       Socket              => Socket,
+                       Confirmation        => Confirmation,
+                       Confirmation_Length => Confirmation_Length,
+                       From_MAC_Address    => MAC_Address);
+
+      end;
 
       if Confirmation_Length < 13 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
          raise Adapter_Error with Message_Unexpected_Confirmation;
@@ -73,7 +74,7 @@ begin
 
 exception
 
-   when Error : Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Get_HFID;

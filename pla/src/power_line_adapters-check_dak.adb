@@ -16,31 +16,29 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Exceptions;
+with Messages.Constructors;
 with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
 
 function Check_DAK (Self                : Adapter_Type;
-                    Pass_Phrase         : String;
+                    Passphrase          : String;
                     Network_Device_Name : String) return Boolean is
 
    use type Octets.Octets_Type;
 
-   Confirmation          : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   Confirmation          : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Length);
    Confirmation_Length   : Natural;
-   DAK                   : Key_Type;
+   DAK                   : Octets.Key_Type;
    Expected_Confirmation : Packets.Payload_Type (1 .. 12);
-   Generated_DAK         : Key_Type;
+   Generated_DAK         : Octets.Key_Type;
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
-   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
    Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Validate_DAK_Pass_Phrase (Pass_Phrase      => Pass_Phrase,
-                             Check_Min_Length => True);
-
-   Request_Payload := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#09#, others => 16#00#);
+   Validate_DAK_Passphrase (Passphrase       => Passphrase,
+                            Check_Min_Length => True);
 
    begin
 
@@ -49,11 +47,19 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request             => Request_Payload,
-                    Socket              => Socket,
-                    Confirmation        => Confirmation,
-                    Confirmation_Length => Confirmation_Length,
-                    From_MAC_Address    => MAC_Address);
+      declare
+
+         Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_1_Request;
+
+      begin
+
+         Self.Process (Request             => Request,
+                       Socket              => Socket,
+                       Confirmation        => Confirmation,
+                       Confirmation_Length => Confirmation_Length,
+                       From_MAC_Address    => MAC_Address);
+
+      end;
 
       Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#04#, 16#01#, 16#00#);
 
@@ -66,13 +72,19 @@ begin
       DAK (3) := Confirmation (14);
       DAK (4) := Confirmation (13);
 
-      Request_Payload := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#03#, 16#0a#, others => 16#00#);
+      declare
 
-      Self.Process (Request             => Request_Payload,
-                    Socket              => Socket,
-                    Confirmation        => Confirmation,
-                    Confirmation_Length => Confirmation_Length,
-                    From_MAC_Address    => MAC_Address);
+         Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_2_Request;
+
+      begin
+
+         Self.Process (Request             => Request,
+                       Socket              => Socket,
+                       Confirmation        => Confirmation,
+                       Confirmation_Length => Confirmation_Length,
+                       From_MAC_Address    => MAC_Address);
+
+      end;
 
       Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#03#, 16#04#, 16#01#, 16#00#);
 
@@ -85,13 +97,19 @@ begin
       DAK (7) := Confirmation (14);
       DAK (8) := Confirmation (13);
 
-      Request_Payload := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#04#, 16#0b#, others => 16#00#);
+      declare
 
-      Self.Process (Request             => Request_Payload,
-                    Socket              => Socket,
-                    Confirmation        => Confirmation,
-                    Confirmation_Length => Confirmation_Length,
-                    From_MAC_Address    => MAC_Address);
+         Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_3_Request;
+
+      begin
+
+         Self.Process (Request             => Request,
+                       Socket              => Socket,
+                       Confirmation        => Confirmation,
+                       Confirmation_Length => Confirmation_Length,
+                       From_MAC_Address    => MAC_Address);
+
+      end;
 
       Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#04#, 16#04#, 16#01#, 16#00#);
 
@@ -104,13 +122,19 @@ begin
       DAK (11) := Confirmation (14);
       DAK (12) := Confirmation (13);
 
-      Request_Payload := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#05#, 16#0c#, others => 16#00#);
+      declare
 
-      Self.Process (Request             => Request_Payload,
-                    Socket              => Socket,
-                    Confirmation        => Confirmation,
-                    Confirmation_Length => Confirmation_Length,
-                    From_MAC_Address    => MAC_Address);
+         Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_4_Request;
+
+      begin
+
+         Self.Process (Request             => Request,
+                       Socket              => Socket,
+                       Confirmation        => Confirmation,
+                       Confirmation_Length => Confirmation_Length,
+                       From_MAC_Address    => MAC_Address);
+
+      end;
 
       Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#05#, 16#04#, 16#01#, 16#00#);
 
@@ -133,13 +157,13 @@ begin
    DAK (15) := Confirmation (14);
    DAK (16) := Confirmation (13);
 
-   Generated_DAK := Generate_DAK (Pass_Phrase => Pass_Phrase);
+   Generated_DAK := Generate_DAK (Passphrase => Passphrase);
 
    return Generated_DAK = DAK;
 
 exception
 
-   when Error : Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Check_DAK;

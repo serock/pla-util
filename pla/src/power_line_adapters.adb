@@ -17,7 +17,7 @@
 ------------------------------------------------------------------------
 with Ada.Characters.Latin_1;
 with GNAT.SHA256;
-with Power_Line_Adapters.Network_Device;
+with Power_Line_Adapters.Network;
 
 package body Power_Line_Adapters is
 
@@ -47,32 +47,32 @@ package body Power_Line_Adapters is
 
    end "=";
 
-   function Generate_DAK (Pass_Phrase : String) return Key_Type is
+   function Generate_DAK (Passphrase : String) return Octets.Key_Type is
 
       Salt : constant Ada.Streams.Stream_Element_Array (1 .. 8) := (16#08#, 16#85#, 16#6d#, 16#af#, 16#7c#, 16#f5#, 16#81#, 16#85#);
 
    begin
 
-      return Generate_Key (Pass_Phrase => Pass_Phrase,
-                           Salt        => Salt);
+      return Generate_Key (Passphrase => Passphrase,
+                           Salt       => Salt);
 
    end Generate_DAK;
 
-   function Generate_Key (Pass_Phrase : String;
-                          Salt        : Ada.Streams.Stream_Element_Array) return Key_Type is
+   function Generate_Key (Passphrase : String;
+                          Salt       : Ada.Streams.Stream_Element_Array) return Octets.Key_Type is
 
       use type Ada.Streams.Stream_Element_Offset;
 
-      Key    : Key_Type;
+      Key    : Octets.Key_Type;
       J      : Ada.Streams.Stream_Element_Offset;
       Digest : GNAT.SHA256.Binary_Message_Digest;
-      PS     : Ada.Streams.Stream_Element_Array (1 .. Pass_Phrase'Length + Salt'Length);
+      PS     : Ada.Streams.Stream_Element_Array (1 .. Passphrase'Length + Salt'Length);
 
    begin
 
       J := 1;
-      for I in Pass_Phrase'Range loop
-         PS (J) := Ada.Streams.Stream_Element (Character'Pos (Pass_Phrase (I)));
+      for I in Passphrase'Range loop
+         PS (J) := Ada.Streams.Stream_Element (Character'Pos (Passphrase (I)));
          J      := J + 1;
       end loop;
 
@@ -87,7 +87,7 @@ package body Power_Line_Adapters is
       end loop;
 
       J := 1;
-      for I in Key_Type'Range loop
+      for I in Octets.Key_Type'Range loop
          Key (I) := Octets.Octet_Type (Digest (J));
          J       := J + 1;
       end loop;
@@ -96,32 +96,16 @@ package body Power_Line_Adapters is
 
    end Generate_Key;
 
-   function Generate_NMK (Pass_Phrase : String) return Key_Type is
+   function Generate_NMK (Passphrase : String) return Octets.Key_Type is
 
       Salt : constant Ada.Streams.Stream_Element_Array (1 .. 8) := (16#08#, 16#85#, 16#6d#, 16#af#, 16#7c#, 16#f5#, 16#81#, 16#86#);
 
    begin
 
-      return Generate_Key (Pass_Phrase => Pass_Phrase,
-                           Salt        => Salt);
+      return Generate_Key (Passphrase => Passphrase,
+                           Salt       => Salt);
 
    end Generate_NMK;
-
-   function Get_Octets (HFID : HFID_Strings.Bounded_String) return HFID_Octets_Type is
-
-      Length : constant HFID_Strings.Length_Range := HFID_Strings.Length (Source => HFID);
-      Octets : HFID_Octets_Type                   := (others => 16#00#);
-
-   begin
-
-      for I in 1 .. Length loop
-         Octets (I) := Character'Pos (HFID_Strings.Element (Source => HFID,
-                                                            Index  => I));
-      end loop;
-
-      return Octets;
-
-   end Get_Octets;
 
    function Has_MAC_Address (Self        : Adapter_Type;
                              MAC_Address : MAC_Addresses.MAC_Address_Type) return Boolean is
@@ -142,10 +126,10 @@ package body Power_Line_Adapters is
 
    end Image;
 
-   procedure Initialize (Adapter           : in out Adapter_Type;
-                         Network_Interface :        Network_Interface_Type;
-                         MAC_Address       :        MAC_Addresses.MAC_Address_Type;
-                         HFID              :        HFID_Strings.Bounded_String) is
+   procedure Initialize (Adapter           : out Adapter_Type;
+                         Network_Interface :     Network_Interface_Type;
+                         MAC_Address       :     MAC_Addresses.MAC_Address_Type;
+                         HFID              :     HFID_Strings.Bounded_String) is
 
    begin
 
@@ -156,7 +140,7 @@ package body Power_Line_Adapters is
    end Initialize;
 
    procedure Process (Self                :     Adapter_Type;
-                      Request             :     Packets.Payload_Type;
+                      Request             :     Messages.Message_Type;
                       Socket              :     Packet_Sockets.Thin.Socket_Type;
                       Confirmation        : out Packets.Payload_Type;
                       Confirmation_Length : out Natural;
@@ -164,8 +148,8 @@ package body Power_Line_Adapters is
 
    begin
 
-      Network_Device.Send (Payload     => Request,
-                           Destination => Self.MAC_Address);
+      Power_Line_Adapters.Network.Send (Message     => Request,
+                    Destination => Self.MAC_Address);
 
       Socket.Receive (Payload        => Confirmation,
                       Payload_Length => Confirmation_Length,
@@ -177,20 +161,20 @@ package body Power_Line_Adapters is
 
    end Process;
 
-   procedure Validate_DAK_Pass_Phrase (Pass_Phrase      : String;
-                                       Check_Min_Length : Boolean := True) is
+   procedure Validate_DAK_Passphrase (Passphrase       : String;
+                                      Check_Min_Length : Boolean := True) is
 
-      Max_Pass_Phrase_Length : constant := 19;
-      Min_Pass_Phrase_Length : constant := 19;
+      Max_Passphrase_Length : constant := 19;
+      Min_Passphrase_Length : constant := 19;
 
    begin
 
-      Validate_Pass_Phrase (Pass_Phrase            => Pass_Phrase,
-                            Min_Pass_Phrase_Length => Min_Pass_Phrase_Length,
-                            Max_Pass_Phrase_Length => Max_Pass_Phrase_Length,
-                            Check_Min_Length       => Check_Min_Length);
+      Validate_Passphrase (Passphrase            => Passphrase,
+                           Min_Passphrase_Length => Min_Passphrase_Length,
+                           Max_Passphrase_Length => Max_Passphrase_Length,
+                           Check_Min_Length      => Check_Min_Length);
 
-   end Validate_DAK_Pass_Phrase;
+   end Validate_DAK_Passphrase;
 
    procedure Validate_HFID (HFID            : HFID_Strings.Bounded_String;
                             Min_HFID_Length : Positive := 1) is
@@ -217,52 +201,52 @@ package body Power_Line_Adapters is
 
    end Validate_HFID;
 
-   procedure Validate_NMK_Pass_Phrase (Pass_Phrase      : String;
-                                       Check_Min_Length : Boolean := True) is
+   procedure Validate_NMK_Passphrase (Passphrase       : String;
+                                      Check_Min_Length : Boolean := True) is
 
-      Max_Pass_Phrase_Length : constant := 64;
-      Min_Pass_Phrase_Length : constant := 24;
-
-   begin
-
-      Validate_Pass_Phrase (Pass_Phrase            => Pass_Phrase,
-                            Min_Pass_Phrase_Length => Min_Pass_Phrase_Length,
-                            Max_Pass_Phrase_Length => Max_Pass_Phrase_Length,
-                            Check_Min_Length       => Check_Min_Length);
-
-   end Validate_NMK_Pass_Phrase;
-
-   procedure Validate_Pass_Phrase (Pass_Phrase            : String;
-                                   Min_Pass_Phrase_Length : Positive;
-                                   Max_Pass_Phrase_Length : Positive;
-                                   Check_Min_Length       : Boolean := True) is
+      Max_Passphrase_Length : constant := 64;
+      Min_Passphrase_Length : constant := 24;
 
    begin
 
-      if Pass_Phrase'Length > Max_Pass_Phrase_Length then
-         raise Adapter_Error with "Pass phrase has more than" & Integer'Image (Max_Pass_Phrase_Length) & " characters";
+      Validate_Passphrase (Passphrase            => Passphrase,
+                           Min_Passphrase_Length => Min_Passphrase_Length,
+                           Max_Passphrase_Length => Max_Passphrase_Length,
+                           Check_Min_Length      => Check_Min_Length);
+
+   end Validate_NMK_Passphrase;
+
+   procedure Validate_Passphrase (Passphrase            : String;
+                                  Min_Passphrase_Length : Positive;
+                                  Max_Passphrase_Length : Positive;
+                                  Check_Min_Length      : Boolean := True) is
+
+   begin
+
+      if Passphrase'Length > Max_Passphrase_Length then
+         raise Adapter_Error with "Passphrase has more than" & Integer'Image (Max_Passphrase_Length) & " characters";
       end if;
 
-      if Check_Min_Length and then Pass_Phrase'Length < Min_Pass_Phrase_Length then
-         raise Adapter_Error with "Pass phrase has fewer than" & Integer'Image (Min_Pass_Phrase_Length) & " characters";
+      if Check_Min_Length and then Passphrase'Length < Min_Passphrase_Length then
+         raise Adapter_Error with "Passphrase has fewer than" & Integer'Image (Min_Passphrase_Length) & " characters";
       end if;
 
-      for I in Pass_Phrase'Range loop
+      for I in Passphrase'Range loop
 
-         if Pass_Phrase (I) < ' ' or else Pass_Phrase (I) > Ada.Characters.Latin_1.DEL then
-            raise Adapter_Error with "Pass phrase contains one or more illegal characters";
+         if Passphrase (I) < ' ' or else Passphrase (I) > Ada.Characters.Latin_1.DEL then
+            raise Adapter_Error with "Passphrase contains one or more illegal characters";
          end if;
 
       end loop;
 
-   end Validate_Pass_Phrase;
+   end Validate_Passphrase;
 
    function Check_DAK (Self                : Adapter_Type;
-                       Pass_Phrase         : String;
+                       Passphrase          : String;
                        Network_Device_Name : String) return Boolean is separate;
 
    function Check_NMK (Self                : Adapter_Type;
-                       Pass_Phrase         : String;
+                       Passphrase          : String;
                        Network_Device_Name : String) return Boolean is separate;
 
    function Get_Any_Network_Info (Self                : Adapter_Type;
@@ -308,7 +292,7 @@ package body Power_Line_Adapters is
                        Network_Device_Name : String) is separate;
 
    procedure Set_NMK (Self                : Adapter_Type;
-                      Pass_Phrase         : String;
+                      Passphrase          : String;
                       Network_Device_Name : String) is separate;
 
 end Power_Line_Adapters;

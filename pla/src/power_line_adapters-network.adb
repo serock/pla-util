@@ -16,11 +16,14 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Exceptions;
+with Messages.Constructors;
 with Packet_Sockets.Thin;
+with Packets.Network_Devices;
 with Power_Line_Adapters.Constructors;
-with Power_Line_Adapters.Network_Device;
 
 package body Power_Line_Adapters.Network is
+
+   Network_Device : Packets.Network_Devices.Network_Device_Type;
 
    function Discover (Network_Device_Name : String;
                       MAC_Address         : MAC_Addresses.MAC_Address_Type := MAC_Addresses.Broadcast_MAC_Address) return Power_Line_Adapter_Sets.Set is
@@ -33,14 +36,9 @@ package body Power_Line_Adapters.Network is
       Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#71#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
       Network_Interface     : Network_Interface_Type;
       PLA_MAC_Address       : MAC_Addresses.MAC_Address_Type;
-      Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
       Socket                : Packet_Sockets.Thin.Socket_Type;
 
    begin
-
-      Request_Payload := (16#01#, 16#70#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#,
-                          16#a3#, 16#97#, 16#a2#, 16#55#, 16#53#, 16#be#, 16#f1#, 16#fc#, 16#f9#, 16#79#, 16#6b#, 16#52#, 16#14#, 16#13#, 16#e9#, 16#e2#,
-                          others => 16#00#);
 
       begin
 
@@ -51,8 +49,16 @@ package body Power_Line_Adapters.Network is
                       Receive_Timeout => Default_Receive_Timeout,
                       Send_Timeout    => Default_Send_Timeout);
 
-         Network_Device.Send (Payload     => Request_Payload,
-                              Destination => MAC_Address);
+         declare
+
+            Request : constant Messages.Message_Type := Messages.Constructors.Create_Discover_Request;
+
+         begin
+
+            Send (Message     => Request,
+                  Destination => MAC_Address);
+
+         end;
 
          loop
             Socket.Receive (Payload        => Confirmation,
@@ -99,5 +105,15 @@ package body Power_Line_Adapters.Network is
          raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
    end Discover;
+
+   procedure Send (Message     : Messages.Message_Type;
+                   Destination : MAC_Addresses.MAC_Address_Type) is
+   begin
+
+      Network_Device.Send (Payload     => Message.Payload,
+                           Protocol    => Message.Protocol,
+                           Destination => Destination);
+
+   end Send;
 
 end Power_Line_Adapters.Network;

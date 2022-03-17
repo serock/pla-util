@@ -15,15 +15,24 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Messages;
-with Power_Line_Adapter_Sets;
+with Packets;
 
-package Power_Line_Adapters.Network is
+package Messages is
 
-   function Discover (Network_Device_Name : String;
-                      MAC_Address         : MAC_Addresses.MAC_Address_Type := MAC_Addresses.Broadcast_MAC_Address) return Power_Line_Adapter_Sets.Set;
+   type Message_Type (Payload_Length : Positive) is tagged private;
 
-   procedure Send (Message     : Messages.Message_Type;
-                   Destination : MAC_Addresses.MAC_Address_Type);
+   procedure Initialize (Self    : out Message_Type;
+                         Payload :     Packets.Payload_Type);
 
-end Power_Line_Adapters.Network;
+   function Payload (Self : Message_Type) return Packets.Payload_Type;
+
+   function Protocol (Self : Message_Type) return Packets.Protocol_Type;
+
+private
+
+   type Message_Type (Payload_Length : Positive) is tagged
+      record
+         Payload : Packets.Payload_Type (1 .. Payload_Length);
+      end record;
+
+end Messages;

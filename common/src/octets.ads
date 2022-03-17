@@ -27,6 +27,9 @@ package Octets is
      with
        Convention => C;
 
+   subtype HFID_Octets_Type is Octets.Octets_Type (1 .. 64);
+   subtype Key_Type         is Octets.Octets_Type (1 .. 16);
+
    package Octet_Text_IO is new Ada.Text_IO.Modular_IO (Num => Octet_Type);
 
    function Octet_Format is new GNAT.Formatted_String.Mod_Format (Int => Octet_Type,

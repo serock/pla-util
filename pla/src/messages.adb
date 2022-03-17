@@ -15,17 +15,36 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Packets;
+with Octets;
 
-private package Power_Line_Adapters.Network_Device is
+package body Messages is
 
-   procedure Open (Network_Device_Name : String);
+   Protocol_Homeplug    : constant Packets.Protocol_Type := (16#88#, 16#e1#);
+   Protocol_Mediaxtream : constant Packets.Protocol_Type := (16#89#, 16#12#);
 
-   procedure Send (Payload     : Packets.Payload_Type;
-                   Destination : MAC_Addresses.MAC_Address_Type);
+   procedure Initialize (Self    : out Message_Type;
+                         Payload :     Packets.Payload_Type) is
+   begin
 
-private
+      Self.Payload := Payload;
 
-   function Derive_Protocol (Payload : Packets.Payload_Type) return Packets.Protocol_Type;
+   end Initialize;
 
-end Power_Line_Adapters.Network_Device;
+   function Payload (Self : Message_Type) return Packets.Payload_Type is
+   begin
+
+      return Self.Payload;
+
+   end Payload;
+
+   function Protocol (Self : Message_Type) return Packets.Protocol_Type is
+
+      use type Octets.Octet_Type;
+
+   begin
+
+      return (if Self.Payload (3) = 16#a0# then Protocol_Mediaxtream else Protocol_Homeplug);
+
+   end Protocol;
+
+end Messages;

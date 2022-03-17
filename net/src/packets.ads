@@ -21,7 +21,7 @@ package Packets is
 
    Packet_Error : exception;
 
-   Minimum_Payload_Size : constant := 46;
+   Minimum_Payload_Length : constant := 46;
 
    subtype Payload_Type  is Octets.Octets_Type;
    subtype Protocol_Type is Octets.Octets_Type (1 .. 2);

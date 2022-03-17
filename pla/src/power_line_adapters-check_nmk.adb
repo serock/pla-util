@@ -16,32 +16,30 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Exceptions;
+with Messages.Constructors;
 with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
 
 function Check_NMK (Self                : Adapter_Type;
-                    Pass_Phrase         : String;
+                    Passphrase          : String;
                     Network_Device_Name : String) return Boolean is
 
    use type Octets.Octets_Type;
 
-   Confirmation          : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   Confirmation          : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Length);
    Confirmation_Length   : Natural;
    I                     : constant Positive := 13;
    Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#01#, 16#10#, 16#00#);
-   Generated_NMK         : Key_Type;
+   Generated_NMK         : Octets.Key_Type;
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
-   NMK                   : Key_Type;
-   Request_Payload       : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Size);
+   NMK                   : Octets.Key_Type;
    Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
-   Validate_NMK_Pass_Phrase (Pass_Phrase      => Pass_Phrase,
-                             Check_Min_Length => False);
-
-   Request_Payload := (16#02#, 16#5c#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#24#, others => 16#00#);
+   Validate_NMK_Passphrase (Passphrase       => Passphrase,
+                            Check_Min_Length => False);
 
    begin
 
@@ -50,11 +48,19 @@ begin
                    Receive_Timeout => Default_Receive_Timeout,
                    Send_Timeout    => Default_Send_Timeout);
 
-      Self.Process (Request             => Request_Payload,
-                    Socket              => Socket,
-                    Confirmation        => Confirmation,
-                    Confirmation_Length => Confirmation_Length,
-                    From_MAC_Address    => MAC_Address);
+      declare
+
+         Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_NMK_Request;
+
+      begin
+
+         Self.Process (Request             => Request,
+                       Socket              => Socket,
+                       Confirmation        => Confirmation,
+                       Confirmation_Length => Confirmation_Length,
+                       From_MAC_Address    => MAC_Address);
+
+      end;
 
       if Confirmation_Length < 28 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
          raise Adapter_Error with Message_Unexpected_Confirmation;
@@ -70,14 +76,14 @@ begin
 
    Socket.Close;
 
-   NMK           := Confirmation (I .. I + Key_Type'Length - 1);
-   Generated_NMK := Generate_NMK (Pass_Phrase => Pass_Phrase);
+   NMK           := Confirmation (I .. I + Octets.Key_Type'Length - 1);
+   Generated_NMK := Generate_NMK (Passphrase => Passphrase);
 
    return Generated_NMK = NMK;
 
 exception
 
-   when Error : Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Check_NMK;

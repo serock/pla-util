@@ -45,11 +45,11 @@ package Commands is
    Command_Error : exception;
 
    function Check_DAK (Network_Device_Name : String;
-                       Pass_Phrase         : String;
+                       Passphrase          : String;
                        PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Boolean;
 
    function Check_NMK (Network_Device_Name : String;
-                       Pass_Phrase         : String;
+                       Passphrase          : String;
                        PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Boolean;
 
    function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set;
@@ -85,7 +85,7 @@ package Commands is
                        PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
    procedure Set_NMK (Network_Device_Name : String;
-                      Pass_Phrase         : String;
+                      Passphrase          : String;
                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
 private

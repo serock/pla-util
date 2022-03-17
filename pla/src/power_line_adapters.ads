@@ -17,6 +17,7 @@
 ------------------------------------------------------------------------
 with HFID_Strings;
 with MAC_Addresses;
+with Messages;
 private with Ada.Streams;
 private with Octets;
 private with Packet_Sockets.Thin;
@@ -125,11 +126,11 @@ package Power_Line_Adapters is
                             Right : Adapter_Type) return Boolean;
 
    function Check_DAK (Self                : Adapter_Type;
-                       Pass_Phrase         : String;
+                       Passphrase          : String;
                        Network_Device_Name : String) return Boolean;
 
    function Check_NMK (Self                : Adapter_Type;
-                       Pass_Phrase         : String;
+                       Passphrase          : String;
                        Network_Device_Name : String) return Boolean;
 
    function Get_Any_Network_Info (Self                : Adapter_Type;
@@ -172,32 +173,25 @@ package Power_Line_Adapters is
                        Network_Device_Name : String);
 
    procedure Set_NMK (Self                : Adapter_Type;
-                      Pass_Phrase         : String;
+                      Passphrase          : String;
                       Network_Device_Name : String);
 
 private
 
-   Default_Receive_Timeout         : constant                       := 500;
-   Default_Send_Timeout            : constant                       := 500;
-   Message_No_Confirmation         : constant String                := "No confirmation received from adapter";
-   Message_Unexpected_Confirmation : constant String                := "Unexpected confirmation received from adapter";
-   Protocol_Homeplug               : constant Packets.Protocol_Type := (16#88#, 16#e1#);
-   Protocol_Mediaxtream            : constant Packets.Protocol_Type := (16#89#, 16#12#);
+   Default_Receive_Timeout         : constant        := 500;
+   Default_Send_Timeout            : constant        := 500;
+   Message_No_Confirmation         : constant String := "No confirmation received from adapter";
+   Message_Unexpected_Confirmation : constant String := "Unexpected confirmation received from adapter";
 
    type HFID_Kind_Type     is (MANUFACTURER, USER);
    type Network_Scope_Type is (MEMBER, ANY);
 
-   subtype HFID_Octets_Type is Octets.Octets_Type (1 .. 64);
-   subtype Key_Type         is Octets.Octets_Type (1 .. 16);
+   function Generate_DAK (Passphrase : String) return Octets.Key_Type;
 
-   function Generate_DAK (Pass_Phrase : String) return Key_Type;
+   function Generate_Key (Passphrase : String;
+                          Salt       : Ada.Streams.Stream_Element_Array) return Octets.Key_Type;
 
-   function Generate_Key (Pass_Phrase : String;
-                          Salt        : Ada.Streams.Stream_Element_Array) return Key_Type;
-
-   function Generate_NMK (Pass_Phrase : String) return Key_Type;
-
-   function Get_Octets (HFID : HFID_Strings.Bounded_String) return HFID_Octets_Type;
+   function Generate_NMK (Passphrase : String) return Octets.Key_Type;
 
    procedure Validate_HFID (HFID            : HFID_Strings.Bounded_String;
                             Min_HFID_Length : Positive := 1);
@@ -209,10 +203,10 @@ private
          HFID              : HFID_Strings.Bounded_String;
       end record;
 
-   procedure Initialize (Adapter           : in out Adapter_Type;
-                         Network_Interface :        Network_Interface_Type;
-                         MAC_Address       :        MAC_Addresses.MAC_Address_Type;
-                         HFID              :        HFID_Strings.Bounded_String);
+   procedure Initialize (Adapter           : out Adapter_Type;
+                         Network_Interface :     Network_Interface_Type;
+                         MAC_Address       :     MAC_Addresses.MAC_Address_Type;
+                         HFID              :     HFID_Strings.Bounded_String);
 
    function Get_HFID (Self                : Adapter_Type;
                       Kind                : HFID_Kind_Type;
@@ -223,21 +217,21 @@ private
                               Network_Device_Name : String) return Network_Info_List_Type;
 
    procedure Process (Self                :     Adapter_Type;
-                      Request             :     Packets.Payload_Type;
+                      Request             :     Messages.Message_Type;
                       Socket              :     Packet_Sockets.Thin.Socket_Type;
                       Confirmation        : out Packets.Payload_Type;
                       Confirmation_Length : out Natural;
                       From_MAC_Address    : out MAC_Addresses.MAC_Address_Type);
 
-   procedure Validate_DAK_Pass_Phrase (Pass_Phrase      : String;
-                                       Check_Min_Length : Boolean := True);
+   procedure Validate_DAK_Passphrase (Passphrase       : String;
+                                      Check_Min_Length : Boolean := True);
 
-   procedure Validate_NMK_Pass_Phrase (Pass_Phrase      : String;
-                                       Check_Min_Length : Boolean := True);
+   procedure Validate_NMK_Passphrase (Passphrase       : String;
+                                      Check_Min_Length : Boolean := True);
 
-   procedure Validate_Pass_Phrase (Pass_Phrase            : String;
-                                   Min_Pass_Phrase_Length : Positive;
-                                   Max_Pass_Phrase_Length : Positive;
-                                   Check_Min_Length       : Boolean := True);
+   procedure Validate_Passphrase (Passphrase            : String;
+                                  Min_Passphrase_Length : Positive;
+                                  Max_Passphrase_Length : Positive;
+                                  Check_Min_Length      : Boolean := True);
 
 end Power_Line_Adapters;
