@@ -17,8 +17,14 @@
 ------------------------------------------------------------------------
 with Interfaces.C.Strings;
 with Octets;
+with System;
 
 private package Packets.Pcap is
+
+   DLT_EN10MB      : constant Interfaces.C.int      := 1;
+   ERRBUF_SIZE     : constant                       := 256;
+   NETMASK_UNKNOWN : constant Interfaces.C.unsigned := 16#ffffffff#;
+   POLLIN          : constant                       := 1;
 
    type BPF_Instruction_Type is
       record
@@ -42,19 +48,54 @@ private package Packets.Pcap is
 
    type BPF_Program_Access_Type is access all BPF_Program_Type;
 
-   DLT_EN10MB      : constant Interfaces.C.int      := 1;
-   ERRBUF_SIZE     : constant                       := 256;
-   NETMASK_UNKNOWN : constant Interfaces.C.unsigned := 16#ffffffff#;
-
    subtype Error_Buffer_Type is Interfaces.C.char_array (1 .. ERRBUF_SIZE);
 
-   type Direction_Type is (D_Inout, D_In, D_Out)
+   type Direction_Type is (D_In_Out, D_In, D_Out)
      with
        Convention => C;
+
+   type Time_Value_Type is
+      record
+         Seconds      : aliased Interfaces.C.long;
+         Microseconds : aliased Interfaces.C.long;
+      end record
+     with
+       Convention => C_Pass_By_Copy;
+
+   type Packet_Header_Type is
+      record
+         Timestamp      : aliased Time_Value_Type;
+         Capture_Length : aliased Interfaces.C.unsigned;
+         Packet_Length  : aliased Interfaces.C.unsigned;
+      end record
+     with
+       Convention => C_Pass_By_Copy;
+
+   type Packet_Header_Access_Type is access Packet_Header_Type;
 
    type Pcap_Type is private;
 
    type Pcap_Access_Type is access Pcap_Type;
+
+   type Pcap_Stats_Type is
+      record
+         Received   : aliased Interfaces.C.unsigned;
+         Dropped    : aliased Interfaces.C.unsigned;
+         IF_Dropped : aliased Interfaces.C.unsigned;
+      end record
+     with
+       Convention => C_Pass_By_Copy;
+
+   type Poll_File_Descriptor_Type is
+      record
+         File_Descriptor  : aliased Interfaces.C.int;
+         Requested_Events : aliased Interfaces.C.short;
+         Returned_Events  : aliased Interfaces.C.short;
+      end record
+     with
+       Convention => C_Pass_By_Copy;
+
+   type Poll_File_Descriptors_Type is array (1 .. 1) of Poll_File_Descriptor_Type;
 
    function Activate (P : Pcap_Access_Type) return Interfaces.C.int
      with
@@ -103,11 +144,33 @@ private package Packets.Pcap is
        Convention    => C,
        External_Name => "pcap_geterr";
 
+   function Get_Selectable_File_Descriptor (P : Pcap_Access_Type) return Interfaces.C.int
+     with
+       Import        => True,
+       Convention    => C,
+       External_Name => "pcap_get_selectable_fd";
+
    function Library_Version return Interfaces.C.Strings.chars_ptr
      with
        Import        => True,
        Convention    => C,
        External_Name => "pcap_lib_version";
+
+   function Poll (File_Descriptors           : in out Poll_File_Descriptors_Type;
+                  Number_Of_File_Descriptors :        Interfaces.C.unsigned_long := 1;
+                  Timeout_Milliseconds       :        Interfaces.C.int) return Interfaces.C.int
+     with
+       Import        => True,
+       Convention    => C,
+       External_Name => "poll";
+
+   function Receive_Packet (P             :     Pcap_Access_Type;
+                            Packet_Header : out Packet_Header_Access_Type;
+                            Packet_Data   : out System.Address) return Interfaces.C.int
+     with
+       Import        => True,
+       Convention    => C,
+       External_Name => "pcap_next_ex";
 
    function Send_Packet (P           : Pcap_Access_Type;
                          Buffer      : Octets.Octets_Type;
@@ -120,9 +183,9 @@ private package Packets.Pcap is
    function Set_Datalink (P   : Pcap_Access_Type;
                           DLT : Interfaces.C.int) return Interfaces.C.int
      with
-       Import => True,
-        Convention => C,
-        External_Name => "pcap_set_datalink";
+       Import        => True,
+       Convention    => C,
+       External_Name => "pcap_set_datalink";
 
    function Set_Direction (P         : Pcap_Access_Type;
                            Direction : Direction_Type) return Interfaces.C.int
@@ -137,6 +200,35 @@ private package Packets.Pcap is
        Import        => True,
        Convention    => C,
        External_Name => "pcap_setfilter";
+
+   function Set_Immediate_Mode (P              : Pcap_Access_Type;
+                                Immediate_Mode : Interfaces.C.int) return Interfaces.C.int
+     with
+       Import        => True,
+       Convention    => C,
+       External_Name => "pcap_set_immediate_mode";
+
+   function Set_Nonblock (P            :     Pcap_Access_Type;
+                          Nonblock     :     Interfaces.C.int;
+                          Error_Buffer : out Error_Buffer_Type) return Interfaces.C.int
+     with
+       Import        => True,
+       Convention    => C,
+       External_Name => "pcap_setnonblock";
+
+   function Set_Snapshot_Length (P               : Pcap_Access_Type;
+                                 Snapshot_Length : Interfaces.C.int) return Interfaces.C.int
+     with
+       Import        => True,
+       Convention    => C,
+       External_Name => "pcap_set_snaplen";
+
+   function Stats (P     :     Pcap_Access_Type;
+                   Stats : out Pcap_Stats_Type) return Interfaces.C.int
+     with
+       Import        => True,
+       Convention    => C,
+       External_Name => "pcap_stats";
 
    function Status_To_String (Error : Interfaces.C.int) return Interfaces.C.Strings.chars_ptr
      with

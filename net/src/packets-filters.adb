@@ -35,14 +35,14 @@ package body Packets.Filters is
                                    Optimize          => 1);
 
       if Return_Code /= 0 then
-         raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Status_To_String (Error => Return_Code));
+         raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Handle));
       end if;
 
       Return_Code := Pcap.Set_Filter (P              => Handle,
                                       Filter_Program => Self.Program'Unchecked_Access);
 
       if Return_Code /= 0 then
-         raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Status_To_String (Error => Return_Code));
+         raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Handle));
       end if;
 
    end Apply_To;
