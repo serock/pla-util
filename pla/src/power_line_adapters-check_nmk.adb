@@ -17,7 +17,6 @@
 ------------------------------------------------------------------------
 with Ada.Exceptions;
 with Messages.Constructors;
-with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
 
@@ -34,47 +33,28 @@ function Check_NMK (Self                : Adapter_Type;
    Generated_NMK         : Octets.Key_Type;
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
    NMK                   : Octets.Key_Type;
-   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
    Validate_NMK_Passphrase (Passphrase       => Passphrase,
                             Check_Min_Length => False);
 
+   declare
+
+      Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_NMK_Request;
+
    begin
 
-      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
-                   Device_Name     => Network_Device_Name,
-                   Receive_Timeout => Default_Receive_Timeout,
-                   Send_Timeout    => Default_Send_Timeout);
-
-      declare
-
-         Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_NMK_Request;
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
-
-      if Confirmation_Length < 28 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
-         raise Adapter_Error with Message_Unexpected_Confirmation;
-      end if;
-
-   exception
-
-      when others =>
-         Socket.Close;
-         raise;
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
    end;
 
-   Socket.Close;
+   if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+      raise Adapter_Error with Message_Unexpected_Confirmation;
+   end if;
 
    NMK           := Confirmation (I .. I + Octets.Key_Type'Length - 1);
    Generated_NMK := Generate_NMK (Passphrase => Passphrase);
@@ -83,7 +63,7 @@ begin
 
 exception
 
-   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Check_NMK;

@@ -20,7 +20,6 @@ with MAC_Addresses;
 with Messages;
 private with Ada.Streams;
 private with Octets;
-private with Packet_Sockets.Thin;
 private with Packets;
 
 package Power_Line_Adapters is
@@ -193,6 +192,8 @@ private
 
    function Generate_NMK (Passphrase : String) return Octets.Key_Type;
 
+   function To_HFID_String (HFID_Octets : Octets.Octets_Type) return HFID_Strings.Bounded_String;
+
    procedure Validate_HFID (HFID            : HFID_Strings.Bounded_String;
                             Min_HFID_Length : Positive := 1);
 
@@ -203,7 +204,7 @@ private
          HFID              : HFID_Strings.Bounded_String;
       end record;
 
-   procedure Initialize (Adapter           : out Adapter_Type;
+   procedure Initialize (Self              : out Adapter_Type;
                          Network_Interface :     Network_Interface_Type;
                          MAC_Address       :     MAC_Addresses.MAC_Address_Type;
                          HFID              :     HFID_Strings.Bounded_String);
@@ -218,7 +219,6 @@ private
 
    procedure Process (Self                :     Adapter_Type;
                       Request             :     Messages.Message_Type;
-                      Socket              :     Packet_Sockets.Thin.Socket_Type;
                       Confirmation        : out Packets.Payload_Type;
                       Confirmation_Length : out Natural;
                       From_MAC_Address    : out MAC_Addresses.MAC_Address_Type);

@@ -17,7 +17,6 @@
 ------------------------------------------------------------------------
 with Ada.Exceptions;
 with Messages.Constructors;
-with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
 
@@ -33,124 +32,102 @@ function Check_DAK (Self                : Adapter_Type;
    Expected_Confirmation : Packets.Payload_Type (1 .. 12);
    Generated_DAK         : Octets.Key_Type;
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
-   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
    Validate_DAK_Passphrase (Passphrase       => Passphrase,
                             Check_Min_Length => True);
 
+   declare
+
+      Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_1_Request;
+
    begin
 
-      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
-                   Device_Name     => Network_Device_Name,
-                   Receive_Timeout => Default_Receive_Timeout,
-                   Send_Timeout    => Default_Send_Timeout);
-
-      declare
-
-         Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_1_Request;
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
-
-      Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#04#, 16#01#, 16#00#);
-
-      if Confirmation_Length < 16 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
-         raise Adapter_Error with Message_Unexpected_Confirmation;
-      end if;
-
-      DAK (1) := Confirmation (16);
-      DAK (2) := Confirmation (15);
-      DAK (3) := Confirmation (14);
-      DAK (4) := Confirmation (13);
-
-      declare
-
-         Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_2_Request;
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
-
-      Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#03#, 16#04#, 16#01#, 16#00#);
-
-      if Confirmation_Length < 16 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
-         raise Adapter_Error with Message_Unexpected_Confirmation;
-      end if;
-
-      DAK (5) := Confirmation (16);
-      DAK (6) := Confirmation (15);
-      DAK (7) := Confirmation (14);
-      DAK (8) := Confirmation (13);
-
-      declare
-
-         Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_3_Request;
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
-
-      Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#04#, 16#04#, 16#01#, 16#00#);
-
-      if Confirmation_Length < 16 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
-         raise Adapter_Error with Message_Unexpected_Confirmation;
-      end if;
-
-      DAK (9)  := Confirmation (16);
-      DAK (10) := Confirmation (15);
-      DAK (11) := Confirmation (14);
-      DAK (12) := Confirmation (13);
-
-      declare
-
-         Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_4_Request;
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
-
-      Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#05#, 16#04#, 16#01#, 16#00#);
-
-      if Confirmation_Length < 16 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
-         raise Adapter_Error with Message_Unexpected_Confirmation;
-      end if;
-
-   exception
-
-      when others =>
-         Socket.Close;
-         raise;
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
    end;
 
-   Socket.Close;
+   Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#04#, 16#01#, 16#00#);
+
+   if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+      raise Adapter_Error with Message_Unexpected_Confirmation;
+   end if;
+
+   DAK (1) := Confirmation (16);
+   DAK (2) := Confirmation (15);
+   DAK (3) := Confirmation (14);
+   DAK (4) := Confirmation (13);
+
+   declare
+
+      Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_2_Request;
+
+   begin
+
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
+
+   end;
+
+   Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#03#, 16#04#, 16#01#, 16#00#);
+
+   if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+      raise Adapter_Error with Message_Unexpected_Confirmation;
+   end if;
+
+   DAK (5) := Confirmation (16);
+   DAK (6) := Confirmation (15);
+   DAK (7) := Confirmation (14);
+   DAK (8) := Confirmation (13);
+
+   declare
+
+      Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_3_Request;
+
+   begin
+
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
+
+   end;
+
+   Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#04#, 16#04#, 16#01#, 16#00#);
+
+   if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+      raise Adapter_Error with Message_Unexpected_Confirmation;
+   end if;
+
+   DAK (9)  := Confirmation (16);
+   DAK (10) := Confirmation (15);
+   DAK (11) := Confirmation (14);
+   DAK (12) := Confirmation (13);
+
+   declare
+
+      Request : constant Messages.Message_Type := Messages.Constructors.Create_Check_DAK_4_Request;
+
+   begin
+
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
+
+   end;
+
+   Expected_Confirmation := (16#02#, 16#5d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#05#, 16#04#, 16#01#, 16#00#);
+
+   if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+      raise Adapter_Error with Message_Unexpected_Confirmation;
+   end if;
 
    DAK (13) := Confirmation (16);
    DAK (14) := Confirmation (15);
@@ -163,7 +140,7 @@ begin
 
 exception
 
-   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Check_DAK;

@@ -17,7 +17,6 @@
 ------------------------------------------------------------------------
 with Ada.Exceptions;
 with Messages.Constructors;
-with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
 
@@ -31,7 +30,6 @@ function Get_Network_Info (Self                : Adapter_Type;
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
    No_Network            : Network_Info_List_Type (1 .. 0);
    Number_Of_Networks    : Natural;
-   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
@@ -39,40 +37,20 @@ begin
 
       use type Octets.Octets_Type;
 
+      Request : constant Messages.Message_Type := (if Scope = ANY then Messages.Constructors.Create_Get_Any_Network_Info_Request else Messages.Constructors.Create_Get_Member_Network_Info_Request);
+
    begin
 
-      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
-                   Device_Name     => Network_Device_Name,
-                   Receive_Timeout => Default_Receive_Timeout,
-                   Send_Timeout    => Default_Send_Timeout);
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
-      declare
-
-         Request : constant Messages.Message_Type := (if Scope = ANY then Messages.Constructors.Create_Get_Any_Network_Info_Request else Messages.Constructors.Create_Get_Member_Network_Info_Request);
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
-
-      if Confirmation_Length < 26 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+      if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
          raise Adapter_Error with Message_Unexpected_Confirmation;
       end if;
 
-   exception
-
-      when others =>
-         Socket.Close;
-         raise;
-
    end;
-
-   Socket.Close;
 
    Number_Of_Networks := Natural (Confirmation (10));
 
@@ -86,12 +64,12 @@ begin
 
       Network_Info : Network_Info_List_Type (1 .. Number_Of_Networks);
       NID          : NID_Type;
-      X            : Positive;
+      X            : Positive := 11;
 
    begin
 
-      X := 11;
       for I in 1 .. Number_Of_Networks loop
+
          NID := NID_Type (Confirmation (X));
          NID := NID + NID_Type (Confirmation (X + 1)) * 16#00_0000_0000_0100#;
          NID := NID + NID_Type (Confirmation (X + 2)) * 16#00_0000_0001_0000#;
@@ -100,19 +78,25 @@ begin
          NID := NID + NID_Type (Confirmation (X + 5)) * 16#00_0100_0000_0000#;
          NID := NID + NID_Type (Confirmation (X + 6)) * 16#01_0000_0000_0000#;
 
-         Network_Info (I).NID                := NID;                                                  X := X + 7;
-         Network_Info (I).SNID               := SNID_Type (Confirmation (X) and 16#0f#);                  X := X + 1;
-         Network_Info (I).TEI                := TEI_Type (Confirmation (X));                              X := X + 1;
-         Network_Info (I).Station_Role       := Station_Role_Type'Val (Confirmation (X));                 X := X + 1;
-         Network_Info (I).CCo_MAC_Address    := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X .. X + 5)); X := X + 6;
-         Network_Info (I).Network_Kind       := Network_Kind_Type'Val (Confirmation (X));                 X := X + 1;
-         Network_Info (I).Num_Coord_Networks := Network_Count_Type (Confirmation (X));                    X := X + 1;
-         Network_Info (I).Status             := Status_Type'Val (Confirmation (X));                       X := X + 1;
+         Network_Info (I).NID := NID;
+         Network_Info (I).SNID               := SNID_Type (Confirmation (X + 7) and 16#0f#);
+         Network_Info (I).TEI                := TEI_Type (Confirmation (X + 8));
+         Network_Info (I).Station_Role       := Station_Role_Type'Val (Confirmation (X + 9));
+         Network_Info (I).CCo_MAC_Address    := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X + 10 .. X + 15));
+         Network_Info (I).Network_Kind       := Network_Kind_Type'Val (Confirmation (X + 16));
+         Network_Info (I).Num_Coord_Networks := Network_Count_Type (Confirmation (X + 17));
+         Network_Info (I).Status             := Status_Type'Val (Confirmation (X + 18));
+
+         X := X + 19;
+
       end loop;
 
       for I in 1 .. Number_Of_Networks loop
+
          Network_Info (I).BCCo_MAC_Address := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X .. X + 5));
-         X                                 := X + 6;
+
+         X := X + 6;
+
       end loop;
 
       return Network_Info;
@@ -121,7 +105,7 @@ begin
 
 exception
 
-   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Get_Network_Info;

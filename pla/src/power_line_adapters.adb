@@ -16,6 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Characters.Latin_1;
+with Ada.Strings;
 with GNAT.SHA256;
 with Power_Line_Adapters.Network;
 
@@ -126,22 +127,21 @@ package body Power_Line_Adapters is
 
    end Image;
 
-   procedure Initialize (Adapter           : out Adapter_Type;
+   procedure Initialize (Self              : out Adapter_Type;
                          Network_Interface :     Network_Interface_Type;
                          MAC_Address       :     MAC_Addresses.MAC_Address_Type;
                          HFID              :     HFID_Strings.Bounded_String) is
 
    begin
 
-      Adapter.Network_Interface := Network_Interface;
-      Adapter.MAC_Address       := MAC_Address;
-      Adapter.HFID              := HFID;
+      Self.Network_Interface := Network_Interface;
+      Self.MAC_Address       := MAC_Address;
+      Self.HFID              := HFID;
 
    end Initialize;
 
    procedure Process (Self                :     Adapter_Type;
                       Request             :     Messages.Message_Type;
-                      Socket              :     Packet_Sockets.Thin.Socket_Type;
                       Confirmation        : out Packets.Payload_Type;
                       Confirmation_Length : out Natural;
                       From_MAC_Address    : out MAC_Addresses.MAC_Address_Type) is
@@ -149,17 +149,44 @@ package body Power_Line_Adapters is
    begin
 
       Power_Line_Adapters.Network.Send (Message     => Request,
-                    Destination => Self.MAC_Address);
+                                        Destination => Self.MAC_Address);
 
-      Socket.Receive (Payload        => Confirmation,
-                      Payload_Length => Confirmation_Length,
-                      From           => From_MAC_Address);
+      Power_Line_Adapters.Network.Receive (Confirmation        => Confirmation,
+                                           Confirmation_Length => Confirmation_Length,
+                                           From_MAC_Address    => From_MAC_Address);
 
       if Confirmation_Length = 0 then
          raise Adapter_Error with Message_No_Confirmation;
       end if;
 
    end Process;
+
+   function To_HFID_String (HFID_Octets : Octets.Octets_Type) return HFID_Strings.Bounded_String is
+
+      C    : Character;
+      HFID : HFID_Strings.Bounded_String;
+      I    : Natural := HFID_Octets'First;
+
+   begin
+
+      while I <= HFID_Octets'Last loop
+
+         C := Character'Val (HFID_Octets (I));
+
+         if C = Ada.Characters.Latin_1.NUL then
+            exit;
+         end if;
+
+         HFID_Strings.Append (Source   => HFID,
+                              New_Item => C,
+                              Drop     => Ada.Strings.Error);
+         I := I + 1;
+
+      end loop;
+
+      return HFID;
+
+   end To_HFID_String;
 
    procedure Validate_DAK_Passphrase (Passphrase       : String;
                                       Check_Min_Length : Boolean := True) is

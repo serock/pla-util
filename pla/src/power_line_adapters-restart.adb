@@ -17,7 +17,6 @@
 ------------------------------------------------------------------------
 with Ada.Exceptions;
 with Messages.Constructors;
-with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
 
@@ -28,7 +27,6 @@ procedure Restart (Self                : Adapter_Type;
    Confirmation_Length   : Natural;
    Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#21#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
-   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
@@ -36,44 +34,24 @@ begin
 
       use type Octets.Octets_Type;
 
+      Request : constant Messages.Message_Type := Messages.Constructors.Create_Restart_Request;
+
    begin
 
-      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
-                   Device_Name     => Network_Device_Name,
-                   Receive_Timeout => Default_Receive_Timeout,
-                   Send_Timeout    => Default_Send_Timeout);
-
-      declare
-
-         Request : constant Messages.Message_Type := Messages.Constructors.Create_Restart_Request;
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
       if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
          raise Adapter_Error with Message_Unexpected_Confirmation;
       end if;
 
-   exception
-
-      when others =>
-         Socket.Close;
-         raise;
-
    end;
-
-   Socket.Close;
 
 exception
 
-   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Restart;

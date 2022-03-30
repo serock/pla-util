@@ -17,7 +17,6 @@
 ------------------------------------------------------------------------
 with Ada.Exceptions;
 with Messages.Constructors;
-with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
 
@@ -31,44 +30,25 @@ function Get_Id_Info (Self                : Adapter_Type;
    Expected_Confirmation : constant Packets.Payload_Type := (16#01#, 16#61#, 16#60#, 16#00#, 16#00#);
    Id_Info               : Id_Info_Type;
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
-   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
+   declare
+
+      Request : constant Messages.Message_Type := Messages.Constructors.Create_Get_Id_Info_Request;
+
    begin
 
-      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_HomePlug,
-                   Device_Name     => Network_Device_Name,
-                   Receive_Timeout => Default_Receive_Timeout,
-                   Send_Timeout    => Default_Send_Timeout);
-
-      declare
-
-         Request : constant Messages.Message_Type := Messages.Constructors.Create_Get_Id_Info_Request;
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
-
-      if Confirmation_Length < 11 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
-         raise Adapter_Error with Message_Unexpected_Confirmation;
-      end if;
-
-   exception
-
-      when others =>
-         Socket.Close;
-         raise;
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
    end;
 
-   Socket.Close;
+   if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+      raise Adapter_Error with Message_Unexpected_Confirmation;
+   end if;
 
    case Confirmation (10) is
       when 16#00# => Id_Info.Homeplug_AV_Version := HPAV_1_1;
@@ -78,21 +58,13 @@ begin
          raise Adapter_Error with Message_Unexpected_Confirmation;
    end case;
 
-   if Id_Info.Homeplug_AV_Version = HPAV_2_0 then
-
-      Id_Info.MCS := MCS_Type'Val (Confirmation (12));
-
-   else
-
-      Id_Info.MCS := MIMO_Not_Supported;
-
-   end if;
+   Id_Info.MCS := (if Id_Info.Homeplug_AV_Version = HPAV_2_0 then MCS_Type'Val (Confirmation (12)) else MIMO_Not_Supported);
 
    return Id_Info;
 
 exception
 
-   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Get_Id_Info;

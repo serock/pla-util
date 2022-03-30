@@ -17,7 +17,6 @@
 ------------------------------------------------------------------------
 with Ada.Exceptions;
 with Messages.Constructors;
-with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
 
@@ -27,48 +26,29 @@ function Get_Capabilities (Self                : Adapter_Type;
    use type Octets.Octets_Type;
 
    Capabilities          : Capabilities_Type;
-   Confirmation          : Packets.Payload_Type (1 .. 30);
+   Confirmation          : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Length);
    Confirmation_Length   : Natural;
    Expected_Confirmation : constant Packets.Payload_Type := (16#01#, 16#35#, 16#60#, 16#00#, 16#00#);
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
-   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
+   declare
+
+      Request : constant Messages.Message_Type := Messages.Constructors.Create_Get_Capabilities_Request;
+
    begin
 
-      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_HomePlug,
-                   Device_Name     => Network_Device_Name,
-                   Receive_Timeout => Default_Receive_Timeout,
-                   Send_Timeout    => Default_Send_Timeout);
-
-      declare
-
-         Request : constant Messages.Message_Type := Messages.Constructors.Create_Get_Capabilities_Request;
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
-
-      if Confirmation_Length < 30 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
-         raise Adapter_Error with Message_Unexpected_Confirmation;
-      end if;
-
-   exception
-
-      when others =>
-         Socket.Close;
-         raise;
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
    end;
 
-   Socket.Close;
+   if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+      raise Adapter_Error with Message_Unexpected_Confirmation;
+   end if;
 
    Capabilities.AV_Version             := AV_Version_Type'Val (Confirmation (6));
    Capabilities.MAC_Address            := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (7 .. 12));
@@ -81,7 +61,7 @@ begin
 
 exception
 
-   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Get_Capabilities;

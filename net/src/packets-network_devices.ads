@@ -34,10 +34,10 @@ package Packets.Network_Devices is
      with
        Pre => Self.Is_Available;
 
-   procedure Receive (Self           :     Network_Device_Type;
-                      Payload        : out Payload_Type;
-                      Payload_Length : out Natural;
-                      From           : out MAC_Addresses.MAC_Address_Type);
+   procedure Receive (Self             :     Network_Device_Type;
+                      Payload_Buffer   : out Payload_Type;
+                      Payload_Length   : out Natural;
+                      From_MAC_Address : out MAC_Addresses.MAC_Address_Type);
 
    procedure Send (Self        : Network_Device_Type;
                    Payload     : Payload_Type;

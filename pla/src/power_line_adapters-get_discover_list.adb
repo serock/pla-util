@@ -17,7 +17,6 @@
 ------------------------------------------------------------------------
 with Ada.Exceptions;
 with Messages.Constructors;
-with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
 
@@ -34,45 +33,26 @@ function Get_Discover_List (Self                : Adapter_Type;
    Number_Of_Stations    : Station_Count_Type;
    Octets_Per_Network    : constant := 13;
    Octets_Per_Station    : constant := 12;
-   Socket                : Packet_Sockets.Thin.Socket_Type;
    X                     : Positive;
 
 begin
 
+   declare
+
+      Request : constant Messages.Message_Type := Messages.Constructors.Create_Get_Discover_List_Request;
+
    begin
 
-      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_HomePlug,
-                   Device_Name     => Network_Device_Name,
-                   Receive_Timeout => Default_Receive_Timeout,
-                   Send_Timeout    => Default_Send_Timeout);
-
-      declare
-
-         Request : constant Messages.Message_Type := Messages.Constructors.Create_Get_Discover_List_Request;
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
-
-      if Confirmation_Length < 7 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
-         raise Adapter_Error with Message_Unexpected_Confirmation;
-      end if;
-
-   exception
-
-      when others =>
-         Socket.Close;
-         raise;
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
    end;
 
-   Socket.Close;
+   if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+      raise Adapter_Error with Message_Unexpected_Confirmation;
+   end if;
 
    X                  := 6;
    Number_Of_Stations := Natural (Confirmation (X));
@@ -128,7 +108,7 @@ begin
 
 exception
 
-   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Get_Discover_List;

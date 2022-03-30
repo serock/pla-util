@@ -25,10 +25,9 @@ package body Power_Line_Adapters.Constructors is
 
    begin
 
-      Initialize (Adapter           => Adapter,
-                  Network_Interface => Network_Interface,
-                  MAC_Address       => MAC_Address,
-                  HFID              => HFID);
+      Adapter.Initialize (Network_Interface => Network_Interface,
+                          MAC_Address       => MAC_Address,
+                          HFID              => HFID);
 
       return Adapter;
 

@@ -55,9 +55,9 @@ package body Power_Line_Adapters.Network is
 
          --  TODO handle discovery of single/multiple adapters ... multiple only for discover command (broadcast address), single otherwise (direct address or first adapter from broadcast)
 
-         Network_Device.Receive (Payload        => Confirmation,
-                                 Payload_Length => Confirmation_Length,
-                                 From           => PLA_MAC_Address);
+         Network_Device.Receive (Payload_Buffer   => Confirmation,
+                                 Payload_Length   => Confirmation_Length,
+                                 From_MAC_Address => PLA_MAC_Address);
 
          if Confirmation_Length = 0 then
             exit;
@@ -78,17 +78,28 @@ package body Power_Line_Adapters.Network is
 
          Adapters.Include (New_Item => Constructors.Create (Network_Interface => Network_Interface,
                                                             MAC_Address       => PLA_MAC_Address,
-                                                            HFID              => Packet_Sockets.Thin.To_HFID_String (Payload => Confirmation (12 .. Confirmation_Length))));
+                                                            HFID              => To_HFID_String (HFID_Octets => Confirmation (12 .. Confirmation_Length))));
       end loop;
 
       return Adapters;
 
    exception
 
-      when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
+      when Error : Packets.Packet_Error =>
          raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
    end Discover;
+
+   procedure Receive (Confirmation        : out Packets.Payload_Type;
+                      Confirmation_Length : out Natural;
+                      From_MAC_Address    : out MAC_Addresses.MAC_Address_Type) is
+   begin
+
+      Network_Device.Receive (Payload_Buffer   => Confirmation,
+                              Payload_Length   => Confirmation_Length,
+                              From_MAC_Address => From_MAC_Address);
+
+   end Receive;
 
    procedure Send (Message     : Messages.Message_Type;
                    Destination : MAC_Addresses.MAC_Address_Type) is

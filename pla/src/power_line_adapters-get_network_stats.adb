@@ -17,7 +17,6 @@
 ------------------------------------------------------------------------
 with Ada.Exceptions;
 with Messages.Constructors;
-with Packet_Sockets.Thin;
 
 separate (Power_Line_Adapters)
 
@@ -30,7 +29,6 @@ function Get_Network_Stats (Self                : Adapter_Type;
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
    No_Stats              : Network_Stats_List_Type (1 .. 0);
    Number_Of_Stations    : Natural;
-   Socket                : Packet_Sockets.Thin.Socket_Type;
 
 begin
 
@@ -38,40 +36,20 @@ begin
 
       use type Octets.Octets_Type;
 
+      Request : constant Messages.Message_Type := Messages.Constructors.Create_Get_Network_Stats_Request;
+
    begin
 
-      Socket.Open (Protocol        => Packet_Sockets.Thin.Protocol_8912,
-                   Device_Name     => Network_Device_Name,
-                   Receive_Timeout => Default_Receive_Timeout,
-                   Send_Timeout    => Default_Send_Timeout);
+      Self.Process (Request             => Request,
+                    Confirmation        => Confirmation,
+                    Confirmation_Length => Confirmation_Length,
+                    From_MAC_Address    => MAC_Address);
 
-      declare
-
-         Request : constant Messages.Message_Type := Messages.Constructors.Create_Get_Network_Stats_Request;
-
-      begin
-
-         Self.Process (Request             => Request,
-                       Socket              => Socket,
-                       Confirmation        => Confirmation,
-                       Confirmation_Length => Confirmation_Length,
-                       From_MAC_Address    => MAC_Address);
-
-      end;
-
-      if Confirmation_Length < 10 or else Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+      if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
          raise Adapter_Error with Message_Unexpected_Confirmation;
       end if;
 
-   exception
-
-      when others =>
-         Socket.Close;
-         raise;
-
    end;
-
-   Socket.Close;
 
    Number_Of_Stations := Natural (Confirmation (10));
 
@@ -84,19 +62,17 @@ begin
       use type Octets.Octet_Type;
 
       Network_Stats : Network_Stats_List_Type (1 .. Number_Of_Stations);
-      X             : Positive;
+      X             : Positive := 11;
 
    begin
 
-      X := 11;
       for I in 1 .. Number_Of_Stations loop
 
          Network_Stats (I).Destination_Address    := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X .. X + 5));
-         X := X + 6;
-         Network_Stats (I).Average_Rate_To_Dest   := Data_Rate_Type (Confirmation (X)) + 256 * (Data_Rate_Type (Confirmation (X + 1) and 16#07#));
-         X := X + 2;
-         Network_Stats (I).Average_Rate_From_Dest := Data_Rate_Type (Confirmation (X)) + 256 * (Data_Rate_Type (Confirmation (X + 1) and 16#07#));
-         X := X + 2;
+         Network_Stats (I).Average_Rate_To_Dest   := Data_Rate_Type (Confirmation (X + 6)) + 256 * (Data_Rate_Type (Confirmation (X + 7) and 16#07#));
+         Network_Stats (I).Average_Rate_From_Dest := Data_Rate_Type (Confirmation (X + 8)) + 256 * (Data_Rate_Type (Confirmation (X + 9) and 16#07#));
+
+         X := X + 10;
 
       end loop;
 
@@ -106,7 +82,7 @@ begin
 
 exception
 
-   when Error : Packets.Packet_Error | Packet_Sockets.Thin.Packet_Error =>
+   when Error : Packets.Packet_Error =>
       raise Adapter_Error with Ada.Exceptions.Exception_Message (Error);
 
 end Get_Network_Stats;

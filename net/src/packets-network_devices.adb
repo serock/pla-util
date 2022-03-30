@@ -142,14 +142,14 @@ package body Packets.Network_Devices is
 
    end Open;
 
-   procedure Receive (Self           :     Network_Device_Type;
-                      Payload        : out Payload_Type;
-                      Payload_Length : out Natural;
-                      From           : out MAC_Addresses.MAC_Address_Type) is
+   procedure Receive (Self             :     Network_Device_Type;
+                      Payload_Buffer   : out Payload_Type;
+                      Payload_Length   : out Natural;
+                      From_MAC_Address : out MAC_Addresses.MAC_Address_Type) is
 
       use type Interfaces.C.int;
-      use type Interfaces.C.unsigned;
 
+      Capture_Length        : Natural;
       FD                    : Interfaces.C.int;
       Packet_Data_Address   : System.Address;
       Packet_Header_Access  : Pcap.Packet_Header_Access_Type;
@@ -177,10 +177,11 @@ package body Packets.Network_Devices is
 
       if Return_Code = 0 then
 
-         Payload_Length := 0;
-         From           := MAC_Addresses.Null_MAC_Address;
+         Payload_Length   := 0;
+         From_MAC_Address := MAC_Addresses.Null_MAC_Address;
 
          return;
+
       end if;
 
       Return_Code := Pcap.Receive_Packet (P             => Self.Handle,
@@ -191,23 +192,23 @@ package body Packets.Network_Devices is
          raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Self.Handle));
       end if;
 
-      if Packet_Header_Access.Capture_Length < 60 then
-         raise Packet_Error with "Capture length is too small";
-      elsif Packet_Header_Access.Capture_Length > Payload'Length then
-         raise Packet_Error with "Capture length is too big";
+      Capture_Length := Natural (Packet_Header_Access.Capture_Length);
+
+      if Payload_Buffer'Length < Capture_Length - 14 then
+         raise Packet_Error with "Payload buffer is too small";
       end if;
 
       declare
 
-         Packet_Data : Octets.Octets_Type (1 .. Integer (Packet_Header_Access.Capture_Length))
+         Packet_Data : Octets.Octets_Type (1 .. Capture_Length)
            with
              Address => Packet_Data_Address;
 
       begin
 
-         Payload_Length                := Integer (Packet_Header_Access.Capture_Length) - 14;
-         Payload (1 .. Payload_Length) := Packet_Data (15 .. Integer (Packet_Header_Access.Capture_Length));
-         From                          := MAC_Addresses.Create_MAC_Address (Octets => Packet_Data (7 .. 12));
+         Payload_Length                       := Capture_Length - 14;
+         Payload_Buffer (1 .. Payload_Length) := Packet_Data (15 .. Capture_Length);
+         From_MAC_Address                     := MAC_Addresses.Create_MAC_Address (Octets => Packet_Data (7 .. 12));
 
       end;
 
