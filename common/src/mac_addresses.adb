@@ -82,6 +82,16 @@ package body MAC_Addresses is
 
    end Image;
 
+   function Is_Unicast (Self : MAC_Address_Type) return Boolean is
+
+      use type Octets.Octet_Type;
+
+   begin
+
+      return (Self.Octets (1) and 1) = 0;
+
+   end Is_Unicast;
+
    function Value (Image : MAC_Address_Image_Type) return MAC_Address_Type is
 
       Separator : constant Character := ':';

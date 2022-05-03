@@ -27,14 +27,8 @@ package body Power_Line_Adapters.Network is
    function Discover (Network_Device_Name : String;
                       MAC_Address         : MAC_Addresses.MAC_Address_Type := MAC_Addresses.Broadcast_MAC_Address) return Power_Line_Adapter_Sets.Set is
 
-      use type Octets.Octets_Type;
-
-      Adapters              : Power_Line_Adapter_Sets.Set (Capacity => Max_Adapters);
-      Confirmation          : Packets.Payload_Type (1 .. 75);
-      Confirmation_Length   : Natural;
-      Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#71#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
-      Network_Interface     : Network_Interface_Type;
-      PLA_MAC_Address       : MAC_Addresses.MAC_Address_Type;
+      Adapters  : Power_Line_Adapter_Sets.Set (Capacity => (if MAC_Address.Is_Unicast then 1 else Max_Adapters));
+      Receiving : Boolean := True;
 
    begin
 
@@ -51,35 +45,19 @@ package body Power_Line_Adapters.Network is
 
       end;
 
-      loop
+      if MAC_Address.Is_Unicast then
 
-         --  TODO handle discovery of single/multiple adapters ... multiple only for discover command (broadcast address), single otherwise (direct address or first adapter from broadcast)
+         Receiving := Receive_Discovered_Adapter (Adapters => Adapters);
 
-         Network_Device.Receive (Payload_Buffer   => Confirmation,
-                                 Payload_Length   => Confirmation_Length,
-                                 From_MAC_Address => PLA_MAC_Address);
+      else
 
-         if Confirmation_Length = 0 then
-            exit;
-         end if;
+         while Receiving loop
 
-         if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
-            raise Adapter_Error with Message_Unexpected_Confirmation;
-         end if;
+            Receiving := Receive_Discovered_Adapter (Adapters => Adapters);
 
-         case Confirmation (10) is
-            when 0      => Network_Interface := MII0;
-            when 1      => Network_Interface := MII1;
-            when 2 | 3  => Network_Interface := PLC;
-            when 4      => Network_Interface := SDR;
-            when others =>
-               raise Adapter_Error with Message_Unexpected_Confirmation;
-         end case;
+         end loop;
 
-         Adapters.Include (New_Item => Constructors.Create (Network_Interface => Network_Interface,
-                                                            MAC_Address       => PLA_MAC_Address,
-                                                            HFID              => To_HFID_String (HFID_Octets => Confirmation (12 .. Confirmation_Length))));
-      end loop;
+      end if;
 
       return Adapters;
 
@@ -100,6 +78,47 @@ package body Power_Line_Adapters.Network is
                               From_MAC_Address => From_MAC_Address);
 
    end Receive;
+
+   function Receive_Discovered_Adapter (Adapters : in out Power_Line_Adapter_Sets.Set) return Boolean is
+
+      use type Octets.Octets_Type;
+
+      Confirmation          : Packets.Payload_Type (1 .. 75);
+      Confirmation_Length   : Natural;
+      Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#71#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
+      Network_Interface     : Network_Interface_Type;
+      PLA_MAC_Address       : MAC_Addresses.MAC_Address_Type;
+
+   begin
+
+      Network_Device.Receive (Payload_Buffer   => Confirmation,
+                              Payload_Length   => Confirmation_Length,
+                              From_MAC_Address => PLA_MAC_Address);
+
+      if Confirmation_Length = 0 then
+         return False;
+      end if;
+
+      if Confirmation (Expected_Confirmation'Range) /= Expected_Confirmation then
+         raise Adapter_Error with Message_Unexpected_Confirmation;
+      end if;
+
+      case Confirmation (10) is
+         when 0      => Network_Interface := MII0;
+         when 1      => Network_Interface := MII1;
+         when 2 | 3  => Network_Interface := PLC;
+         when 4      => Network_Interface := SDR;
+         when others =>
+            raise Adapter_Error with Message_Unexpected_Confirmation;
+      end case;
+
+      Adapters.Include (New_Item => Constructors.Create (Network_Interface => Network_Interface,
+                                                            MAC_Address       => PLA_MAC_Address,
+                                                            HFID              => To_HFID_String (HFID_Octets => Confirmation (12 .. Confirmation_Length))));
+
+      return True;
+
+   end Receive_Discovered_Adapter;
 
    procedure Send (Message     : Messages.Message_Type;
                    Destination : MAC_Addresses.MAC_Address_Type) is

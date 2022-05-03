@@ -31,4 +31,8 @@ package Power_Line_Adapters.Network is
    procedure Send (Message     : Messages.Message_Type;
                    Destination : MAC_Addresses.MAC_Address_Type);
 
+private
+
+   function Receive_Discovered_Adapter (Adapters : in out Power_Line_Adapter_Sets.Set) return Boolean;
+
 end Power_Line_Adapters.Network;

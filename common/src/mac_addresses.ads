@@ -34,6 +34,8 @@ package MAC_Addresses is
 
    function Image (Self : MAC_Address_Type) return MAC_Address_Image_Type;
 
+   function Is_Unicast (Self : MAC_Address_Type) return Boolean;
+
    function Value (Image : MAC_Address_Image_Type) return MAC_Address_Type;
 
    Broadcast_MAC_Address : constant MAC_Address_Type;
