@@ -16,6 +16,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Octets;
+private with Ada.Strings.Bounded;
 
 package Packets is
 
@@ -27,5 +28,9 @@ package Packets is
    subtype Protocol_Type is Octets.Octets_Type (1 .. 2);
 
    function Library_Version return String;
+
+private
+
+   package Interface_Name_Strings is new Ada.Strings.Bounded.Generic_Bounded_Length (Max => 16);
 
 end Packets;

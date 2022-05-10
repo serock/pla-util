@@ -25,28 +25,69 @@ package Console is
 
 private
 
-   procedure Check_DAK (Network_Device_Name : String);
-   procedure Check_NMK (Network_Device_Name : String);
-   procedure Discover (Network_Device_Name : String);
-   procedure Get_Capabilities (Network_Device_Name : String);
-   procedure Get_Discover_List (Network_Device_Name : String);
-   procedure Get_HFID (Network_Device_Name : String);
-   function Get_HFID_Level return Commands.HFID_Level_Type;
-   procedure Get_Id_Info (Network_Device_Name : String);
-   procedure Get_Network_Info (Network_Device_Name : String);
-   function Get_Network_Scope return Commands.Network_Scope_Type;
-   procedure Get_Network_Stats (Network_Device_Name : String);
+   procedure Check_DAK (Network_Device_Name : String;
+                        Passphrase          : String;
+                        PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
+   procedure Check_NMK (Network_Device_Name : String;
+                        Passphrase          : String;
+                        PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
+   procedure Discover (Network_Device_Name : String;
+                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
+   procedure Get_Capabilities (Network_Device_Name : String;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
+   procedure Get_Discover_List (Network_Device_Name : String;
+                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
+   procedure Get_HFID (Network_Device_Name : String;
+                       HFID_Level          : Commands.HFID_Level_Type;
+                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
+   function Get_HFID_Level (HFID_Level_Text : String) return Commands.HFID_Level_Type;
+
+   procedure Get_Id_Info (Network_Device_Name : String;
+                          PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
+   procedure Get_Network_Info (Network_Device_Name : String;
+                               Network_Scope       : Commands.Network_Scope_Type;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
+   function Get_Network_Scope (Network_Scope_Text : String) return Commands.Network_Scope_Type;
+
+   procedure Get_Network_Stats (Network_Device_Name : String;
+                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
    function Get_PLA_MAC_Address (Image : String) return MAC_Addresses.MAC_Address_Type;
+
    function Image (HPAV_Version : Power_Line_Adapters.HPAV_Version_Type) return String;
+
    function Image (NID : Power_Line_Adapters.NID_Type) return String;
+
    function Image (Signal_Level : Power_Line_Adapters.Signal_Level_Type) return String;
-   procedure Reset (Network_Device_Name : String);
-   procedure Restart (Network_Device_Name : String);
+
+   procedure Reset (Network_Device_Name : String;
+                    PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
+   procedure Restart (Network_Device_Name : String;
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
    function Security_Level (NID : Power_Line_Adapters.NID_Type) return String;
-   procedure Set_HFID (Network_Device_Name : String);
-   procedure Set_NMK (Network_Device_Name : String);
+
+   procedure Set_HFID (Network_Device_Name : String;
+                       HFID                : String;
+                       PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
+   procedure Set_NMK (Network_Device_Name : String;
+                      Passphrase          : String;
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
    procedure Show_Help;
+
    procedure Show_Version;
+
    function To_Command (Source : String) return Commands.Command_Type;
 
 end Console;

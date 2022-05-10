@@ -52,7 +52,8 @@ package Commands is
                        Passphrase          : String;
                        PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Boolean;
 
-   function Discover (Network_Device_Name : String) return Power_Line_Adapter_Sets.Set;
+   function Discover (Network_Device_Name : String;
+                      PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter_Sets.Set;
 
    function Get_Capabilities (Network_Device_Name : String;
                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Capabilities_Type;

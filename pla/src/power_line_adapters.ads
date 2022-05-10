@@ -177,8 +177,6 @@ package Power_Line_Adapters is
 
 private
 
-   Default_Receive_Timeout         : constant        := 500;
-   Default_Send_Timeout            : constant        := 500;
    Message_No_Confirmation         : constant String := "No confirmation received from adapter";
    Message_Unexpected_Confirmation : constant String := "Unexpected confirmation received from adapter";
 

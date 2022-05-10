@@ -15,6 +15,7 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
+with Config;
 with GNAT.OS_Lib;
 with Interfaces.C.Strings;
 with Packets.Device_Locators;
@@ -48,10 +49,11 @@ package body Packets.Network_Devices is
 
       use type Interfaces.C.int;
 
-      Error_Buffer : aliased Pcap.Error_Buffer_Type;
-      Handle       : Pcap.Pcap_Access_Type;
-      Return_Code  : Interfaces.C.int;
-      Target_Count : Interfaces.C.size_t;
+      Error_Buffer   : aliased Pcap.Error_Buffer_Type;
+      Handle         : Pcap.Pcap_Access_Type;
+      Interface_Name : Interface_Name_Strings.Bounded_String;
+      Return_Code    : Interfaces.C.int;
+      Target_Count   : Interfaces.C.size_t;
 
    begin
 
@@ -61,11 +63,13 @@ package body Packets.Network_Devices is
 
       begin
 
-         Self.MAC_Address := Locator.Find (Device_Name => Network_Device_Name);
+         Locator.Find (Device_Name       => Network_Device_Name,
+                       Interface_Name    => Interface_Name,
+                       Interface_Address => Self.MAC_Address);
 
       end;
 
-      Interfaces.C.To_C (Item   => Network_Device_Name,
+      Interfaces.C.To_C (Item   => Interface_Name_Strings.To_String (Source => Interface_Name),
                          Target => Self.Interface_Name,
                          Count  => Target_Count);
 
@@ -169,7 +173,7 @@ package body Packets.Network_Devices is
                                       Returned_Events  => 0));
 
       Return_Code := Pcap.Poll (File_Descriptors     => Poll_File_Descriptors,
-                                Timeout_Milliseconds => 500);
+                                Timeout_Milliseconds => Interfaces.C.int (Config.Network_Receive_Timeout));
 
       if Return_Code = -1 then
          raise Packet_Error with GNAT.OS_Lib.Errno_Message;

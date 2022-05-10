@@ -25,7 +25,7 @@ The following software is being used to develop `pla-util`:
 ### Software
 The following library is required to build and run `pla-util`:
 
-* libpcap (version 1.9.1 is used during development)
+* libpcap (version 1.8.1 or higher is recommended; version 1.9.1 was used during development)
 
 ### Hardware
 During development, `pla-util` is tested with D-Link DHP-700AV adapters from a *D-Link DHP-701AV PowerLine AV2 2000 Gigabit Starter Kit*.
@@ -62,30 +62,42 @@ sudo setcap cap_net_raw+ep pla-util
 ```
 
 ## How to Run the Program
-To run the program, use one of the following commands:
+Running `pla-util --help` displays the following information:
 
 ```
-./pla-util <NIC> discover
-./pla-util <NIC> reset <pla-mac-address>
-./pla-util <NIC> restart <pla-mac-address>
-./pla-util <NIC> get-capabilities [pla-mac-address]
-./pla-util <NIC> get-discover-list [pla-mac-address]
-./pla-util <NIC> get-hfid {manufacturer|user} [pla-mac-address]
-./pla-util <NIC> get-id-info [pla-mac-address]
-./pla-util <NIC> get-network-info {member|any} [pla-mac-address]
-./pla-util <NIC> get-network-stats [pla-mac-address]
-./pla-util <NIC> set-hfid <id> [pla-mac-address]
-./pla-util <NIC> set-nmk <pass-phrase> [pla-mac-address]
-./pla-util <NIC> check-dak <plc-pass-phrase> [pla-mac-address]
-./pla-util <NIC> check-nmk <pass-phrase> [pla-mac-address]
+pla-util 2.0.0-pre
+A utility for power line adapters with Broadcom chipsets
+
+Usage:
+  pla-util [options] <command> [arguments]
+  pla-util -h | --help                      Display help and exit
+  pla-util -V | --version                   Display version and exit
+
+Options:
+  -i, --interface=<name>   Network interface to use (e.g., eth0)
+  -p, --pla=<mac-address>  Power line adapter at unicast MAC address
+  -t, --timeout=<ms>       Network timeout in milliseconds [default: 500]
+
+Commands:
+  check-dak <pla-passphrase>         Check device access key
+  check-nmk <passphrase>             Check network membership key
+  discover                           Discover power line adapters on subnet
+  get-capabilities                   Get capabilities
+  get-discover-list                  Get discovered PLAs and networks
+  get-hfid ( manufacturer | user )   Get human-friendly id [default: user]
+  get-id-info                        Get identification info
+  get-network-info ( any | member )  Get network information [default: member]
+  get-network-stats                  Get average PHY data rates
+  reset                              Factory reset power line adapter
+  restart                            Restart / reboot power line adapter
+  set-hfid <id>                      Set user human-friendly id
+  set-nmk <passphrase>               Set network membership key
 ```
 
-where
-`<nic>` is the name of an ethernet network device (e.g., `eth0` or `enp0s25`)
-connected to a power line adapter.
-`<pla-mac-address>` is the MAC address of a power line adapter as reported by the `discover` command.
+If you don't use the `--interface` option, the program will use the first running, non-loopback network interface that it finds.
+
+If you don't use the `--pla` option, the program will send request packets to the "closest" power line adapter, which is typically an adapter that is accessible via Ethernet cabling
+rather than electrical wiring.
 
 ## License
 This program is licensed under the GNU General Public License Version 3.
-
-

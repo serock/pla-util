@@ -57,17 +57,19 @@ package body Packets.Device_Locators is
 
    end Finalize;
 
-   function Find (Self        : in out Device_Locator_Type;
-                  Device_Name :        String) return MAC_Addresses.MAC_Address_Type is
+   procedure Find (Self              : in out Device_Locator_Type;
+                   Device_Name       :        String;
+                   Interface_Name    :    out Interface_Name_Strings.Bounded_String;
+                   Interface_Address :    out MAC_Addresses.MAC_Address_Type) is
 
       use type Interfaces.C.int;
       use type Pcap.Devices.Address_Access_Type;
 
-      Address_Access   : Pcap.Devices.Address_Access_Type    := null;
-      Device           : Pcap.Devices.Interface_Access_Type  := null;
+      Address_Access   : Pcap.Devices.Address_Access_Type   := null;
+      Device           : Pcap.Devices.Interface_Access_Type := null;
       Error_Buffer     : aliased Pcap.Error_Buffer_Type;
       Return_Code      : Interfaces.C.int;
-      Search_Algorithm : Search_Type'Class := (if Device_Name = "" then Create else Create (Device_Name => Device_Name));
+      Search_Algorithm : Search_Type'Class                  := (if Device_Name = "" then Create else Create (Device_Name => Device_Name));
 
    begin
 
@@ -83,6 +85,7 @@ package body Packets.Device_Locators is
       end if;
 
       Device         := Search_Algorithm.Run (Network_Device => Self.Devices_Access);
+      Interface_Name := Interface_Name_Strings.To_Bounded_String (Source => Interfaces.C.Strings.Value (Item => Device.Name));
       Address_Access := Device.Addresses;
 
       while Address_Access /= null and then Pcap.Devices.Is_Not_Packet_Address (Socket_Address => Address_Access.Socket_Address) loop
@@ -90,10 +93,10 @@ package body Packets.Device_Locators is
       end loop;
 
       if Address_Access = null then
-         raise Packet_Error with "MAC address of device " & Interfaces.C.Strings.Value (Item => Device.Name) & " not found";
+         raise Packet_Error with "MAC address of device " & Interface_Name_Strings.To_String (Source => Interface_Name) & " not found";
       end if;
 
-      return MAC_Addresses.Create_MAC_Address (Octets => Address_Access.Socket_Address.SLL_Address (1 .. 6));
+      Interface_Address := MAC_Addresses.Create_MAC_Address (Octets => Address_Access.Socket_Address.SLL_Address (1 .. 6));
 
    end Find;
 

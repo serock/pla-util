@@ -1,3 +1,10 @@
+# 2.0.0 (2022-??-??)
+
+* Overhaul the command line syntax (any scripts that call `pla-util` will need to be updated).
+* Write error messages to the standard error stream.
+* Set the exit status to 1 when an error occurs.
+* Use libpcap for sending and receiving packets.
+
 # 1.2.0 (2022-02-22)
 
 * Fix the security level displayed by `get-network-info` command.

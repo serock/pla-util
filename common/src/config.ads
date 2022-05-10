@@ -15,17 +15,8 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with Power_Line_Adapter_Sets;
-with Power_Line_Adapters.Network;
+package Config is
 
-separate (Commands)
+   Network_Receive_Timeout : Positive := 500;
 
-function Discover (Network_Device_Name : String;
-                   PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapter_Sets.Set is
-
-begin
-
-   return Power_Line_Adapters.Network.Discover (Network_Device_Name => Network_Device_Name,
-                                                MAC_Address         => PLA_MAC_Address);
-
-end Discover;
+end Config;
