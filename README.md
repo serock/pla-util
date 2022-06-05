@@ -52,7 +52,7 @@ permission to use packet sockets. Otherwise, you may see the
 following error message when you run the program:
 
 ```
-Error: Operation not permitted
+pla-util: You don't have permission to capture on that device
 ```
 
 To grant permission, you can use the following command:
