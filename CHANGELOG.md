@@ -1,6 +1,7 @@
-# 2.0.0 (2022-??-??)
+# 2.0.0 (2022-06-11)
 
 * Overhaul the command line syntax (any scripts that call `pla-util` will need to be updated).
+  * Providing a network interface on the command line is no longer required (Issue [#8](https://github.com/serock/pla-util/issues/8)).
 * Write error messages to the standard error stream.
 * Set the exit status to 1 when an error occurs.
 * Use libpcap for sending and receiving packets.
