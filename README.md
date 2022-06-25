@@ -35,7 +35,7 @@ During development, `pla-util` is tested with D-Link DHP-700AV adapters from a *
 2. Launch `gnatstudio`, select **Open existing project**, and browse to the `pla_util.gpr` project file.
 3. Use GNAT Studio's **Build All** toolbar button to build the project, or try **Build** > **Project** > **Build All**.
 
-If the build is successful, the `pla-util` executable will be in the same directory as the `pla_util.gpr` project file.
+If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
 ## How to Build the Program with GPRbuild
 1. Launch a terminal.
@@ -44,7 +44,7 @@ If the build is successful, the `pla-util` executable will be in the same direct
 4. You might need to install gprbuild, on debian: `sudo apt install gprbuild gnat`
 5. Run `gprbuild -P pla_util.gpr`.
 
-If the build is successful, the `pla-util` executable will be in the same directory as the `pla_util.gpr` project file.
+If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
 ## How to Grant the Program Permission to use Packet Sockets
 Before you can use the program, you will need to grant the program

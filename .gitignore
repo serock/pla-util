@@ -1,6 +1,11 @@
-# Object directory
-obj/**
+# Alire directory
+/alire/
 
-# Executable
-pla-util
+# Alire config directory
+/config/
 
+# Executable directory
+/bin/
+
+# Object directories
+obj/
