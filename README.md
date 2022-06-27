@@ -100,4 +100,4 @@ If you don't use the `--pla` option, the program will send request packets to th
 rather than electrical wiring.
 
 ## License
-This program is licensed under the GNU General Public License Version 3.
+This program is licensed under the GNU General Public License Version 3 or later.
