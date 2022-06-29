@@ -15,12 +15,18 @@ The following power line adapters have been used with `pla-util`:
 * TP-Link TL-PA9020 (uses BCM60500)
 
 ## Development Environment
-The following software is being used to develop `pla-util`:
+The following software is being used to develop `pla-util` on [openSUSE Leap](https://www.opensuse.org/):
 
-* [GNAT Community Edition](https://www.adacore.com/download), which includes the GNAT Studio IDE and the GPRbuild tool
+* GNU Ada Compiler (GNAT)
+* GPRbuild
+* GNAT Studio
 * [Git](https://git-scm.com/)
 * [libpcap](https://www.tcpdump.org/)
-* [openSUSE Leap](https://www.opensuse.org/)
+
+[GNAT Community Edition](https://www.adacore.com/download) includes a GNU Ada Compiler (GNAT), GPRbuild, and GNAT Studio.
+However, on June 2, 2022, AdaCore announced on their blog that the 2021 release is the last release of GNAT Community Edition.
+
+[Alire](https://alire.ada.dev/)'s `alr` command-line tool will download a GNU Ada Compiler (GNAT) and GPRbuild when the tool builds a project for the first time.
 
 ### Software
 The following library is required to build and run `pla-util`:
@@ -30,7 +36,7 @@ The following library is required to build and run `pla-util`:
 ### Hardware
 During development, `pla-util` is tested with D-Link DHP-700AV adapters from a *D-Link DHP-701AV PowerLine AV2 2000 Gigabit Starter Kit*.
 
-## How to Build the Program with GNAT Studio
+## How to Build the Program with GNAT Studio and GNAT Community Edition
 1. Use git to clone this repository.
 2. Launch `gnatstudio`, select **Open existing project**, and browse to the `pla_util.gpr` project file.
 3. Use GNAT Studio's **Build All** toolbar button to build the project, or try **Build** > **Project** > **Build All**.
@@ -38,11 +44,17 @@ During development, `pla-util` is tested with D-Link DHP-700AV adapters from a *
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
 ## How to Build the Program with GPRbuild
-1. Launch a terminal.
-2. Use git to clone this repository.
-3. Go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
-4. You might need to install gprbuild, on debian: `sudo apt install gprbuild gnat`
-5. Run `gprbuild -P pla_util.gpr`.
+1. Use git to clone this repository.
+2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
+3. You might need to install gprbuild, on Debian: `sudo apt install gprbuild gnat`
+4. Run `gprbuild -P pla_util.gpr`.
+
+If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
+
+## How to Build the Program with Alire
+1. Use git to clone this repository.
+2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
+3. Run `alr build`.
 
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
@@ -65,7 +77,7 @@ sudo setcap cap_net_raw+ep pla-util
 Running `pla-util --help` displays the following information:
 
 ```
-pla-util 2.0.0-pre
+pla-util 2.0.0
 A utility for power line adapters with Broadcom chipsets
 
 Usage:

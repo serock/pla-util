@@ -18,7 +18,16 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
+with "shared.gpr";
+
 aggregate project Pla_Util is
+
+   case Shared.Alire_Mode is
+      when "False" =>
+         for Project_Path use ("legacy");
+      when "True" =>
+         for Project_Path use ("config");
+   end case;
 
    for Project_Files use ("cli/cli.gpr");
    for Object_Dir use "obj";

@@ -18,11 +18,13 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-abstract project Shared is
+abstract project Pla_Util_Config is
 
-   type Alire_Mode_Type is ("False", "True");
+   Ada_Compiler_Switches := External_As_List ("ADAFLAGS", " ") &
+          (
+            "-gnat12", "-gnata", "-gnatf", "-gnateE", "-gnato", "-fstack-check", "-gnatE", "-g", "-gnatVa", "-gnatwa", "-gnaty3aAbBcdefhiIklnoOprsStux"
+          );
 
-   Alire_Mode : Alire_Mode_Type := external ("ALIRE", "False");
+   Build_Profile := "";
 
-end Shared;
-
+end Pla_Util_Config;
