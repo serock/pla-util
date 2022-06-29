@@ -172,7 +172,7 @@ begin
       Command_Id          : constant String                         := GNAT.Command_Line.Get_Argument;
       Network_Device_Name : constant String                         := Switch_Parameter_Map (I_Key);
       PLA_MAC_Address     : constant MAC_Addresses.MAC_Address_Type := (if Switch_Parameter_Map (P_Key) = "" then MAC_Addresses.Broadcast_MAC_Address else
-                                                                           Get_PLA_MAC_Address (Image => Switch_Parameter_Map (P_Key)));
+                                                                           Get_PLA_MAC_Address (MAC_Address_Image => Switch_Parameter_Map (P_Key)));
 
    begin
 

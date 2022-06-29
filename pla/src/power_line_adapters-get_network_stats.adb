@@ -71,7 +71,7 @@ begin
 
       for I in 1 .. Number_Of_Stations loop
 
-         Network_Stats (I).Destination_Address    := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X .. X + 5));
+         Network_Stats (I).Destination_Address    := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Confirmation (X .. X + 5));
          Network_Stats (I).Average_Rate_To_Dest   := Data_Rate_Type (Confirmation (X + 6)) + 256 * (Data_Rate_Type (Confirmation (X + 7) and 16#07#));
          Network_Stats (I).Average_Rate_From_Dest := Data_Rate_Type (Confirmation (X + 8)) + 256 * (Data_Rate_Type (Confirmation (X + 9) and 16#07#));
 

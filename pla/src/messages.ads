@@ -24,8 +24,8 @@ package Messages is
 
    type Message_Type (Payload_Length : Positive) is tagged private;
 
-   procedure Initialize (Self    : out Message_Type;
-                         Payload :     Packets.Payload_Type);
+   procedure Initialize (Self            : out Message_Type;
+                         Message_Payload :     Packets.Payload_Type);
 
    function Payload (Self : Message_Type) return Packets.Payload_Type;
 

@@ -349,16 +349,16 @@ package body Console is
 
    end Get_Network_Stats;
 
-   function Get_PLA_MAC_Address (Image : String) return MAC_Addresses.MAC_Address_Type is
+   function Get_PLA_MAC_Address (MAC_Address_Image : String) return MAC_Addresses.MAC_Address_Type is
    begin
 
-      return MAC_Addresses.Value (Image => Image);
+      return MAC_Addresses.Value (MAC_Address_Image => MAC_Address_Image);
 
    exception
 
       when Constraint_Error =>
 
-         raise MAC_Addresses.MAC_Address_Error with "Invalid MAC address '" & Image & "'";
+         raise MAC_Addresses.MAC_Address_Error with "Invalid MAC address '" & MAC_Address_Image & "'";
 
    end Get_PLA_MAC_Address;
 

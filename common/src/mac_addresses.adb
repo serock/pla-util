@@ -44,13 +44,13 @@ package body MAC_Addresses is
 
    end "<";
 
-   function Create_MAC_Address (Octets : MAC_Address_Octets_Type) return MAC_Address_Type is
+   function Create_MAC_Address (MAC_Address_Octets : MAC_Address_Octets_Type) return MAC_Address_Type is
 
       MAC_Address : MAC_Address_Type;
 
    begin
 
-      MAC_Address.Octets := Octets;
+      MAC_Address.Octets := MAC_Address_Octets;
 
       return MAC_Address;
 
@@ -95,25 +95,27 @@ package body MAC_Addresses is
 
    end Is_Unicast;
 
-   function Value (Image : MAC_Address_Image_Type) return MAC_Address_Type is
+   function Value (MAC_Address_Image : MAC_Address_Image_Type) return MAC_Address_Type is
 
       Separator : constant Character := ':';
 
    begin
 
-      if Image (3) /= Separator or else Image (6) /= Separator or else Image (9) /= Separator or else Image (12) /= Separator or else Image (15) /= Separator then
+      if MAC_Address_Image (3) /= Separator or else MAC_Address_Image (6) /= Separator or else MAC_Address_Image (9) /= Separator or else
+        MAC_Address_Image (12) /= Separator or else MAC_Address_Image (15) /= Separator
+      then
 
-         raise MAC_Address_Error with "Invalid MAC Address format " & Image;
+         raise MAC_Address_Error with "Invalid MAC Address format " & MAC_Address_Image;
 
       end if;
 
-      if Image = "00:00:00:00:00:00" then
+      if MAC_Address_Image = "00:00:00:00:00:00" then
          return Null_MAC_Address;
       end if;
 
       declare
 
-         Lower_Image        : constant MAC_Address_Image_Type := Ada.Characters.Handling.To_Lower (Item => Image);
+         Lower_Image        : constant MAC_Address_Image_Type := Ada.Characters.Handling.To_Lower (Item => MAC_Address_Image);
          MAC_Address_Octets : MAC_Address_Octets_Type;
 
       begin
@@ -129,13 +131,13 @@ package body MAC_Addresses is
          MAC_Address_Octets (5) := Octets.Octet_Type'Value ("16#" & Lower_Image (13 .. 14) & '#');
          MAC_Address_Octets (6) := Octets.Octet_Type'Value ("16#" & Lower_Image (16 .. 17) & '#');
 
-         return Create_MAC_Address (Octets => MAC_Address_Octets);
+         return Create_MAC_Address (MAC_Address_Octets => MAC_Address_Octets);
 
       exception
 
          when Constraint_Error =>
 
-            raise MAC_Address_Error with "Invalid MAC Address " & Image;
+            raise MAC_Address_Error with "Invalid MAC Address " & MAC_Address_Image;
 
       end;
 

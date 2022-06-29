@@ -85,7 +85,7 @@ begin
          Network_Info (I).SNID               := SNID_Type (Confirmation (X + 7) and 16#0f#);
          Network_Info (I).TEI                := TEI_Type (Confirmation (X + 8));
          Network_Info (I).Station_Role       := Station_Role_Type'Val (Confirmation (X + 9));
-         Network_Info (I).CCo_MAC_Address    := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X + 10 .. X + 15));
+         Network_Info (I).CCo_MAC_Address    := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Confirmation (X + 10 .. X + 15));
          Network_Info (I).Network_Kind       := Network_Kind_Type'Val (Confirmation (X + 16));
          Network_Info (I).Num_Coord_Networks := Network_Count_Type (Confirmation (X + 17));
          Network_Info (I).Status             := Status_Type'Val (Confirmation (X + 18));
@@ -96,7 +96,7 @@ begin
 
       for I in 1 .. Number_Of_Networks loop
 
-         Network_Info (I).BCCo_MAC_Address := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X .. X + 5));
+         Network_Info (I).BCCo_MAC_Address := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Confirmation (X .. X + 5));
 
          X := X + 6;
 

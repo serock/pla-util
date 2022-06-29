@@ -31,7 +31,7 @@ package MAC_Addresses is
    function "<" (Left  : MAC_Address_Type;
                  Right : MAC_Address_Type) return Boolean;
 
-   function Create_MAC_Address (Octets : MAC_Address_Octets_Type) return MAC_Address_Type;
+   function Create_MAC_Address (MAC_Address_Octets : MAC_Address_Octets_Type) return MAC_Address_Type;
 
    function Get_Octets (Self : MAC_Address_Type) return MAC_Address_Octets_Type;
 
@@ -39,7 +39,7 @@ package MAC_Addresses is
 
    function Is_Unicast (Self : MAC_Address_Type) return Boolean;
 
-   function Value (Image : MAC_Address_Image_Type) return MAC_Address_Type;
+   function Value (MAC_Address_Image : MAC_Address_Image_Type) return MAC_Address_Type;
 
    Broadcast_MAC_Address : constant MAC_Address_Type;
    Null_MAC_Address      : constant MAC_Address_Type;

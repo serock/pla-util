@@ -63,26 +63,26 @@ package Packets.Pcap.Devices is
      with
        Convention => C_Pass_By_Copy;
 
-   function Find_All_Devices (Devices      : out Interface_Access_Type;
-                              Error_Buffer : out Error_Buffer_Type) return Interfaces.C.int
+   function Find_All_Devices (Network_Devices : out Interface_Access_Type;
+                              Error_Buffer    : out Error_Buffer_Type) return Interfaces.C.int
      with
        Import        => True,
        Convention    => C,
        External_Name => "pcap_findalldevs";
 
-   procedure Free_All_Devices (Devices : Interface_Access_Type)
+   procedure Free_All_Devices (Network_Devices : Interface_Access_Type)
      with
        Import        => True,
        Convention    => C,
        External_Name => "pcap_freealldevs";
 
-   function Is_Down (Device : Interface_Access_Type) return Boolean;
+   function Is_Down (Network_Device : Interface_Access_Type) return Boolean;
 
-   function Is_Loopback (Device : Interface_Access_Type) return Boolean;
+   function Is_Loopback (Network_Device : Interface_Access_Type) return Boolean;
 
    function Is_Not_Packet_Address (Socket_Address : Socket_Address_Access_Type) return Boolean;
 
-   function Is_Not_Running (Device : Interface_Access_Type) return Boolean;
+   function Is_Not_Running (Network_Device : Interface_Access_Type) return Boolean;
 
 private
 
@@ -94,16 +94,16 @@ private
    IF_UP       : constant Interfaces.C.unsigned       := 16#0000_0002#;
    IF_RUNNING  : constant Interfaces.C.unsigned       := 16#0000_0004#;
 
-   function Is_Down (Device : Interface_Access_Type) return Boolean is
-     ((Device.Flags and IF_UP) = 0);
+   function Is_Down (Network_Device : Interface_Access_Type) return Boolean is
+     ((Network_Device.all.Flags and IF_UP) = 0);
 
-   function Is_Loopback (Device : Interface_Access_Type) return Boolean is
-     ((Device.Flags and IF_LOOPBACK) /= 0);
+   function Is_Loopback (Network_Device : Interface_Access_Type) return Boolean is
+     ((Network_Device.all.Flags and IF_LOOPBACK) /= 0);
 
    function Is_Not_Packet_Address (Socket_Address : Socket_Address_Access_Type) return Boolean is
-     (Socket_Address.SA_Family /= AF_PACKET);
+     (Socket_Address.all.SA_Family /= AF_PACKET);
 
-   function Is_Not_Running (Device : Interface_Access_Type) return Boolean is
-     ((Device.Flags and IF_RUNNING) = 0);
+   function Is_Not_Running (Network_Device : Interface_Access_Type) return Boolean is
+     ((Network_Device.all.Flags and IF_RUNNING) = 0);
 
 end Packets.Pcap.Devices;

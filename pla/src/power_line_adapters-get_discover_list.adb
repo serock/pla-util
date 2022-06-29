@@ -74,7 +74,7 @@ begin
 
       for I in 1 .. Number_Of_Stations loop
 
-         Discovered_List.Stations (I).MAC_Address  := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (X .. X + 5));
+         Discovered_List.Stations (I).MAC_Address  := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Confirmation (X .. X + 5));
          Discovered_List.Stations (I).TEI          := TEI_Type (Confirmation (X + 6));
          Discovered_List.Stations (I).Same_Network := No_Yes_Type'Val (Confirmation (X + 7));
          Discovered_List.Stations (I).SNID         := SNID_Type (Confirmation (X + 8) and 16#0f#);

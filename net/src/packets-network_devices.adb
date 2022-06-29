@@ -199,7 +199,7 @@ package body Packets.Network_Devices is
          raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Self.Handle));
       end if;
 
-      Capture_Length := Natural (Packet_Header_Access.Capture_Length);
+      Capture_Length := Natural (Packet_Header_Access.all.Capture_Length);
 
       if Payload_Buffer'Length < Capture_Length - 14 then
          raise Packet_Error with "Payload buffer is too small";
@@ -215,7 +215,7 @@ package body Packets.Network_Devices is
 
          Payload_Length                       := Capture_Length - 14;
          Payload_Buffer (1 .. Payload_Length) := Packet_Data (15 .. Capture_Length);
-         From_MAC_Address                     := MAC_Addresses.Create_MAC_Address (Octets => Packet_Data (7 .. 12));
+         From_MAC_Address                     := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Packet_Data (7 .. 12));
 
       end;
 

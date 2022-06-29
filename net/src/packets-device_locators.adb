@@ -52,7 +52,7 @@ package body Packets.Device_Locators is
 
       if Self.Devices_Access /= null then
 
-         Pcap.Devices.Free_All_Devices (Devices => Self.Devices_Access);
+         Pcap.Devices.Free_All_Devices (Network_Devices => Self.Devices_Access);
 
          Self.Devices_Access := null;
 
@@ -69,15 +69,15 @@ package body Packets.Device_Locators is
       use type Pcap.Devices.Address_Access_Type;
 
       Address_Access   : Pcap.Devices.Address_Access_Type   := null;
-      Device           : Pcap.Devices.Interface_Access_Type := null;
+      Device_Access    : Pcap.Devices.Interface_Access_Type := null;
       Error_Buffer     : aliased Pcap.Error_Buffer_Type;
       Return_Code      : Interfaces.C.int;
       Search_Algorithm : Search_Type'Class                  := (if Device_Name = "" then Create else Create (Device_Name => Device_Name));
 
    begin
 
-      Return_Code := Pcap.Devices.Find_All_Devices (Devices      => Self.Devices_Access,
-                                                    Error_Buffer => Error_Buffer);
+      Return_Code := Pcap.Devices.Find_All_Devices (Network_Devices => Self.Devices_Access,
+                                                    Error_Buffer    => Error_Buffer);
 
       if Return_Code /= 0 then
          raise Packet_Error with Interfaces.C.To_Ada (Item => Error_Buffer);
@@ -87,62 +87,62 @@ package body Packets.Device_Locators is
          raise Packet_Error with "No devices found";
       end if;
 
-      Device         := Search_Algorithm.Run (Network_Device => Self.Devices_Access);
-      Interface_Name := Interface_Name_Strings.To_Bounded_String (Source => Interfaces.C.Strings.Value (Item => Device.Name));
-      Address_Access := Device.Addresses;
+      Device_Access  := Search_Algorithm.Run (Network_Device => Self.Devices_Access);
+      Interface_Name := Interface_Name_Strings.To_Bounded_String (Source => Interfaces.C.Strings.Value (Item => Device_Access.all.Name));
+      Address_Access := Device_Access.all.Addresses;
 
-      while Address_Access /= null and then Pcap.Devices.Is_Not_Packet_Address (Socket_Address => Address_Access.Socket_Address) loop
-         Address_Access := Address_Access.Next;
+      while Address_Access /= null and then Pcap.Devices.Is_Not_Packet_Address (Socket_Address => Address_Access.all.Socket_Address) loop
+         Address_Access := Address_Access.all.Next;
       end loop;
 
       if Address_Access = null then
          raise Packet_Error with "MAC address of device " & Interface_Name_Strings.To_String (Source => Interface_Name) & " not found";
       end if;
 
-      Interface_Address := MAC_Addresses.Create_MAC_Address (Octets => Address_Access.Socket_Address.SLL_Address (1 .. 6));
+      Interface_Address := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Address_Access.all.Socket_Address.all.SLL_Address (1 .. 6));
 
    end Find;
 
    overriding function Run (Self           : Basic_Search_Type;
                             Network_Device : Pcap.Devices.Interface_Access_Type) return Pcap.Devices.Interface_Access_Type is
 
-      Device : Pcap.Devices.Interface_Access_Type := Network_Device;
+      Device_Access : Pcap.Devices.Interface_Access_Type := Network_Device;
 
    begin
 
-      while Device /= null and then
-        (Pcap.Devices.Is_Loopback (Device => Device) or else
-         Pcap.Devices.Is_Down (Device => Device) or else
-         Pcap.Devices.Is_Not_Running (Device => Device)) loop
+      while Device_Access /= null and then
+        (Pcap.Devices.Is_Loopback (Network_Device => Device_Access) or else
+         Pcap.Devices.Is_Down (Network_Device => Device_Access) or else
+         Pcap.Devices.Is_Not_Running (Network_Device => Device_Access)) loop
 
-         Device := Device.Next;
+         Device_Access := Device_Access.all.Next;
 
       end loop;
 
-      if Device = null then
+      if Device_Access = null then
          raise Packet_Error with "No up and running non-loopback network device found";
       end if;
 
-      return Device;
+      return Device_Access;
 
    end Run;
 
    overriding function Run (Self           : Named_Search_Type;
                             Network_Device : Pcap.Devices.Interface_Access_Type) return Pcap.Devices.Interface_Access_Type is
 
-      Device : Pcap.Devices.Interface_Access_Type := Network_Device;
+      Device_Access : Pcap.Devices.Interface_Access_Type := Network_Device;
 
    begin
 
-      while Device /= null and then Interfaces.C.Strings.Value (Item => Device.Name) /= Interfaces.C.To_Ada (Item => Self.Network_Device_Name) loop
-         Device := Device.Next;
+      while Device_Access /= null and then Interfaces.C.Strings.Value (Item => Device_Access.all.Name) /= Interfaces.C.To_Ada (Item => Self.Network_Device_Name) loop
+         Device_Access := Device_Access.all.Next;
       end loop;
 
-      if Device = null then
+      if Device_Access = null then
          raise Packet_Error with "Device " & Interfaces.C.To_Ada (Item => Self.Network_Device_Name) & " not found";
       end if;
 
-      return Device;
+      return Device_Access;
 
    end Run;
 

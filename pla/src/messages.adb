@@ -25,11 +25,11 @@ package body Messages is
    Protocol_Homeplug    : constant Packets.Protocol_Type := (16#88#, 16#e1#);
    Protocol_Mediaxtream : constant Packets.Protocol_Type := (16#89#, 16#12#);
 
-   procedure Initialize (Self    : out Message_Type;
-                         Payload :     Packets.Payload_Type) is
+   procedure Initialize (Self            : out Message_Type;
+                         Message_Payload :     Packets.Payload_Type) is
    begin
 
-      Self.Payload := Payload;
+      Self.Payload := Message_Payload;
 
    end Initialize;
 

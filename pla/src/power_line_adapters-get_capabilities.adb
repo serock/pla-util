@@ -54,7 +54,7 @@ begin
    end if;
 
    Capabilities.AV_Version             := AV_Version_Type'Val (Confirmation (6));
-   Capabilities.MAC_Address            := MAC_Addresses.Create_MAC_Address (Octets => Confirmation (7 .. 12));
+   Capabilities.MAC_Address            := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Confirmation (7 .. 12));
    Capabilities.OUI                    := 65536 * OUI_Type (Confirmation (13)) + 256 * OUI_Type (Confirmation (14)) + OUI_Type (Confirmation (15));
    Capabilities.Proxy                  := Capable_Type'Val (Confirmation (19));
    Capabilities.Backup_CCo             := Capable_Type'Val (Confirmation (20));
