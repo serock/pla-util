@@ -39,13 +39,13 @@ generate_c = false
 "*".ada_version = "ada12"
 "*".style_checks = ["-gnaty3aAbBcdefhiIklnoOprsStux"]
 
-development.compile_checks = ["-gnatf", "-gnatwa", "-gnatVa", "-gnatwd", "-gnatw.d", "-gnatwh", "-gnatw.h", "-gnatw.j", "-gnatw.k", "-gnatwl", "-gnatw.l", "-gnatwo", "-gnatw.q", "-gnatw_r", "-gnatw.s", "-gnatwt", "-gnatw.u", "-gnatw.w"]
+development.compile_checks = ["-gnatf", "-gnatwa", "-gnatVa", "-gnatwd", "-gnatw.d", "-gnatwh", "-gnatw.h", "-gnatw.j", "-gnatw.k", "-gnatwl", "-gnatw.l", "-gnatwo", "-gnatw.o", "-gnatw.q", "-gnatw_r", "-gnatw.s", "-gnatwt", "-gnatw.u", "-gnatw.w"]
 development.contracts = ["-gnata"]
 development.debug_info = ["-g", "-gnateE"]
 development.optimization = []
 development.runtime_checks = ["-gnatE", "-gnato", "-fstack-check"]
 
-validation.compile_checks = ["-gnatf", "-gnatwa", "-gnatVa", "-gnatwd", "-gnatw.d", "-gnatwh", "-gnatw.h", "-gnatw.j", "-gnatw.k", "-gnatwl", "-gnatw.l", "-gnatwo", "-gnatw.q", "-gnatw_r", "-gnatw.s", "-gnatwt", "-gnatw.u", "-gnatw.w"]
+validation.compile_checks = ["-gnatf", "-gnatwa", "-gnatVa", "-gnatwd", "-gnatw.d", "-gnatwh", "-gnatw.h", "-gnatw.j", "-gnatw.k", "-gnatwl", "-gnatw.l", "-gnatwo", "-gnatw.o", "-gnatw.q", "-gnatw_r", "-gnatw.s", "-gnatwt", "-gnatw.u", "-gnatw.w"]
 validation.contracts = ["-gnata"]
 validation.debug_info = ["-g", "-gnateE"]
 validation.optimization = []

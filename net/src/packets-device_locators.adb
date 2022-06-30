@@ -60,32 +60,18 @@ package body Packets.Device_Locators is
 
    end Finalize;
 
-   procedure Find (Self              : in out Device_Locator_Type;
-                   Device_Name       :        String;
-                   Interface_Name    :    out Interface_Name_Strings.Bounded_String;
-                   Interface_Address :    out MAC_Addresses.MAC_Address_Type) is
+   procedure Find (Self              :     Device_Locator_Type;
+                   Device_Name       :     String;
+                   Interface_Name    : out Interface_Name_Strings.Bounded_String;
+                   Interface_Address : out MAC_Addresses.MAC_Address_Type) is
 
-      use type Interfaces.C.int;
       use type Pcap.Devices.Address_Access_Type;
 
       Address_Access   : Pcap.Devices.Address_Access_Type   := null;
       Device_Access    : Pcap.Devices.Interface_Access_Type := null;
-      Error_Buffer     : aliased Pcap.Error_Buffer_Type;
-      Return_Code      : Interfaces.C.int;
       Search_Algorithm : Search_Type'Class                  := (if Device_Name = "" then Create else Create (Device_Name => Device_Name));
 
    begin
-
-      Return_Code := Pcap.Devices.Find_All_Devices (Network_Devices => Self.Devices_Access,
-                                                    Error_Buffer    => Error_Buffer);
-
-      if Return_Code /= 0 then
-         raise Packet_Error with Interfaces.C.To_Ada (Item => Error_Buffer);
-      end if;
-
-      if Self.Devices_Access = null then
-         raise Packet_Error with "No devices found";
-      end if;
 
       Device_Access  := Search_Algorithm.Run (Network_Device => Self.Devices_Access);
       Interface_Name := Interface_Name_Strings.To_Bounded_String (Source => Interfaces.C.Strings.Value (Item => Device_Access.all.Name));
@@ -102,6 +88,28 @@ package body Packets.Device_Locators is
       Interface_Address := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Address_Access.all.Socket_Address.all.SLL_Address (1 .. 6));
 
    end Find;
+
+   procedure Find_All_Devices (Self : in out Device_Locator_Type) is
+
+      use type Interfaces.C.int;
+
+      Error_Buffer : aliased Pcap.Error_Buffer_Type;
+      Return_Code  : Interfaces.C.int;
+
+   begin
+
+      Return_Code := Pcap.Devices.Find_All_Devices (Network_Devices => Self.Devices_Access,
+                                                    Error_Buffer    => Error_Buffer);
+
+      if Return_Code /= 0 then
+         raise Packet_Error with Interfaces.C.To_Ada (Item => Error_Buffer);
+      end if;
+
+      if Self.Devices_Access = null then
+         raise Packet_Error with "No devices found";
+      end if;
+
+   end Find_All_Devices;
 
    overriding function Run (Self           : Basic_Search_Type;
                             Network_Device : Pcap.Devices.Interface_Access_Type) return Pcap.Devices.Interface_Access_Type is

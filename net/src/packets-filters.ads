@@ -27,9 +27,12 @@ private package Packets.Filters is
 
    type Filter_Type is tagged limited private;
 
-   procedure Apply_To (Self       : in out Filter_Type;
-                       Expression :        String;
-                       Handle     :        Pcap.Pcap_Access_Type)
+   procedure Apply_To (Self   : Filter_Type;
+                       Handle : Pcap.Pcap_Access_Type);
+
+   procedure Compile (Self       : in out Filter_Type;
+                      Expression :        String;
+                      Handle     :        Pcap.Pcap_Access_Type)
      with
        Pre => Self.Is_Available;
 

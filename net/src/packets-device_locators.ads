@@ -51,10 +51,12 @@ private package Packets.Device_Locators is
 
    type Device_Locator_Type is tagged limited private;
 
-   procedure Find (Self              : in out Device_Locator_Type;
-                   Device_Name       :        String;
-                   Interface_Name    :    out Interface_Name_Strings.Bounded_String;
-                   Interface_Address :    out MAC_Addresses.MAC_Address_Type)
+   procedure Find (Self              :     Device_Locator_Type;
+                   Device_Name       :     String;
+                   Interface_Name    : out Interface_Name_Strings.Bounded_String;
+                   Interface_Address : out MAC_Addresses.MAC_Address_Type);
+
+   procedure Find_All_Devices (Self : in out Device_Locator_Type)
      with
        Pre => Self.Is_Available;
 

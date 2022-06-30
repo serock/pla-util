@@ -49,7 +49,8 @@ private package Packets.Pcap is
      with
        Convention => C_Pass_By_Copy;
 
-   type BPF_Program_Access_Type is access all BPF_Program_Type;
+   type BPF_Program_Access_Type          is access all BPF_Program_Type;
+   type BPF_Program_Constant_Access_Type is access constant BPF_Program_Type;
 
    subtype Error_Buffer_Type is Interfaces.C.char_array (1 .. ERRBUF_SIZE);
 
@@ -198,7 +199,7 @@ private package Packets.Pcap is
        External_Name => "pcap_setdirection";
 
    function Set_Filter (P              : Pcap_Access_Type;
-                        Filter_Program : BPF_Program_Access_Type) return Interfaces.C.int
+                        Filter_Program : BPF_Program_Constant_Access_Type) return Interfaces.C.int
      with
        Import        => True,
        Convention    => C,

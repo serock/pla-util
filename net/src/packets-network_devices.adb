@@ -66,6 +66,8 @@ package body Packets.Network_Devices is
 
       begin
 
+         Locator.Find_All_Devices;
+
          Locator.Find (Device_Name       => Network_Device_Name,
                        Interface_Name    => Interface_Name,
                        Interface_Address => Self.MAC_Address);
@@ -143,8 +145,11 @@ package body Packets.Network_Devices is
 
       begin
 
-         Filter.Apply_To (Expression => "ether proto 0x8912 or ether proto 0x88e1",
-                          Handle     => Handle);
+         Filter.Compile (Expression => "ether proto 0x8912 or ether proto 0x88e1",
+                         Handle     => Handle);
+
+         Filter.Apply_To (Handle => Handle);
+
       end;
 
    end Open;

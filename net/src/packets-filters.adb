@@ -22,9 +22,27 @@ with Interfaces.C.Strings;
 
 package body Packets.Filters is
 
-   procedure Apply_To (Self       : in out Filter_Type;
-                       Expression :        String;
-                       Handle     :        Pcap.Pcap_Access_Type) is
+   procedure Apply_To (Self   : Filter_Type;
+                       Handle : Pcap.Pcap_Access_Type) is
+
+      use type Interfaces.C.int;
+
+      Return_Code : Interfaces.C.int;
+
+   begin
+
+      Return_Code := Pcap.Set_Filter (P              => Handle,
+                                      Filter_Program => Self.Program'Unchecked_Access);
+
+      if Return_Code /= 0 then
+         raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Handle));
+      end if;
+
+   end Apply_To;
+
+   procedure Compile (Self       : in out Filter_Type;
+                      Expression :        String;
+                      Handle     :        Pcap.Pcap_Access_Type) is
 
       use type Interfaces.C.int;
 
@@ -41,14 +59,7 @@ package body Packets.Filters is
          raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Handle));
       end if;
 
-      Return_Code := Pcap.Set_Filter (P              => Handle,
-                                      Filter_Program => Self.Program'Unchecked_Access);
-
-      if Return_Code /= 0 then
-         raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Handle));
-      end if;
-
-   end Apply_To;
+   end Compile;
 
    overriding procedure Finalize (Self : in out Filter_Type) is
    begin
