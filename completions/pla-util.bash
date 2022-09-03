@@ -1,0 +1,103 @@
+#  SPDX-License-Identifier: GPL-3.0-or-later
+#----------------------------------------------------------------------
+#  pla-util - A power line adapter utility
+#  Copyright (C) 2016-2022 John Serock
+#
+#  This file is part of pla-util.
+#
+#  pla-util is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  pla-util is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program. If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------
+__pla_util_command_word_index () {
+    local -i i
+    local cmd word
+    local -a cmd_array=( $cmds )
+    for (( i=1; i < ${#words[@]}; i++ )); do
+        word=${words[i]}
+        [[ ${#word} -lt 5 ]] && continue
+        for cmd in $cmds; do
+            if [[ "$word" == "$cmd" ]]; then
+                cmd_word_index=$i
+                break 2
+            fi
+        done
+    done
+}
+
+_pla_util_remove_any_duplicate_options () {
+    local -A opts_aa=( [--interface]=1 [--pla]=1 [--timeout]=1 )
+    local -i i
+    local word
+    for word in "${words[@]}"; do
+        [[ $word && ${opts_aa[${word%%=*}]} ]] || continue
+        for i in "${!COMPREPLY[@]}"; do
+            [[ ${COMPREPLY[i]%%=} == ${word%%=*} ]] && unset COMPREPLY[i]
+        done
+    done
+}
+
+_pla_util() {
+    local cur prev split
+    local -i cword cmd_word_index=0
+    local -a words=()
+    local -r cmds="check-dak check-nmk discover get-capabilities get-discover-list get-hfid get-id-info get-network-info get-network-stats reset restart set-hfid set-nmk"
+    local -r primary_opts="--interface= --pla= --timeout="
+    local -r opts="--help --version $primary_opts"
+    _init_completion -s -n : || return
+    [[ $cur && ! ${cur//[[:space:]]} ]] && cur=
+    __pla_util_command_word_index
+    case "$prev" in
+        pla-util)
+            if [[ $COMP_POINT -eq ${#COMP_LINE} ]]; then
+                COMPREPLY=( $( compgen -o nosort -W "$opts $cmds" -- "$cur" ) )
+                [[ ${#COMPREPLY[@]} -eq 1 ]] && [[ "$COMPREPLY" == *= ]] && compopt -o nospace
+            elif [[ $cmd_word_index -eq 0 || $cword -lt $cmd_word_index ]]; then
+                COMPREPLY=( $( compgen -o nosort -W "$primary_opts" -- "$cur" ) )
+                [[ ${#COMPREPLY[@]} -eq 1 ]] && [[ "$COMPREPLY" == *= ]] && compopt -o nospace
+            fi
+            return 0
+            ;;
+        get-hfid)
+            COMPREPLY=( $( compgen -W "manufacturer user" -- "$cur" ) )
+            return 0
+            ;;
+        get-network-info)
+            COMPREPLY=( $( compgen -W "any member" -- "$cur" ) )
+            return 0
+            ;;
+        check-dak|check-nmk|discover|get-capabilities|get-discover-list|get-id-info|get-network-stats|reset|restart|set-hfid|set-nmk)
+            COMPREPLY=()
+            return 0
+            ;;
+        -i|--interface)
+            _available_interfaces
+            return 0
+            ;;
+        -p|--pla|-t|--timeout|-h|--help|-V|--version)
+            COMPREPLY=()
+            return 0
+            ;;
+    esac    
+    $split && return
+    if [[ $cmd_word_index -eq 0 ]]; then
+        COMPREPLY=( $( compgen -o nosort -W "$primary_opts $cmds" -- "$cur" ) )
+        [[ ${#COMPREPLY[@]} -eq 1 ]] && [[ "$COMPREPLY" == *= ]] && compopt -o nospace
+    elif [[ $cword -lt $cmd_word_index ]]; then
+        COMPREPLY=( $( compgen -o nosort -W "$primary_opts" -- "$cur" ) )
+        [[ ${#COMPREPLY[@]} -eq 1 ]] && [[ "$COMPREPLY" == *= ]] && compopt -o nospace
+    fi
+    [[ ${#COMPREPLY[@]} -ne 0 ]] && _pla_util_remove_any_duplicate_options
+    return 0
+}
+
+complete -o nosort -F _pla_util pla-util
