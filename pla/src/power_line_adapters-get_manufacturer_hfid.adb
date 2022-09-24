@@ -20,12 +20,10 @@
 ------------------------------------------------------------------------
 separate (Power_Line_Adapters)
 
-function Get_Manufacturer_HFID (Self                : Adapter_Type;
-                                Network_Device_Name : String) return HFID_Strings.Bounded_String is
+function Get_Manufacturer_HFID (Self : Adapter_Type) return HFID_Strings.Bounded_String is
 
 begin
 
-   return Self.Get_HFID (Kind                => MANUFACTURER,
-                         Network_Device_Name => Network_Device_Name);
+   return Self.Get_HFID (Kind => MANUFACTURER);
 
 end Get_Manufacturer_HFID;

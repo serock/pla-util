@@ -41,7 +41,6 @@ begin
       raise Command_Error with (if PLA_MAC_Address = MAC_Addresses.Broadcast_MAC_Address then Message_No_Adapters else Message_Not_Found);
    end if;
 
-   Adapters.First_Element.Set_NMK (Passphrase          => Passphrase,
-                                   Network_Device_Name => Network_Device_Name);
+   Adapters.First_Element.Set_NMK (Passphrase => Passphrase);
 
 end Set_NMK;

@@ -23,9 +23,8 @@ with Messages.Constructors;
 
 separate (Power_Line_Adapters)
 
-function Get_Network_Info (Self                : Adapter_Type;
-                           Scope               : Network_Scope_Type;
-                           Network_Device_Name : String) return Network_Info_List_Type is
+function Get_Network_Info (Self  : Adapter_Type;
+                           Scope : Network_Scope_Type) return Network_Info_List_Type is
 
    Confirmation          : Packets.Payload_Type (1 .. 385);
    Confirmation_Length   : Natural;

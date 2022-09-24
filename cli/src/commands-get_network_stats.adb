@@ -40,6 +40,6 @@ begin
       raise Command_Error with (if PLA_MAC_Address = MAC_Addresses.Broadcast_MAC_Address then Message_No_Adapters else Message_Not_Found);
    end if;
 
-   return Adapters.First_Element.Get_Network_Stats (Network_Device_Name => Network_Device_Name);
+   return Adapters.First_Element.Get_Network_Stats;
 
 end Get_Network_Stats;

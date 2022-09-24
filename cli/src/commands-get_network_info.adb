@@ -45,11 +45,11 @@ begin
 
       when Member =>
 
-         return Adapters.First_Element.Get_Member_Network_Info (Network_Device_Name => Network_Device_Name);
+         return Adapters.First_Element.Get_Member_Network_Info;
 
       when Any =>
 
-         return Adapters.First_Element.Get_Any_Network_Info (Network_Device_Name => Network_Device_Name);
+         return Adapters.First_Element.Get_Any_Network_Info;
 
    end case;
 

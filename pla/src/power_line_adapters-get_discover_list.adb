@@ -23,8 +23,7 @@ with Messages.Constructors;
 
 separate (Power_Line_Adapters)
 
-function Get_Discover_List (Self                : Adapter_Type;
-                            Network_Device_Name : String) return Discover_List_Type is
+function Get_Discover_List (Self : Adapter_Type) return Discover_List_Type is
 
    use type Octets.Octets_Type;
 

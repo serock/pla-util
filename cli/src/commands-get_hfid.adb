@@ -45,11 +45,11 @@ begin
 
       when Manufacturer =>
 
-         return Adapters.First_Element.Get_Manufacturer_HFID (Network_Device_Name => Network_Device_Name);
+         return Adapters.First_Element.Get_Manufacturer_HFID;
 
       when User =>
 
-         return Adapters.First_Element.Get_User_HFID (Network_Device_Name => Network_Device_Name);
+         return Adapters.First_Element.Get_User_HFID;
 
    end case;
 

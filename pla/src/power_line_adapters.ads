@@ -127,56 +127,42 @@ package Power_Line_Adapters is
    overriding function "=" (Left  : Adapter_Type;
                             Right : Adapter_Type) return Boolean;
 
-   function Check_DAK (Self                : Adapter_Type;
-                       Passphrase          : String;
-                       Network_Device_Name : String) return Boolean;
+   function Check_DAK (Self       : Adapter_Type;
+                       Passphrase : String) return Boolean;
 
-   function Check_NMK (Self                : Adapter_Type;
-                       Passphrase          : String;
-                       Network_Device_Name : String) return Boolean;
+   function Check_NMK (Self       : Adapter_Type;
+                       Passphrase : String) return Boolean;
 
-   function Get_Any_Network_Info (Self                : Adapter_Type;
-                                  Network_Device_Name : String) return Network_Info_List_Type;
+   function Get_Any_Network_Info (Self : Adapter_Type) return Network_Info_List_Type;
 
-   function Get_Capabilities (Self                : Adapter_Type;
-                              Network_Device_Name : String) return Capabilities_Type;
+   function Get_Capabilities (Self : Adapter_Type) return Capabilities_Type;
 
-   function Get_Discover_List (Self                : Adapter_Type;
-                               Network_Device_Name : String) return Discover_List_Type;
+   function Get_Discover_List (Self : Adapter_Type) return Discover_List_Type;
 
-   function Get_Id_Info (Self                : Adapter_Type;
-                         Network_Device_Name : String) return Id_Info_Type;
+   function Get_Id_Info (Self : Adapter_Type) return Id_Info_Type;
 
-   function Get_Manufacturer_HFID (Self                : Adapter_Type;
-                                   Network_Device_Name : String) return HFID_Strings.Bounded_String;
+   function Get_Manufacturer_HFID (Self : Adapter_Type) return HFID_Strings.Bounded_String;
 
-   function Get_Member_Network_Info (Self                : Adapter_Type;
-                                     Network_Device_Name : String) return Network_Info_List_Type;
+   function Get_Member_Network_Info (Self : Adapter_Type) return Network_Info_List_Type;
 
-   function Get_Network_Stats (Self                : Adapter_Type;
-                               Network_Device_Name : String) return Network_Stats_List_Type;
+   function Get_Network_Stats (Self : Adapter_Type) return Network_Stats_List_Type;
 
-   function Get_User_HFID (Self                : Adapter_Type;
-                           Network_Device_Name : String) return HFID_Strings.Bounded_String;
+   function Get_User_HFID (Self : Adapter_Type) return HFID_Strings.Bounded_String;
 
    function Has_MAC_Address (Self        : Adapter_Type;
                              MAC_Address : MAC_Addresses.MAC_Address_Type) return Boolean;
 
    function Image (Self : Adapter_Type) return String;
 
-   procedure Reset (Self                : Adapter_Type;
-                    Network_Device_Name : String);
+   procedure Reset (Self : Adapter_Type);
 
-   procedure Restart (Self                : Adapter_Type;
-                      Network_Device_Name : String);
+   procedure Restart (Self : Adapter_Type);
 
-   procedure Set_HFID (Self                : Adapter_Type;
-                       HFID                : HFID_Strings.Bounded_String;
-                       Network_Device_Name : String);
+   procedure Set_HFID (Self : Adapter_Type;
+                       HFID : HFID_Strings.Bounded_String);
 
-   procedure Set_NMK (Self                : Adapter_Type;
-                      Passphrase          : String;
-                      Network_Device_Name : String);
+   procedure Set_NMK (Self       : Adapter_Type;
+                      Passphrase : String);
 
 private
 
@@ -210,13 +196,11 @@ private
                          MAC_Address       :     MAC_Addresses.MAC_Address_Type;
                          HFID              :     HFID_Strings.Bounded_String);
 
-   function Get_HFID (Self                : Adapter_Type;
-                      Kind                : HFID_Kind_Type;
-                      Network_Device_Name : String) return HFID_Strings.Bounded_String;
+   function Get_HFID (Self : Adapter_Type;
+                      Kind : HFID_Kind_Type) return HFID_Strings.Bounded_String;
 
-   function Get_Network_Info (Self                : Adapter_Type;
-                              Scope               : Network_Scope_Type;
-                              Network_Device_Name : String) return Network_Info_List_Type;
+   function Get_Network_Info (Self  : Adapter_Type;
+                              Scope : Network_Scope_Type) return Network_Info_List_Type;
 
    procedure Process (Self                :     Adapter_Type;
                       Request             :     Messages.Message_Type;

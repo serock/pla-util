@@ -23,9 +23,8 @@ with Messages.Constructors;
 
 separate (Power_Line_Adapters)
 
-procedure Set_NMK (Self                : Adapter_Type;
-                   Passphrase          : String;
-                   Network_Device_Name : String) is
+procedure Set_NMK (Self       : Adapter_Type;
+                   Passphrase : String) is
 
    Confirmation          : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Length);
    Confirmation_Length   : Natural;

@@ -23,9 +23,8 @@ with Messages.Constructors;
 
 separate (Power_Line_Adapters)
 
-function Get_HFID (Self                : Adapter_Type;
-                   Kind                : HFID_Kind_Type;
-                   Network_Device_Name : String) return HFID_Strings.Bounded_String is
+function Get_HFID (Self : Adapter_Type;
+                   Kind : HFID_Kind_Type) return HFID_Strings.Bounded_String is
 
    use type Octets.Octets_Type;
 

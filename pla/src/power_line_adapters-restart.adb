@@ -23,8 +23,7 @@ with Messages.Constructors;
 
 separate (Power_Line_Adapters)
 
-procedure Restart (Self                : Adapter_Type;
-                   Network_Device_Name : String) is
+procedure Restart (Self : Adapter_Type) is
 
    Confirmation          : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Length);
    Confirmation_Length   : Natural;

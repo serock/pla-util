@@ -23,9 +23,8 @@ with Messages.Constructors;
 
 separate (Power_Line_Adapters)
 
-function Check_NMK (Self                : Adapter_Type;
-                    Passphrase          : String;
-                    Network_Device_Name : String) return Boolean is
+function Check_NMK (Self       : Adapter_Type;
+                    Passphrase : String) return Boolean is
 
    use type Octets.Octets_Type;
 

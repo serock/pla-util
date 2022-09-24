@@ -38,6 +38,6 @@ begin
       raise Command_Error with Message_Not_Found;
    end if;
 
-   Adapters.First_Element.Restart (Network_Device_Name => Network_Device_Name);
+   Adapters.First_Element.Restart;
 
 end Restart;

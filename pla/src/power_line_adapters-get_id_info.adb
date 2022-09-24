@@ -23,8 +23,7 @@ with Messages.Constructors;
 
 separate (Power_Line_Adapters)
 
-function Get_Id_Info (Self                : Adapter_Type;
-                      Network_Device_Name : String) return Id_Info_Type is
+function Get_Id_Info (Self : Adapter_Type) return Id_Info_Type is
 
    use type Octets.Octets_Type;
 

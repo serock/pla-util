@@ -20,12 +20,10 @@
 ------------------------------------------------------------------------
 separate (Power_Line_Adapters)
 
-function Get_Any_Network_Info (Self                : Adapter_Type;
-                               Network_Device_Name : String) return Network_Info_List_Type is
+function Get_Any_Network_Info (Self : Adapter_Type) return Network_Info_List_Type is
 
 begin
 
-   return Self.Get_Network_Info (Scope               => ANY,
-                                 Network_Device_Name => Network_Device_Name);
+   return Self.Get_Network_Info (Scope => ANY);
 
 end Get_Any_Network_Info;

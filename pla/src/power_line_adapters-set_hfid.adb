@@ -23,9 +23,8 @@ with Messages.Constructors;
 
 separate (Power_Line_Adapters)
 
-procedure Set_HFID (Self                : Adapter_Type;
-                    HFID                : HFID_Strings.Bounded_String;
-                    Network_Device_Name : String) is
+procedure Set_HFID (Self : Adapter_Type;
+                    HFID : HFID_Strings.Bounded_String) is
 
    Confirmation          : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Length);
    Confirmation_Length   : Natural;

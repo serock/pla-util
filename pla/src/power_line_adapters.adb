@@ -271,58 +271,42 @@ package body Power_Line_Adapters is
 
    end Validate_Passphrase;
 
-   function Check_DAK (Self                : Adapter_Type;
-                       Passphrase          : String;
-                       Network_Device_Name : String) return Boolean is separate;
+   function Check_DAK (Self       : Adapter_Type;
+                       Passphrase : String) return Boolean is separate;
 
-   function Check_NMK (Self                : Adapter_Type;
-                       Passphrase          : String;
-                       Network_Device_Name : String) return Boolean is separate;
+   function Check_NMK (Self       : Adapter_Type;
+                       Passphrase : String) return Boolean is separate;
 
-   function Get_Any_Network_Info (Self                : Adapter_Type;
-                                  Network_Device_Name : String) return Network_Info_List_Type is separate;
+   function Get_Any_Network_Info (Self : Adapter_Type) return Network_Info_List_Type is separate;
 
-   function Get_Capabilities (Self                : Adapter_Type;
-                              Network_Device_Name : String) return Capabilities_Type is separate;
+   function Get_Capabilities (Self : Adapter_Type) return Capabilities_Type is separate;
 
-   function Get_Discover_List (Self                : Adapter_Type;
-                               Network_Device_Name : String) return Discover_List_Type is separate;
+   function Get_Discover_List (Self : Adapter_Type) return Discover_List_Type is separate;
 
-   function Get_HFID (Self                : Adapter_Type;
-                      Kind                : HFID_Kind_Type;
-                      Network_Device_Name : String) return HFID_Strings.Bounded_String is separate;
+   function Get_HFID (Self : Adapter_Type;
+                      Kind : HFID_Kind_Type) return HFID_Strings.Bounded_String is separate;
 
-   function Get_Id_Info (Self                : Adapter_Type;
-                         Network_Device_Name : String) return Id_Info_Type is separate;
+   function Get_Id_Info (Self : Adapter_Type) return Id_Info_Type is separate;
 
-   function Get_Manufacturer_HFID (Self                : Adapter_Type;
-                                   Network_Device_Name : String) return HFID_Strings.Bounded_String is separate;
+   function Get_Manufacturer_HFID (Self : Adapter_Type) return HFID_Strings.Bounded_String is separate;
 
-   function Get_Member_Network_Info (Self                : Adapter_Type;
-                                     Network_Device_Name : String) return Network_Info_List_Type is separate;
+   function Get_Member_Network_Info (Self : Adapter_Type) return Network_Info_List_Type is separate;
 
-   function Get_Network_Info (Self                : Adapter_Type;
-                              Scope               : Network_Scope_Type;
-                              Network_Device_Name : String) return Network_Info_List_Type is separate;
+   function Get_Network_Info (Self  : Adapter_Type;
+                              Scope : Network_Scope_Type) return Network_Info_List_Type is separate;
 
-   function Get_Network_Stats (Self                : Adapter_Type;
-                               Network_Device_Name : String) return Network_Stats_List_Type is separate;
+   function Get_Network_Stats (Self : Adapter_Type) return Network_Stats_List_Type is separate;
 
-   function Get_User_HFID (Self                : Adapter_Type;
-                           Network_Device_Name : String) return HFID_Strings.Bounded_String is separate;
+   function Get_User_HFID (Self : Adapter_Type) return HFID_Strings.Bounded_String is separate;
 
-   procedure Reset (Self                : Adapter_Type;
-                    Network_Device_Name : String) is separate;
+   procedure Reset (Self : Adapter_Type) is separate;
 
-   procedure Restart (Self                : Adapter_Type;
-                      Network_Device_Name : String) is separate;
+   procedure Restart (Self : Adapter_Type) is separate;
 
-   procedure Set_HFID (Self                : Adapter_Type;
-                       HFID                : HFID_Strings.Bounded_String;
-                       Network_Device_Name : String) is separate;
+   procedure Set_HFID (Self : Adapter_Type;
+                       HFID : HFID_Strings.Bounded_String) is separate;
 
-   procedure Set_NMK (Self                : Adapter_Type;
-                      Passphrase          : String;
-                      Network_Device_Name : String) is separate;
+   procedure Set_NMK (Self       : Adapter_Type;
+                      Passphrase : String) is separate;
 
 end Power_Line_Adapters;
