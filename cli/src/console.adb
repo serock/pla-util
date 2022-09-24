@@ -384,9 +384,9 @@ package body Console is
    begin
       case Signal_Level is
          when 0 =>      return "not available";
-         when 1 =>      return Integer'((Integer (Signal_Level) + 1) * (-5))'Image & " dB < SL <= 0 dB";
+         when 1 =>      return Integer'Image ((Integer (Signal_Level) + 1) * (-5)) & " dB < SL <= 0 dB";
          when 15 =>     return "SL <= -75 dB";
-         when others => return Integer'((Integer (Signal_Level) + 1) * (-5))'Image & " dB < SL <= " & Integer'(Integer (Signal_Level) * (-5))'Image & " dB";
+         when others => return Integer'Image ((Integer (Signal_Level) + 1) * (-5)) & " dB < SL <= " & Integer'Image (Integer (Signal_Level) * (-5)) & " dB";
       end case;
 
    end Image;
