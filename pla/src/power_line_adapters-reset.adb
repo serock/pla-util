@@ -1,7 +1,7 @@
 --  SPDX-License-Identifier: GPL-3.0-or-later
 ------------------------------------------------------------------------
 --  pla-util - A power line adapter utility
---  Copyright (C) 2016-2022 John Serock
+--  Copyright (C) 2016-2023 John Serock
 --
 --  This file is part of pla-util.
 --
