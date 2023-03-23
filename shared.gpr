@@ -20,6 +20,8 @@
 ------------------------------------------------------------------------
 abstract project Shared is
 
+   for Source_Files use ();
+
    type Alire_Mode_Type is ("False", "True");
 
    Alire_Mode : Alire_Mode_Type := external ("ALIRE", "False");
