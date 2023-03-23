@@ -19,19 +19,20 @@ The following software is being used to develop `pla-util` on [openSUSE Leap](ht
 
 * GNU Ada Compiler (GNAT)
 * GPRbuild
+* [Alire](https://alire.ada.dev/)
 * GNAT Studio
 * [Git](https://git-scm.com/)
 * [libpcap](https://www.tcpdump.org/)
 
 [GNAT Community Edition](https://www.adacore.com/download) includes a GNU Ada Compiler (GNAT), GPRbuild, and GNAT Studio.
-However, on June 2, 2022, AdaCore announced on their blog that the 2021 release is the last release of GNAT Community Edition.
+However, AdaCore announced on their [June 2, 2022 blog post](https://blog.adacore.com/a-new-era-for-ada-spark-open-source-community) that the 2021 release is the last release of GNAT Community Edition and encouraged users to transition to Alire.
 
-[Alire](https://alire.ada.dev/)'s `alr` command-line tool will download a GNU Ada Compiler (GNAT) and GPRbuild when the tool builds a project for the first time.
+Alire's `alr` command-line tool will download a GNU Ada Compiler (GNAT) and GPRbuild when `alr` builds a project for the first time.
 
 ### Software
-The following library is required to build and run `pla-util`:
+The following libraries are required to build and run `pla-util`:
 
-* libpcap (version 1.8.1 or higher is recommended; version 1.9.1 was used during development)
+* libpcap (`libpcap.so`) and/or libpcap-devel (version 1.8.1 or higher is recommended; version 1.9.1 was used during development)
 
 ### Hardware
 During development, `pla-util` is tested with D-Link DHP-700AV adapters from a *D-Link DHP-701AV PowerLine AV2 2000 Gigabit Starter Kit*.
@@ -43,11 +44,17 @@ During development, `pla-util` is tested with D-Link DHP-700AV adapters from a *
 
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
+## How to Build the Program with gnatmake
+1. Use git to clone this repository.
+2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
+3. Do `export GPR_PROJECT_PATH=legacy`
+4. Run `gnatmake -p -P cli/cli.gpr`
+
 ## How to Build the Program with GPRbuild
 1. Use git to clone this repository.
 2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
 3. You might need to install gprbuild, on Debian: `sudo apt install gprbuild gnat`
-4. Run `gprbuild -P pla_util.gpr`.
+4. Run `gprbuild -P pla_util.gpr`. However, if the build fails with _object directory "obj" not found_ messages, retry the build by running `gprbuild -p -P pla_util.gpr`.
 
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
@@ -59,9 +66,8 @@ If the build is successful, the `pla-util` executable will be in the `bin` subdi
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
 ## How to Grant the Program Permission to use Packet Sockets
-Before you can use the program, you will need to grant the program
-permission to use packet sockets. Otherwise, you may see the
-following error message when you run the program:
+Before you can use the program, you will need to grant the program permission to use packet sockets.
+Otherwise, you may see the following error message when you run the program:
 
 ```
 pla-util: You don't have permission to capture on that device
