@@ -22,7 +22,12 @@ abstract project Pla_Util_Config is
 
    Ada_Compiler_Switches := External_As_List ("ADAFLAGS", " ") &
           (
-            "-gnat12", "-gnata", "-gnatf", "-gnateE", "-gnato", "-fstack-check", "-gnatE", "-g", "-gnatVa", "-gnatwa", "-gnaty3aAbBcdefhiIklnoOprsStux"
+            "-gnateu", "-gnatf", "-gnatwa", "-gnatVa", "-gnatwd", "-gnatw.d", "-gnatwh", "-gnatw.h", "-gnatw.j", "-gnatw.k", "-gnatwl", "-gnatw.l", "-gnatwo", "-gnatw.o", "-gnatw.q", "-gnatw_r", "-gnatw.s", "-gnatwt", "-gnatw.u", "-gnatw.w", 
+            "-gnat12",
+            "-gnata",
+            "-gnatE", "-gnato", "-fstack-check",
+            "-g", "-gnateE",
+            "-gnaty3aAbBcdefhiIklnoOprsStux"
           );
 
    Build_Profile := "";
