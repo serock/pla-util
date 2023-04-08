@@ -27,7 +27,7 @@ procedure Restart (Self : Adapter_Type) is
 
    Confirmation          : Packets.Payload_Type (1 .. Packets.Minimum_Payload_Length);
    Confirmation_Length   : Natural;
-   Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#21#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#, 16#00#);
+   Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#21#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#, 16#00#);
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
 
 begin

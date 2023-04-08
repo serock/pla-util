@@ -27,7 +27,7 @@ function Get_Network_Stats (Self : Adapter_Type) return Network_Stats_List_Type 
 
    Confirmation          : Packets.Payload_Type (1 .. 170);
    Confirmation_Length   : Natural;
-   Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#2d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#01#);
+   Expected_Confirmation : constant Packets.Payload_Type := (16#02#, 16#2d#, 16#a0#, 16#00#, 16#00#, 16#00#, 16#1f#, 16#84#, 16#02#);
    MAC_Address           : MAC_Addresses.MAC_Address_Type;
    No_Stats              : Network_Stats_List_Type (1 .. 0);
    Number_Of_Stations    : Natural;
