@@ -65,6 +65,9 @@ private
 
    function Get_PLA_MAC_Address (MAC_Address_Image : String) return MAC_Addresses.MAC_Address_Type;
 
+   procedure Get_Station_Info (Network_Device_Name : String;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+
    function Image (HPAV_Version : Power_Line_Adapters.HPAV_Version_Type) return String;
 
    function Image (NID : Power_Line_Adapters.NID_Type) return String;

@@ -362,6 +362,17 @@ package body Console is
 
    end Get_PLA_MAC_Address;
 
+   procedure Get_Station_Info (Network_Device_Name : String;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is
+   begin
+
+      Commands.Get_Station_Info (Network_Device_Name => Network_Device_Name,
+                                 PLA_MAC_Address     => PLA_MAC_Address);
+
+      Ada.Text_IO.Put_Line (Item => "Get_Station_Info command was sent to device");
+
+   end Get_Station_Info;
+
    function Image (HPAV_Version : Power_Line_Adapters.HPAV_Version_Type) return String is
    begin
 
@@ -474,6 +485,7 @@ package body Console is
       Ada.Text_IO.Put_Line (Item => "  get-id-info                        Get identification info");
       Ada.Text_IO.Put_Line (Item => "  get-network-info ( any | member )  Get network information [default: member]");
       Ada.Text_IO.Put_Line (Item => "  get-network-stats                  Get average PHY data rates");
+      Ada.Text_IO.Put_Line (Item => "  get-station_info                   Get power line adapter information");
       Ada.Text_IO.Put_Line (Item => "  reset                              Factory reset power line adapter");
       Ada.Text_IO.Put_Line (Item => "  restart                            Restart / reboot power line adapter");
       Ada.Text_IO.Put_Line (Item => "  set-hfid <id>                      Set user human-friendly id");

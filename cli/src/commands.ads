@@ -34,6 +34,7 @@ package Commands is
                          Get_Id_Info,
                          Get_Network_Info,
                          Get_Network_Stats,
+                         Get_Station_Info,
                          Reset,
                          Restart,
                          Set_HFID,
@@ -77,6 +78,9 @@ package Commands is
 
    function Get_Network_Stats (Network_Device_Name : String;
                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Network_Stats_List_Type;
+
+   procedure Get_Station_Info (Network_Device_Name : String;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
    procedure Reset (Network_Device_Name : String;
                     PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);

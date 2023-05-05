@@ -49,6 +49,8 @@ package Messages.Constructors is
 
    function Create_Get_Network_Stats_Request return Message_Type;
 
+   function Create_Get_Station_Info_Request return Message_Type;
+
    function Create_Get_User_HFID_Request return Message_Type;
 
    function Create_Reset_Request return Message_Type;

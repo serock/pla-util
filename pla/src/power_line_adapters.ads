@@ -147,6 +147,8 @@ package Power_Line_Adapters is
 
    function Get_Network_Stats (Self : Adapter_Type) return Network_Stats_List_Type;
 
+   procedure Get_Station_Info (Self : Adapter_Type);
+
    function Get_User_HFID (Self : Adapter_Type) return HFID_Strings.Bounded_String;
 
    function Has_MAC_Address (Self        : Adapter_Type;

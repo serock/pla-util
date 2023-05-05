@@ -276,6 +276,11 @@ begin
             Get_Network_Stats (Network_Device_Name => Network_Device_Name,
                                PLA_MAC_Address     => PLA_MAC_Address);
 
+         when Commands.Get_Station_Info =>
+
+            Get_Station_Info (Network_Device_Name => Network_Device_Name,
+                              PLA_MAC_Address     => PLA_MAC_Address);
+
          when Commands.Reset =>
 
             Reset (Network_Device_Name => Network_Device_Name,

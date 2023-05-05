@@ -297,6 +297,8 @@ package body Power_Line_Adapters is
 
    function Get_Network_Stats (Self : Adapter_Type) return Network_Stats_List_Type is separate;
 
+   procedure Get_Station_Info (Self : Adapter_Type) is separate;
+
    function Get_User_HFID (Self : Adapter_Type) return HFID_Strings.Bounded_String is separate;
 
    procedure Reset (Self : Adapter_Type) is separate;

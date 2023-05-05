@@ -50,7 +50,7 @@ _pla_util() {
     local cur prev split
     local -i cword cmd_word_index=0
     local -a words=()
-    local -r cmds="check-dak check-nmk discover get-capabilities get-discover-list get-hfid get-id-info get-network-info get-network-stats reset restart set-hfid set-nmk"
+    local -r cmds="check-dak check-nmk discover get-capabilities get-discover-list get-hfid get-id-info get-network-info get-network-stats get-station-info reset restart set-hfid set-nmk"
     local -r primary_opts="--interface= --pla= --timeout="
     local -r opts="--help --version $primary_opts"
     _init_completion -s -n : || return
@@ -75,7 +75,7 @@ _pla_util() {
             COMPREPLY=( $( compgen -W "any member" -- "$cur" ) )
             return 0
             ;;
-        check-dak|check-nmk|discover|get-capabilities|get-discover-list|get-id-info|get-network-stats|reset|restart|set-hfid|set-nmk)
+        check-dak|check-nmk|discover|get-capabilities|get-discover-list|get-id-info|get-network-stats|get-station-info|reset|restart|set-hfid|set-nmk)
             COMPREPLY=()
             return 0
             ;;

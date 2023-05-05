@@ -54,6 +54,9 @@ package body Commands is
    function Get_Network_Stats (Network_Device_Name : String;
                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Network_Stats_List_Type is separate;
 
+   procedure Get_Station_Info (Network_Device_Name : String;
+                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is separate;
+
    procedure Reset (Network_Device_Name : String;
                     PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is separate;
 
