@@ -36,12 +36,23 @@ use type Power_Line_Adapters.NID_Type;
 
 package body Console is
 
-   package Data_Rate_Text_IO     is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.Data_Rate_Type);
-   package Network_Count_Text_IO is new Ada.Text_IO.Integer_IO (Num => Power_Line_Adapters.Network_Count_Type);
-   package NID_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.NID_Type);
-   package OUI_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.OUI_Type);
-   package SNID_Text_IO          is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.SNID_Type);
-   package TEI_Text_IO           is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.TEI_Type);
+   package Chip_Id_Text_IO              is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.Chip_Id_Type);
+   package Data_Rate_Text_IO            is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.Data_Rate_Type);
+   package Firmware_Revision_Text_IO    is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.Firmware_Revision_Type);
+   package Hardware_Version_Text_IO     is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.Hardware_Version_Type);
+   package Network_Count_Text_IO        is new Ada.Text_IO.Integer_IO (Num => Power_Line_Adapters.Network_Count_Type);
+   package NID_Text_IO                  is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.NID_Type);
+   package OUI_Text_IO                  is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.OUI_Type);
+   package Param_Config_Version_Text_IO is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.Param_Config_Version_Type);
+   package Partial_Version_Text_IO      is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.Partial_Version_Type);
+   package SNID_Text_IO                 is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.SNID_Type);
+   package TEI_Text_IO                  is new Ada.Text_IO.Modular_IO (Num => Power_Line_Adapters.TEI_Type);
+
+   function Chip_Id_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapters.Chip_Id_Type,
+                                                                    Put => Chip_Id_Text_IO.Put);
+
+   function Hardware_Version_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapters.Hardware_Version_Type,
+                                                                             Put => Hardware_Version_Text_IO.Put);
 
    function NID_Format is new GNAT.Formatted_String.Mod_Format (Int => Power_Line_Adapters.NID_Type,
                                                                 Put => NID_Text_IO.Put);
@@ -364,14 +375,78 @@ package body Console is
 
    procedure Get_Station_Info (Network_Device_Name : String;
                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is
+
+      Column_2     : constant                                       := 34;
+      Station_Info : constant Power_Line_Adapters.Station_Info_Type := Commands.Get_Station_Info (Network_Device_Name => Network_Device_Name,
+                                                                                                  PLA_MAC_Address     => PLA_MAC_Address);
+
+      use type Power_Line_Adapters.Chip_Version_Type;
+
    begin
 
-      Commands.Get_Station_Info (Network_Device_Name => Network_Device_Name,
-                                 PLA_MAC_Address     => PLA_MAC_Address);
-
-      Ada.Text_IO.Put_Line (Item => "Get_Station_Info command was sent to device");
+      Ada.Text_IO.Put (Item => "Chip Version:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Ada.Text_IO.Put (Item => Power_Line_Adapters.Chip_Version_Type'Image (Station_Info.Chip_Version));
+      if Station_Info.Chip_Version = Power_Line_Adapters.Unknown then
+         Ada.Text_IO.New_Line (Spacing => 1);
+      else
+         Ada.Text_IO.Put_Line (" (Full Id: " & Image (Chip_Id => Station_Info.Chip_Id) & ")");
+      end if;
+      Ada.Text_IO.Put (Item => "Hardware Version:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Ada.Text_IO.Put_Line (Item => Image (Hardware_Version => Station_Info.Hardware_Version));
+      if Station_Info.Chip_Version = Power_Line_Adapters.Unknown then
+         return;
+      end if;
+      Ada.Text_IO.Put (Item => "Firmware Version:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Ada.Text_IO.Put (Item => "(svn: ");
+      Firmware_Revision_Text_IO.Put (Item  => Station_Info.Firmware_Revision,
+                                     Width => 1,
+                                     Base  => 10);
+      Ada.Text_IO.Put_Line (Item => ")");
+      Ada.Text_IO.Put (Item => "ROM Version:");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Partial_Version_Text_IO.Put (Item  => Station_Info.ROM_Version.Major,
+                                   Width => 1,
+                                   Base  => 10);
+      Ada.Text_IO.Put (Item => '.');
+      Partial_Version_Text_IO.Put (Item  => Station_Info.ROM_Version.Minor,
+                                   Width => 1,
+                                   Base  => 10);
+      Ada.Text_IO.Put (Item => '.');
+      Partial_Version_Text_IO.Put (Item  => Station_Info.ROM_Version.Build,
+                                   Width => 1,
+                                   Base  => 10);
+      Ada.Text_IO.New_Line (Spacing => 1);
+      Ada.Text_IO.Put (Item => "Param Config Version (built-in):");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Param_Config_Version_Text_IO.Put (Item  => Station_Info.Param_Config_Built_In_Version,
+                                        Width => 5,
+                                        Base  => 10);
+      Ada.Text_IO.New_Line (Spacing => 1);
+      Ada.Text_IO.Put (Item => "Param Config Version (NVM):");
+      Ada.Text_IO.Set_Col (To => Column_2);
+      Param_Config_Version_Text_IO.Put (Item  => Station_Info.Param_Config_NVM_Version,
+                                        Width => 5,
+                                        Base  => 10);
+      Ada.Text_IO.New_Line (Spacing => 1);
 
    end Get_Station_Info;
+
+   function Image (Chip_Id : Power_Line_Adapters.Chip_Id_Type) return String is
+   begin
+
+      return "0x" & (-(Chip_Id_Format (Format => +"%08x", Var => Chip_Id)));
+
+   end Image;
+
+   function Image (Hardware_Version : Power_Line_Adapters.Hardware_Version_Type) return String is
+   begin
+
+      return "0x" & (-(Hardware_Version_Format (Format => +"%08x", Var => Hardware_Version)));
+
+   end Image;
 
    function Image (HPAV_Version : Power_Line_Adapters.HPAV_Version_Type) return String is
    begin

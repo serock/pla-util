@@ -68,6 +68,10 @@ private
    procedure Get_Station_Info (Network_Device_Name : String;
                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 
+   function Image (Chip_Id : Power_Line_Adapters.Chip_Id_Type) return String;
+
+   function Image (Hardware_Version : Power_Line_Adapters.Hardware_Version_Type) return String;
+
    function Image (HPAV_Version : Power_Line_Adapters.HPAV_Version_Type) return String;
 
    function Image (NID : Power_Line_Adapters.NID_Type) return String;

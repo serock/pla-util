@@ -26,8 +26,8 @@ use type Ada.Containers.Count_Type;
 
 separate (Commands)
 
-procedure Get_Station_Info (Network_Device_Name : String;
-                            PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) is
+function Get_Station_Info (Network_Device_Name : String;
+                           PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Station_Info_Type is
 
    Adapters : constant Power_Line_Adapter_Sets.Set := Power_Line_Adapters.Network.Discover (Network_Device_Name => Network_Device_Name,
                                                                                             MAC_Address         => PLA_MAC_Address);
@@ -38,6 +38,6 @@ begin
       raise Command_Error with Message_Not_Found;
    end if;
 
-   Adapters.First_Element.Get_Station_Info;
+   return Adapters.First_Element.Get_Station_Info;
 
 end Get_Station_Info;

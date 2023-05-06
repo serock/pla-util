@@ -79,8 +79,8 @@ package Commands is
    function Get_Network_Stats (Network_Device_Name : String;
                                PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Network_Stats_List_Type;
 
-   procedure Get_Station_Info (Network_Device_Name : String;
-                               PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
+   function Get_Station_Info (Network_Device_Name : String;
+                              PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type) return Power_Line_Adapters.Station_Info_Type;
 
    procedure Reset (Network_Device_Name : String;
                     PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);

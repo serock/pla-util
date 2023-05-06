@@ -29,8 +29,12 @@ package Power_Line_Adapters is
 
    type Adapter_Type                is tagged private;
    type Capable_Type                is (Not_Capable, Capable);
+   type Chip_Id_Type                is mod 16#1_0000_0000#;
+   type Chip_Version_Type           is (Unknown, BCM60500_A0, BCM60500_A1, BCM60500_B0, BCM60333_A1, BCM60333_B0, BCM60335_A0);
    type Coordinating_Status_Type    is (Unknown, Non_Coordinating_Network, Coordinating_Network, Coordinating_Network_In_Same_Group, Coordinating_Network_In_Different_Group);
    type Data_Rate_Type              is mod 2048;
+   type Firmware_Revision_Type      is mod 16#1_0000_0000#;
+   type Hardware_Version_Type       is mod 16#1_0000_0000#;
    type HPAV_Version_Type           is (HPAV_1_1, HPAV_2_0, Not_HPAV);
    type Implementation_Version_Type is mod 65536;
    type MCS_Type                    is (MIMO_Not_Supported, Selection_Diversity, MIMO_With_Beam_Forming);
@@ -39,6 +43,8 @@ package Power_Line_Adapters is
    type NID_Type                    is mod 16#40_0000_0000_0000#;
    type No_Yes_Type                 is (No, Yes);
    type OUI_Type                    is mod 16#100_0000#;
+   type Param_Config_Version_Type   is mod 16#1_0000_0000#;
+   type Partial_Version_Type        is mod 64;
    type Signal_Level_Type           is mod 16;
    type SNID_Type                   is mod 16;
    type Station_Role_Type           is (Unassoc_STA, Unassoc_CCo, STA, CCo, Backup_CCo);
@@ -98,6 +104,13 @@ package Power_Line_Adapters is
 
    type Network_Stats_List_Type is array (Positive range <>) of Network_Stats_Type;
 
+   type ROM_Version_Type is
+      record
+         Major : Partial_Version_Type;
+         Minor : Partial_Version_Type;
+         Build : Partial_Version_Type;
+      end record;
+
    type Station_Type is
       record
          MAC_Address  : MAC_Addresses.MAC_Address_Type;
@@ -108,6 +121,17 @@ package Power_Line_Adapters is
          PCo          : No_Yes_Type;
          Backup_CCo   : No_Yes_Type;
          Signal_Level : Signal_Level_Type;
+      end record;
+
+   type Station_Info_Type is
+      record
+         Chip_Version                  : Chip_Version_Type;
+         Hardware_Version              : Hardware_Version_Type;
+         Firmware_Revision             : Firmware_Revision_Type;
+         Chip_Id                       : Chip_Id_Type;
+         ROM_Version                   : ROM_Version_Type;
+         Param_Config_Built_In_Version : Param_Config_Version_Type;
+         Param_Config_NVM_Version      : Param_Config_Version_Type;
       end record;
 
    type Station_List_Type is array (Positive range <>) of Station_Type;
@@ -147,7 +171,7 @@ package Power_Line_Adapters is
 
    function Get_Network_Stats (Self : Adapter_Type) return Network_Stats_List_Type;
 
-   procedure Get_Station_Info (Self : Adapter_Type);
+   function Get_Station_Info (Self : Adapter_Type) return Station_Info_Type;
 
    function Get_User_HFID (Self : Adapter_Type) return HFID_Strings.Bounded_String;
 
@@ -173,6 +197,8 @@ private
 
    type HFID_Kind_Type     is (MANUFACTURER, USER);
    type Network_Scope_Type is (MEMBER, ANY);
+
+   for Partial_Version_Type'Size use 8;
 
    function Generate_DAK (Passphrase : String) return Octets.Key_Type;
 
