@@ -18,6 +18,7 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
+with Firmware_Boot_Strings;
 with HFID_Strings;
 with MAC_Addresses;
 with Messages;
@@ -33,10 +34,15 @@ package Power_Line_Adapters is
    type Chip_Version_Type           is (Unknown, BCM60500_A0, BCM60500_A1, BCM60500_B0, BCM60333_A1, BCM60333_B0, BCM60335_A0);
    type Coordinating_Status_Type    is (Unknown, Non_Coordinating_Network, Coordinating_Network, Coordinating_Network_In_Same_Group, Coordinating_Network_In_Different_Group);
    type Data_Rate_Type              is mod 2048;
+   type Firmware_Name_Type          is (INVALID, APOLLO, CONCORDE, GEMINI, HYDRA);
    type Firmware_Revision_Type      is mod 16#1_0000_0000#;
+   type Flash_Model_Type            is (UNKNOWN, DEFAULT, S25FL216K, EN25F80, SST25VF016B, SST25VF032B, SST25VF080B, MX25L8006E, MX25L1606E, MX25L3206E,
+                                        GD25Q80B, GD25Q16B, GD25Q32B, W25Q80BV, W25Q16BV, W25Q32BV, FM25S16);
    type Hardware_Version_Type       is mod 16#1_0000_0000#;
+   type Homeplug_Version_Type       is (Unknown, V_1_1, V_2_0);
    type HPAV_Version_Type           is (HPAV_1_1, HPAV_2_0, Not_HPAV);
    type Implementation_Version_Type is mod 65536;
+   type Max_Bit_Rate_Type           is (Unknown, MBR_200, MBR_1000, MBR_1800);
    type MCS_Type                    is (MIMO_Not_Supported, Selection_Diversity, MIMO_With_Beam_Forming);
    type Network_Kind_Type           is (In_Home_Network, Access_Network);
    type Network_Interface_Type      is (MII0, MII1, PLC, SDR);
@@ -50,6 +56,7 @@ package Power_Line_Adapters is
    type Station_Role_Type           is (Unassoc_STA, Unassoc_CCo, STA, CCo, Backup_CCo);
    type Status_Type                 is (Joined, Not_Joined_Have_NMK, Not_Joined_No_NMK);
    type TEI_Type                    is mod 256;
+   type Uptime_Type                 is mod 16#1_0000_0000#;
 
    subtype AV_Version_Type    is HPAV_Version_Type range HPAV_1_1 .. HPAV_2_0;
    subtype Network_Count_Type is Natural range 0 .. 6;
@@ -63,6 +70,14 @@ package Power_Line_Adapters is
          Backup_CCo             : Capable_Type;
          Proxy                  : Capable_Type;
          Implementation_Version : Implementation_Version_Type;
+      end record;
+
+   type Firmware_Version_Type is
+      record
+         Name  : Firmware_Name_Type;
+         Major : Partial_Version_Type;
+         Minor : Partial_Version_Type;
+         Build : Partial_Version_Type;
       end record;
 
    type Id_Info_Type is
@@ -132,6 +147,12 @@ package Power_Line_Adapters is
          ROM_Version                   : ROM_Version_Type;
          Param_Config_Built_In_Version : Param_Config_Version_Type;
          Param_Config_NVM_Version      : Param_Config_Version_Type;
+         Uptime                        : Uptime_Type;
+         Firmware_Boot_Message         : Firmware_Boot_Strings.Bounded_String;
+         Firmware_Version              : Firmware_Version_Type;
+         Flash_Model                   : Flash_Model_Type;
+         Homeplug_Version              : Homeplug_Version_Type;
+         Max_Bit_Rate                  : Max_Bit_Rate_Type;
       end record;
 
    type Station_List_Type is array (Positive range <>) of Station_Type;

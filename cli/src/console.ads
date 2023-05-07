@@ -78,6 +78,8 @@ private
 
    function Image (Signal_Level : Power_Line_Adapters.Signal_Level_Type) return String;
 
+   function Image (Uptime : Power_Line_Adapters.Uptime_Type) return String;
+
    procedure Reset (Network_Device_Name : String;
                     PLA_MAC_Address     : MAC_Addresses.MAC_Address_Type);
 

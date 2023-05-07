@@ -19,9 +19,9 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Ada.Characters.Latin_1;
-with Ada.Strings;
 with GNAT.SHA256;
 with Power_Line_Adapters.Network;
+with To_Bounded_String;
 
 package body Power_Line_Adapters is
 
@@ -166,28 +166,12 @@ package body Power_Line_Adapters is
 
    function To_HFID_String (HFID_Octets : Octets.Octets_Type) return HFID_Strings.Bounded_String is
 
-      C    : Character;
-      HFID : HFID_Strings.Bounded_String;
-      I    : Natural := HFID_Octets'First;
+      function To_String is new To_Bounded_String (T      => HFID_Strings.Bounded_String,
+                                                   Append => HFID_Strings.Append);
 
    begin
 
-      while I <= HFID_Octets'Last loop
-
-         C := Character'Val (HFID_Octets (I));
-
-         if C = Ada.Characters.Latin_1.NUL then
-            exit;
-         end if;
-
-         HFID_Strings.Append (Source   => HFID,
-                              New_Item => C,
-                              Drop     => Ada.Strings.Error);
-         I := I + 1;
-
-      end loop;
-
-      return HFID;
+      return To_String (Data => HFID_Octets);
 
    end To_HFID_String;
 
