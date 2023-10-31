@@ -65,6 +65,18 @@ If the build is successful, the `pla-util` executable will be in the `bin` subdi
 
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
+## How to Build a Docker Image
+1. Use git to clone this repository.
+2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
+3. Run `docker build -t pla-util .`.
+
+If the build is successful, the new `pla-util` minimal runtime image can be run with Docker.
+For example,
+
+```
+docker run -i -t --network=host pla-util
+```
+
 ## How to Grant the Program Permission to use Packet Sockets
 Before you can use the program, you will need to grant the program permission to use packet sockets.
 Otherwise, you may see the following error message when you run the program:
@@ -83,7 +95,7 @@ sudo setcap cap_net_raw+ep pla-util
 Running `pla-util --help` displays the following information:
 
 ```
-pla-util 2.0.0
+pla-util 2.1.0
 A utility for power line adapters with Broadcom chipsets
 
 Usage:
@@ -106,6 +118,7 @@ Commands:
   get-id-info                        Get identification info
   get-network-info ( any | member )  Get network information [default: member]
   get-network-stats                  Get average PHY data rates
+  get-station-info                   Get power line adapter information
   reset                              Factory reset power line adapter
   restart                            Restart / reboot power line adapter
   set-hfid <id>                      Set user human-friendly id

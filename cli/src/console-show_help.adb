@@ -45,7 +45,7 @@ begin
    Ada.Text_IO.Put_Line (Item => "  get-id-info                        Get identification info");
    Ada.Text_IO.Put_Line (Item => "  get-network-info ( any | member )  Get network information [default: member]");
    Ada.Text_IO.Put_Line (Item => "  get-network-stats                  Get average PHY data rates");
-   Ada.Text_IO.Put_Line (Item => "  get-station_info                   Get power line adapter information");
+   Ada.Text_IO.Put_Line (Item => "  get-station-info                   Get power line adapter information");
    Ada.Text_IO.Put_Line (Item => "  reset                              Factory reset power line adapter");
    Ada.Text_IO.Put_Line (Item => "  restart                            Restart / reboot power line adapter");
    Ada.Text_IO.Put_Line (Item => "  set-hfid <id>                      Set user human-friendly id");

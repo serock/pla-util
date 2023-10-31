@@ -1,3 +1,14 @@
+# 2.1.0 (2023-10-31)
+
+* Move executable to bin subdirectory.
+* Support building project with Alire.
+* Eliminate most compiler warnings.
+* Add bash completion script.
+* Support building project with GNAT 7.5.
+* Add `get-station-info` command.
+* Add Dockerfile that builds a minimal runtime image; contributed by Alexander Lais.
+* Adjusted sequence numbers in request and confirmation messages.
+
 # 2.0.0 (2022-06-11)
 
 * Overhaul the command line syntax (any scripts that call `pla-util` will need to be updated).

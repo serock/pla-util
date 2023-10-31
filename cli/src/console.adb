@@ -59,7 +59,7 @@ package body Console is
    Separator_Character_Mapping : constant Ada.Strings.Maps.Character_Mapping := Ada.Strings.Maps.To_Mapping (From => "-",
                                                                                                              To   => "_");
    Syntax_Error                : exception;
-   Version                     : constant String                             := "2.0.0";
+   Version                     : constant String                             := "2.1.0";
 
    procedure Check_DAK (Network_Device_Name : String;
                         Passphrase          : String;

@@ -21,7 +21,7 @@
 #----------------------------------------------------------------------
 name = "pla_util"
 description = "A power line adapter utility"
-version = "2.0.0"
+version = "2.1.0"
 licenses = "GPL-3.0-or-later"
 website = "https://github.com/serock/pla-util"
 
