@@ -7,7 +7,7 @@
 * Support building project with GNAT 7.5.
 * Add `get-station-info` command.
 * Add Dockerfile that builds a minimal runtime image; contributed by Alexander Lais.
-* Adjusted sequence numbers in request and confirmation messages.
+* Adjust sequence numbers in request and confirmation messages.
 
 # 2.0.0 (2022-06-11)
 
