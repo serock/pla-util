@@ -14,6 +14,30 @@ The following power line adapters have been used with `pla-util`:
 * TP-Link TL-PA7017 (uses BCM60355)
 * TP-Link TL-PA9020 (uses BCM60500)
 
+## Binary Packages
+Binary packages and repositories for the latest `pla-util` release are created by the openSUSE Build Server for several Linux distributions and architectures:
+
+* Debian (x86_64 and aarch64)
+* Fedora (x86_64 and aarch64)
+* Mageia (x86_64)
+* Raspbian (armv7l and aarch64)
+* openSUSE Leap and Tumbleweed (x86_64 and aarch64)
+* Ubuntu (x86_64 and aarch64)
+
+Instructions for installing binary packages can be found on the [download](https://software.opensuse.org/download.html?project=home%3Aserock&package=pla-util) page.
+
+### Package Signing Key
+Binary packages are signed with a GNU Privacy Guard (GPG) key. The details of the public signing key are:
+
+```
+User ID:        home:serock OBS Project <home:serock@build.opensuse.org>
+Key ID:         fa46358092ee566e
+Fingerprint:    3c38 14f1 6b3c 01c1 0d6a 72d6 fa46 3580 92ee 566e
+Expires on:     2026-01-07
+Key Size:       4096 bytes
+Algorithm type: RSA
+```
+
 ## Development Environment
 The following software is being used to develop `pla-util` on [openSUSE Leap](https://www.opensuse.org/):
 
