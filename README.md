@@ -44,22 +44,21 @@ The following software is being used to develop `pla-util` on [openSUSE Leap](ht
 * GNU Ada Compiler (GNAT)
 * GPRbuild
 * [Alire](https://alire.ada.dev/)
-* GNAT Studio
+* [GNAT Studio](https://github.com/AdaCore/gnatstudio/releases)
 * [Git](https://git-scm.com/)
 * [libpcap](https://www.tcpdump.org/)
 
-[GNAT Community Edition](https://www.adacore.com/download) includes a GNU Ada Compiler (GNAT), GPRbuild, and GNAT Studio.
-However, AdaCore announced on their [June 2, 2022 blog post](https://blog.adacore.com/a-new-era-for-ada-spark-open-source-community) that the 2021 release is the last release of GNAT Community Edition and encouraged users to transition to Alire.
-
-Alire's `alr` command-line tool will download a GNU Ada Compiler (GNAT) and GPRbuild when `alr` builds a project for the first time.
-
-### Software
-The following libraries are required to build and run `pla-util`:
-
-* libpcap (`libpcap.so`) and/or libpcap-devel (version 1.8.1 or higher is recommended; version 1.9.1 was used during development)
+If your Linux distribution does not provide a package for GPRbuild, Alire's `alr` command-line tool will download a GNU Ada Compiler (GNAT) and GPRbuild when `alr` builds a project for the first time.
 
 ### Hardware
 During development, `pla-util` is tested with D-Link DHP-700AV adapters from a *D-Link DHP-701AV PowerLine AV2 2000 Gigabit Starter Kit*.
+
+### Software
+The `libpcap` package(s) are required to build and run `pla-util`.
+
+:information_source: **Note:**
+
+* See the [Dependencies](../../wiki/Dependencies) page on the wiki for software packages that should be installed before attempting to build.
 
 ## How to Build the Program with GNAT Studio and GNAT Community Edition
 1. Use git to clone this repository.
