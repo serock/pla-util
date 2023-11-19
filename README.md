@@ -131,13 +131,18 @@ If you don't use the `--pla` option, the program will send request packets to th
 rather than electrical wiring.
 
 ## Bash Completion
-A bash completion file for the `pla-util` command is available at `completions/pla-util.bash` in this project.
-The `pla-util.bash` completion file depends on the `bash-completion` package, which is installed by default in many Linux distributions.
-As noted in the `bash-completion` [FAQ](https://github.com/scop/bash-completion/#faq), the completion file should be put into in one of the following directories:
+A bash completion file for the `pla-util` command is available at `completions/pla-util` in this project.
+The `pla-util` completion file depends on the `bash-completion` package, which is installed by default in many Linux distributions.
+As noted in the `bash-completion` [FAQ](https://github.com/scop/bash-completion/#faq), the completion file can be put into in one of the following directories:
 
 * `$BASH_COMPLETION_USER_DIR/completions`
 * `$XDG_DATA_HOME/bash-completion/completions`, if `BASH_COMPLETION_USER_DIR` is not set
 * `~/.local/share/bash-completion/completions`, if `BASH_COMPLETION_USER_DIR` and `XDG_DATA_HOME` are not set
+
+:information_source: **Note:**
+
+1. After the 2.1.0 release, the bash completion file was renamed from `pla-util.bash` to `pla-util`.
+2. If you download and install a binary package for the 2.1.0 release or later, the bash completion file is installed as `/usr/share/bash-completion/completions/pla-util`.
 
 ## License
 This program is licensed under the GNU General Public License Version 3 or later.
