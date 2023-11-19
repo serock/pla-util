@@ -100,17 +100,18 @@ docker run -i -t --network=host pla-util
 ```
 
 ## How to Grant the Program Permission to use Packet Sockets
-Before you can use the program, you will need to grant the program permission to use packet sockets.
+If you do not intend to run `pla-util` as root, then before you can use the program, you will need to grant `pla-util` permission to use packet sockets.
 Otherwise, you may see the following error message when you run the program:
 
 ```
 pla-util: You don't have permission to capture on that device
 ```
 
-To grant permission, you can use the following command:
+Use the `filecap` command to set the `net_raw` capability on `pla-util`. 
+If `pla-util` was installed in `/usr/bin`, you can use the following command:
 
 ```
-sudo setcap cap_net_raw+ep pla-util
+sudo filecap /usr/bin/pla-util net_raw
 ```
 
 ## How to Run the Program
