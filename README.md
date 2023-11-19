@@ -60,7 +60,7 @@ The `libpcap` package(s) are required to build and run `pla-util`.
 
 * See the [Dependencies](../../wiki/Dependencies) page on the wiki for software packages that should be installed before attempting to build.
 
-## How to Build the Program with GNAT Studio and GNAT Community Edition
+## How to Build the Program with GNAT Studio
 1. Use git to clone this repository.
 2. Launch `gnatstudio`, select **Open existing project**, and browse to the `pla_util.gpr` project file.
 3. Use GNAT Studio's **Build All** toolbar button to build the project, or try **Build** > **Project** > **Build All**.
@@ -70,14 +70,13 @@ If the build is successful, the `pla-util` executable will be in the `bin` subdi
 ## How to Build the Program with gnatmake
 1. Use git to clone this repository.
 2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
-3. Do `export GPR_PROJECT_PATH=legacy`
-4. Run `gnatmake -p -P cli/cli.gpr`
+3. Do `export ADA_INCLUDE_PATH=cli/src:pla/src:net/src:common/src`
+4. Run `gnatmake -g -gnateE -gnat12 -o pla-util pla_util.adb -bargs -Es -largs -lpcap`
 
 ## How to Build the Program with GPRbuild
 1. Use git to clone this repository.
 2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
-3. You might need to install gprbuild, on Debian: `sudo apt install gprbuild gnat`
-4. Run `gprbuild -P pla_util.gpr`. However, if the build fails with _object directory "obj" not found_ messages, retry the build by running `gprbuild -p -P pla_util.gpr`.
+3. Run `gprbuild -P pla_util.gpr`. However, if the build fails with _object directory "obj" not found_ messages, retry the build by running `gprbuild -p -P pla_util.gpr`.
 
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
