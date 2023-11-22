@@ -24,13 +24,15 @@ For additional information, see the [Binary Packages](../../wiki/Binary-Packages
 The following software is being used to develop `pla-util` on [openSUSE Leap](https://www.opensuse.org/):
 
 * GNU Ada Compiler (GNAT)
+* GNU Make
 * GPRbuild
 * [Alire](https://alire.ada.dev/)
 * [GNAT Studio](https://github.com/AdaCore/gnatstudio/releases)
-* [Git](https://git-scm.com/)
+* Git
 * [libpcap](https://www.tcpdump.org/)
 
-If your Linux distribution does not provide a package for GPRbuild, Alire's `alr` command-line tool will download a GNU Ada Compiler (GNAT) and GPRbuild when `alr` builds a project for the first time.
+If your Linux distribution does not provide a package for GPRbuild, you can use `make` and `gnatmake` to build.
+Another option is to use Alire's `alr` command-line tool, which will download a GNU Ada Compiler (GNAT) and GPRbuild when `alr` builds a project for the first time.
 
 ### Hardware
 During development, `pla-util` is tested with D-Link DHP-700AV adapters from a *D-Link DHP-701AV PowerLine AV2 2000 Gigabit Starter Kit*.
@@ -42,18 +44,12 @@ The `libpcap` package(s) are required to build and run `pla-util`.
 
 * See the [Dependencies](../../wiki/Dependencies) page on the wiki for software packages that should be installed before attempting to build.
 
-## How to Build the Program with GNAT Studio
+## How to Build the Program with make and gnatmake
 1. Use git to clone this repository.
-2. Launch `gnatstudio`, select **Open existing project**, and browse to the `pla_util.gpr` project file.
-3. Use GNAT Studio's **Build All** toolbar button to build the project, or try **Build** > **Project** > **Build All**.
+2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `Makefile` file).
+3. Run `make`.
 
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
-
-## How to Build the Program with gnatmake
-1. Use git to clone this repository.
-2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
-3. Do `export ADA_INCLUDE_PATH=cli/src:pla/src:net/src:common/src`
-4. Run `gnatmake -g -gnateE -gnat12 -o pla-util pla_util.adb -bargs -Es -largs -lpcap`
 
 ## How to Build the Program with GPRbuild
 1. Use git to clone this repository.
@@ -66,6 +62,13 @@ If the build is successful, the `pla-util` executable will be in the `bin` subdi
 1. Use git to clone this repository.
 2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
 3. Run `alr build`.
+
+If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
+
+## How to Build the Program with GNAT Studio
+1. Use git to clone this repository.
+2. Launch `gnatstudio`, select **Open existing project**, and browse to the `pla_util.gpr` project file.
+3. Use GNAT Studio's **Build All** toolbar button to build the project, or try **Build** > **Project** > **Build All**.
 
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
