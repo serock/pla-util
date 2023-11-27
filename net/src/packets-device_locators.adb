@@ -69,7 +69,7 @@ package body Packets.Device_Locators is
 
       Address_Access   : Pcap.Devices.Address_Access_Type   := null;
       Device_Access    : Pcap.Devices.Interface_Access_Type := null;
-      Search_Algorithm : Search_Type'Class                  := (if Device_Name = "" then Create else Create (Device_Name => Device_Name));
+      Search_Algorithm : constant Search_Type'Class         := (if Device_Name = "" then Create else Create (Device_Name => Device_Name));
 
    begin
 
