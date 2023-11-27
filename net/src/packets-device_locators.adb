@@ -111,8 +111,10 @@ package body Packets.Device_Locators is
 
    end Find_All_Devices;
 
+   pragma Warnings (Off, "formal parameter*is not referenced");
    overriding function Run (Self           : Basic_Search_Type;
                             Network_Device : Pcap.Devices.Interface_Access_Type) return Pcap.Devices.Interface_Access_Type is
+   pragma Warnings (On,  "formal parameter*is not referenced");
 
       Device_Access : Pcap.Devices.Interface_Access_Type := Network_Device;
 
