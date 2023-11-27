@@ -26,7 +26,7 @@ GNATLINK ?= gnatlink
 GNATMAKEFLAGS ?= -v
 GNATBINDFLAGS ?= -v -Es
 GNATLINKFLAGS ?= -v
-ADAFLAGS ?= -g -gnateE -gnato -O2
+ADAFLAGS ?= -g -gnateE -gnato -O3 -gnatn
 LDFLAGS ?= -v
 
 executable = pla-util
@@ -40,66 +40,21 @@ adaflags = -gnat12 -gnateu -gnata -gnatE \
 ldlibs = -lpcap
 ldflags = -pie -z relro -z now
 
-export ADA_INCLUDE_PATH = ./cli/src:./pla/src:./net/src:./common/src
-export ADA_OBJECTS_PATH = ./cli/obj:./pla/obj:./net/obj:./common/obj
+export ADA_INCLUDE_PATH = ./cli/src:./pla/src:./net/src:./common/src:./config
 
 .SUFFIXES:
 .SUFFIXES: .adb .ads .ali .o
 
 .PHONY: clean
 clean:
-	rm -f ./bin/* ./cli/obj/* ./common/obj/* ./net/obj/* ./pla/obj/*
-
-.PHONY: common_subsystem
-common_subsystem: private SUBSYSTEM = common
-common_subsystem:
-	-mkdir ./$(SUBSYSTEM)/obj
-	$(GNATMAKE) $(gnatmakeflags) $(GNATMAKEFLAGS) \
-		-c -D ./$(SUBSYSTEM)/obj \
-		config.ads \
-		firmware_boot_strings.ads \
-		hfid_strings.ads \
-		mac_addresses.adb \
-		octets.ads \
-		-cargs $(adaflags) $(ADAFLAGS)
-
-.PHONY: net_subsystem
-net_subsystem: private SUBSYSTEM = net
-net_subsystem: common_subsystem
-	-mkdir ./$(SUBSYSTEM)/obj
-	$(GNATMAKE) $(gnatmakeflags) $(GNATMAKEFLAGS) \
-		-c -D ./$(SUBSYSTEM)/obj \
-		os_constants.ads \
-		packets.adb \
-		packets-device_locators.adb \
-		packets-filters.adb \
-		packets-network_devices.adb \
-		packets-pcap.ads \
-		packets-pcap-devices.ads \
-                -cargs $(adaflags) $(ADAFLAGS)
-
-.PHONY: pla_subsystem
-pla_subsystem: private SUBSYSTEM = pla
-pla_subsystem: net_subsystem common_subsystem
-	-mkdir ./$(SUBSYSTEM)/obj
-	$(GNATMAKE) $(gnatmakeflags) $(GNATMAKEFLAGS) \
-		-c -D ./$(SUBSYSTEM)/obj \
-		messages.adb \
-		messages-constructors.adb \
-		power_line_adapters.adb \
-		power_line_adapters-constructors.adb \
-		power_line_adapters-network.adb \
-		power_line_adapter_sets.ads \
-		to_bounded_string.adb \
-                -cargs $(adaflags) $(ADAFLAGS)
+	rm -f ./bin/* ./obj/*
 
 .PHONY: all
-all: private SUBSYSTEM = cli
-all: pla_subsystem net_subsystem common_subsystem
-	-mkdir ./$(SUBSYSTEM)/obj
+all:
+	-mkdir ./obj
 	-mkdir ./bin
 	$(GNATMAKE) $(gnatmakeflags) $(GNATMAKEFLAGS) \
-		-D ./$(SUBSYSTEM)/obj -o ./bin/$(executable) $(ada_main_unit) \
+		-D ./obj -o ./bin/$(executable) $(ada_main_unit) \
 		-cargs $(adaflags) $(ADAFLAGS) \
 		-bargs $(gnatbindflags) $(GNATBINDFLAGS) \
 		-largs $(gnatlinkflags) $(GNATLINKFLAGS) \

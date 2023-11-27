@@ -1,11 +1,11 @@
 # Alire directory
 /alire/
 
-# Alire config directory
-/config/
-
 # Executable directory
 /bin/
 
-# Object directories
+# Object directory
 obj/
+
+# Configuration GNAT project file
+*.cgpr

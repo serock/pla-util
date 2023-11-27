@@ -27,6 +27,7 @@ with Config;
 with GNAT.Directory_Operations;
 with GNAT.Formatted_String;
 with HFID_Strings;
+with Pla_Util_Config;
 with Power_Line_Adapter_Sets;
 with Power_Line_Adapters;
 
@@ -59,7 +60,6 @@ package body Console is
    Separator_Character_Mapping : constant Ada.Strings.Maps.Character_Mapping := Ada.Strings.Maps.To_Mapping (From => "-",
                                                                                                              To   => "_");
    Syntax_Error                : exception;
-   Version                     : constant String                             := "2.1.0";
 
    procedure Check_DAK (Network_Device_Name : String;
                         Passphrase          : String;
@@ -326,7 +326,7 @@ package body Console is
 
    procedure Show_Version is
    begin
-      Ada.Text_IO.Put_Line (Item => App_Name & " " & Version);
+      Ada.Text_IO.Put_Line (Item => App_Name & " " & Pla_Util_Config.Crate_Version);
    end Show_Version;
 
    function To_Command (Source : String) return Commands.Command_Type is

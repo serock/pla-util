@@ -18,23 +18,35 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
-with "shared.gpr";
+with "config/pla_util_config.gpr";
+project Pla_Util is
 
-aggregate project Pla_Util is
+   for Languages use ("Ada");
+   for Main use ("pla_util.adb");
 
-   case Shared.Alire_Mode is
-      when "False" =>
-         for Project_Path use ("legacy");
-      when "True" =>
-         for Project_Path use ("config");
-   end case;
-
-   for Project_Files use ("cli/cli.gpr");
+   for Create_Missing_Dirs use "true";
+   for Exec_Dir use "bin";
    for Object_Dir use "obj";
+   for Source_Dirs use ("cli/src", "pla/src", "net/src", "common/src", "config");
+
+   package Binder is
+      for Switches ("Ada") use ("-Es", "-shared");
+   end Binder;
 
    package Builder is
-      for Switches (others) use ("--no-indirect-imports", "-s");
+      for Executable ("pla_util.adb") use "pla-util";
+      for Switches ("Ada") use ("--no-indirect-imports", "-j0", "-R", "-s");
    end Builder;
 
-end Pla_Util;
+   package Compiler is
+      for Switches ("Ada") use
+         ("-gnateu") &
+         Pla_Util_Config.Ada_Compiler_Switches &
+         ("-gnatw.d", "-gnaty-m", "-gnatf", "-fPIE");
+   end Compiler;
 
+   package Linker is
+      for Switches ("Ada") use ("-lpcap", "-pie", "-Wl,-z,relro,-z,now");
+   end Linker;
+
+end Pla_Util;
