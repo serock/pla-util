@@ -12,7 +12,7 @@ package Pla_Util_Config is
 
    Alire_Host_Arch : constant String := "x86_64";
 
-   Alire_Host_Distro : constant String := "distro_unknown";
+   Alire_Host_Distro : constant String := "suse";
 
    type Build_Profile_Kind is (release, validation, development);
    Build_Profile : constant Build_Profile_Kind := release;

@@ -7,20 +7,21 @@ abstract project Pla_Util_Config is
 
    Alire_Host_Arch := "x86_64";
 
-   Alire_Host_Distro := "distro_unknown";
+   Alire_Host_Distro := "suse";
    Ada_Compiler_Switches := External_As_List ("ADAFLAGS", " ");
    Ada_Compiler_Switches := Ada_Compiler_Switches &
           (
             "-O3" -- Optimize for performance
            ,"-gnatn" -- Enable inlining
            ,"-g" -- Generate debug info
-           ,"-gnateE"
+           ,"-gnateE" -- Extra information in exception messages
            ,"-gnatE"
            ,"-gnato" -- Enable numeric overflow checking
            ,"-fstack-check"
            ,"-fstack-protector-strong"
            ,"-gnata" -- Enable assertions and contracts
            ,"-gnat12" -- Ada 2012 Mode
+           ,"-gnatW8" -- UTF-8 encoding for wide characters
           );
 
    type Build_Profile_Kind is ("release", "validation", "development");
