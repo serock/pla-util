@@ -19,29 +19,35 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------
 name = "pla_util"
-description = "A power line adapter utility"
 version = "2.1.0"
+description = "A power line adapter utility"
+authors = ["John Serock"]
+maintainers = ["john.serock@gmail.com"]
+maintainers-logins = ["serock"]
 licenses = "GPL-3.0-or-later"
 website = "https://github.com/serock/pla-util"
-
-authors = ["John Serock"]
-maintainers = ["John Serock <1468970+serock@users.noreply.github.com>"]
-maintainers-logins = ["serock"]
-
+tags = ["powerline"]
+project-files = ["pla_util.gpr"]
 executables = ["pla-util"]
 
-[build-profiles]
-pla_util = "release"
+[available."case(distribution)"]
+"arch|centos|debian|fedora|rhel|suse|ubuntu" = true
+"..." = false
+
+[[depends-on]]
+libpcap = "^1.8.1"
 
 [configuration]
 generate_c = false
+
+[build-profiles]
+pla_util = "release"
 
 [build-switches]
 "*".ada_version = "ada12"
 "*".debug_info = ["-g", "-gnateE"]
 "*".runtime_checks = ["-gnatE", "-gnato", "-fstack-check", "-fstack-protector-strong"]
 "*".contracts = "yes"
-
 development.compile_checks = [
    "-Wall", "-gnatVa", "-gnatwd", "-gnatwh", "-gnatw.h",
    "-gnatw.j", "-gnatw.k", "-gnatwl", "-gnatw.l", "-gnatwo",
