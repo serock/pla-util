@@ -49,4 +49,10 @@ project Pla_Util is
       for Switches ("Ada") use ("-lpcap", "-pie", "-Wl,-z,relro,-z,now");
    end Linker;
 
+   package Install is
+      for Artifacts ("share/bash-completion/completions") use ("completions/pla-util");
+      for Install_Name use "pla-util";
+      for Mode use "usage";
+   end Install;
+
 end Pla_Util;
