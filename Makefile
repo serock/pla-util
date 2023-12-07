@@ -24,7 +24,7 @@ GNATMAKE ?= gnatmake
 GNATBIND ?= gnatbind
 GNATLINK ?= gnatlink
 GNATMAKEFLAGS ?= -v
-GNATBINDFLAGS ?= -v -Es
+GNATBINDFLAGS ?= -v -Es -shared
 GNATLINKFLAGS ?= -v
 ADAFLAGS ?= -g -gnateE -gnato -O3 -gnatn
 LDFLAGS ?= -v
@@ -33,7 +33,7 @@ executable = pla-util
 ada_main_unit = pla_util
 gnatmakeflags = --GCC=$(GCC) --GNATBIND=$(GNATBIND) --GNATLINK=$(GNATLINK) \
 		-eS -j0 -I-
-gnatbindflags = -shared
+gnatbindflags =
 gnatlinkflags = -R
 adaflags = -gnat12 -gnatW8 -gnateu -gnata -gnatE \
 	   -fPIE -fstack-check -fstack-protector-strong

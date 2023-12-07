@@ -30,7 +30,8 @@ project Pla_Util is
    for Source_Dirs use ("cli/src", "pla/src", "net/src", "common/src", "config");
 
    package Binder is
-      for Switches ("Ada") use ("-Es", "-shared");
+      for Switches ("Ada") use
+         Split(External("GNATBINDFLAGS", "-Es -shared"), " ");
    end Binder;
 
    package Builder is
@@ -46,7 +47,11 @@ project Pla_Util is
    end Compiler;
 
    package Linker is
-      for Switches ("Ada") use ("-lpcap", "-pie", "-Wl,-z,relro,-z,now");
+      for Switches ("Ada") use
+         ("-pie", "-Wl,-z,relro,-z,now") &
+         External_As_List("LDFLAGS", " ") &
+         ("-lpcap") &
+         External_As_List("LDLIBS", " ");
    end Linker;
 
    package Install is
