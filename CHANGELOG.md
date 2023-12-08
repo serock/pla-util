@@ -1,10 +1,10 @@
 # 2.1.1 (2023-12-08)
 
-* Harden application
+* Harden application.
   * Produce a position-independent executable having neither rpath nor runpath.
   * Compile with stack protector.
   * Build with full RELRO.
-* Simplify builds
+* Simplify builds.
   * Eliminate subsystem project (`.gpr`) files and subsystem `obj` subdirectories.
   * Eliminate `legacy/pla_util_config.gpr`.
   * Put all `.o` and `.ali` files into one `obj` subdirectory.
