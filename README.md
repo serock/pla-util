@@ -103,7 +103,7 @@ sudo filecap /usr/bin/pla-util net_raw
 Running `pla-util --help` displays the following information:
 
 ```
-pla-util 2.1.0
+pla-util 2.1.1
 A utility for power line adapters with Broadcom chipsets
 
 Usage:

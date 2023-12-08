@@ -1,3 +1,23 @@
+# 2.1.1 (2023-12-08)
+
+* Harden application
+  * Produce a position-independent executable having neither rpath nor runpath.
+  * Compile with stack protector.
+  * Build with full RELRO.
+* Simplify builds
+  * Eliminate subsystem project (`.gpr`) files and subsystem `obj` subdirectories.
+  * Eliminate `legacy/pla_util_config.gpr`.
+  * Put all `.o` and `.ali` files into one `obj` subdirectory.
+  * Link against a shared GNAT runtime.
+  * Add `Makefile` for building with `gnatmake`.
+* Rename `completions/pla-util.bash` to `completions/pla-util`.
+* Fix one compiler warning and suppress another.
+* Update README.
+  * Add info about binary packages.
+  * Use `filecap` instead of `setcap` for setting permissions.
+  * Point to wiki for info about installing dependencies.
+  * Add instructions for building with `make` and `gnatmake`.
+
 # 2.1.0 (2023-10-31)
 
 * Move executable to bin subdirectory.
