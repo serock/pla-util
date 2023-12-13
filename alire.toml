@@ -30,8 +30,8 @@ tags = ["powerline"]
 project-files = ["pla_util.gpr"]
 executables = ["pla-util"]
 
-[available."case(distribution)"]
-"arch|centos|debian|fedora|rhel|suse|ubuntu" = true
+[available."case(os)"]
+"linux" = true
 "..." = false
 
 [[depends-on]]
