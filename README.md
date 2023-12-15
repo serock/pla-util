@@ -61,7 +61,7 @@ If the build is successful, the `pla-util` executable will be in the `bin` subdi
 ## How to Build the Program with Alire
 1. Use git to clone this repository.
 2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
-3. Run `alr build`.
+3. Run `alr build --release`.
 
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
