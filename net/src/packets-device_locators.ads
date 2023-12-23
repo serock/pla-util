@@ -21,7 +21,6 @@
 with Interfaces.C;
 with MAC_Addresses;
 with Packets.Pcap.Devices;
-pragma Elaborate (Packets.Pcap.Devices);
 
 private with Ada.Finalization;
 
