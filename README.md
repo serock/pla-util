@@ -1,3 +1,6 @@
+[![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/pla_util.json)](https://alire.ada.dev/crates/pla_util.html)
+[![build result](https://build.opensuse.org/projects/home:serock/packages/pla-util/badge.svg?type=percent)](https://build.opensuse.org/package/show/home:serock/pla-util)
+
 # pla-util
 A power line adapter utility
 
