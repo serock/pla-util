@@ -30,8 +30,6 @@ package Packets is
    subtype Payload_Type  is Octets.Octets_Type;
    subtype Protocol_Type is Octets.Octets_Type (1 .. 2);
 
-   function Library_Version return String;
-
 private
 
    package Interface_Name_Strings is new Ada.Strings.Bounded.Generic_Bounded_Length (Max => 16);
