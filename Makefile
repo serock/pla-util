@@ -35,7 +35,7 @@ gnatmakeflags = --GCC=$(GCC) --GNATBIND=$(GNATBIND) --GNATLINK=$(GNATLINK) \
 		-eS -j0 -I-
 gnatbindflags =
 gnatlinkflags = -R
-adaflags = -gnat12 -gnatW8 -gnateu -gnata -gnatE \
+adaflags = -gnat12 -gnatW8 -gnateu -gnata \
 	   -fPIE -fstack-check -fstack-protector-strong
 ldlibs = -lpcap
 ldflags = -pie -z relro -z now

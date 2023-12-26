@@ -15,7 +15,6 @@ abstract project Pla_Util_Config is
            ,"-gnatn" -- Enable inlining
            ,"-g" -- Generate debug info
            ,"-gnateE" -- Extra information in exception messages
-           ,"-gnatE"
            ,"-gnato" -- Enable numeric overflow checking
            ,"-fstack-check"
            ,"-fstack-protector-strong"

@@ -23,7 +23,7 @@ generate_c = false
 [build-switches]
 "*".ada_version = "ada12"
 "*".debug_info = ["-g", "-gnateE"]
-"*".runtime_checks = ["-gnatE", "-gnato", "-fstack-check", "-fstack-protector-strong"]
+"*".runtime_checks = ["-gnato", "-fstack-check", "-fstack-protector-strong"]
 "*".contracts = "yes"
 development.compile_checks = [
    "-Wall", "-gnatVa", "-gnatwd", "-gnatwh", "-gnatw.h",
