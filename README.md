@@ -47,26 +47,27 @@ The `libpcap` package(s) are required to build and run `pla-util`.
 
 * See the [Dependencies](../../wiki/Dependencies) page on the wiki for software packages that should be installed before attempting to build.
 
-## How to Build the Program with make and gnatmake
+## How to Build and Install the Program with make and gnatmake
 1. Use git to clone this repository.
 2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `Makefile` file).
 3. Run `make`.
+4. Run `sudo make prefix=/usr install`.
 
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
-## How to Build the Program with GPRbuild
+## How to Build and Install the Program with GPRbuild
 1. Use git to clone this repository.
 2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
 3. Run `gprbuild -P pla_util.gpr`. However, if the build fails with _object directory "obj" not found_ messages, retry the build by running `gprbuild -p -P pla_util.gpr`.
+4. Run `sudo gprinstall -P pla_util.gpr -p --prefix=/usr`.
 
 If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
 
 ## How to Build the Program with Alire
-1. Use git to clone this repository.
-2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
-3. Run `alr build --release`.
-
-If the build is successful, the `pla-util` executable will be in the `bin` subdirectory.
+In a terminal, run:
+1. `alr get pla_util`
+2. `cd $(alr get --dirname pla_util)`
+3. `alr build --release`
 
 ## How to Build the Program with GNAT Studio
 1. Use git to clone this repository.
@@ -143,17 +144,19 @@ rather than electrical wiring.
 
 ## Bash Completion
 A bash completion file for the `pla-util` command is available at `completions/pla-util` in this project.
+If you download and install a binary package or use GPRbuild to build and install, the bash completion file is installed as `/usr/share/bash-completion/completions/pla-util` for the 2.1.0 release or later.
+
+:information_source: **Note:**
+
+* After the 2.1.0 release, the bash completion file was renamed from `pla-util.bash` to `pla-util`.
+
+### Manual Installation
 The `pla-util` completion file depends on the `bash-completion` package, which is installed by default in many Linux distributions.
 As noted in the `bash-completion` [FAQ](https://github.com/scop/bash-completion/#faq), the completion file can be put into in one of the following directories:
 
 * `$BASH_COMPLETION_USER_DIR/completions`
 * `$XDG_DATA_HOME/bash-completion/completions`, if `BASH_COMPLETION_USER_DIR` is not set
 * `~/.local/share/bash-completion/completions`, if `BASH_COMPLETION_USER_DIR` and `XDG_DATA_HOME` are not set
-
-:information_source: **Note:**
-
-1. After the 2.1.0 release, the bash completion file was renamed from `pla-util.bash` to `pla-util`.
-2. If you download and install a binary package for the 2.1.0 release or later, the bash completion file is installed as `/usr/share/bash-completion/completions/pla-util`.
 
 ## License
 This program is licensed under the GNU General Public License Version 3 or later.

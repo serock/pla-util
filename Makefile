@@ -29,6 +29,12 @@ GNATLINKFLAGS ?= -v
 ADAFLAGS ?= -g -gnateE -gnato -O3 -gnatn
 LDFLAGS ?= -v
 
+prefix = /usr/local
+exec_prefix = $(prefix)
+bindir = $(exec_prefix)/bin
+datarootdir = $(prefix)/share
+datadir = $(datarootdir)
+
 executable = pla-util
 ada_main_unit = pla_util
 gnatmakeflags = --GCC=$(GCC) --GNATBIND=$(GNATBIND) --GNATLINK=$(GNATLINK) \
@@ -59,5 +65,17 @@ all:
 		-bargs $(gnatbindflags) $(GNATBINDFLAGS) \
 		-largs $(gnatlinkflags) $(GNATLINKFLAGS) \
 		$(ldflags) $(LDFLAGS) $(ldlibs) $(LDLIBS)
+
+.PHONY: install
+install:
+	install ./bin/pla-util $(bindir)
+	install -m 0644 \
+		./completions/pla-util \
+		$(datadir)/bash-completion/completions
+
+.PHONY: uninstall
+uninstall:
+	-rm $(bindir)/pla-util
+	-rm $(datadir)/bash-completion/completions/pla-util
 
 .DEFAULT_GOAL := all
