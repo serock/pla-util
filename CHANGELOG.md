@@ -1,3 +1,11 @@
+# 2.1.2 (2023-12-31)
+
+* Update Alire manifest for compatibility with Alire 1.x.
+* Remove header and build profiles from Alire manifest.
+* Remove dead, unused, or unnecessary code.
+* Revert to static elaboration model.
+* Add install and uninstall targets to Makefile.
+
 # 2.1.1 (2023-12-08)
 
 * Harden application.

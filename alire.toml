@@ -1,5 +1,5 @@
 name = "pla_util"
-version = "2.1.1"
+version = "2.1.2"
 description = "A power line adapter utility"
 authors = ["John Serock"]
 maintainers = ["john.serock@gmail.com"]
