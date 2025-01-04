@@ -159,4 +159,4 @@ As noted in the `bash-completion` [FAQ](https://github.com/scop/bash-completion/
 * `~/.local/share/bash-completion/completions`, if `BASH_COMPLETION_USER_DIR` and `XDG_DATA_HOME` are not set
 
 ## License
-This program is licensed under the GNU General Public License Version 3 or later.
+This program is licensed under the GNU General Public License Version 3 or any later version.
