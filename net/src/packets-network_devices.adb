@@ -160,6 +160,7 @@ package body Packets.Network_Devices is
                       From_MAC_Address : out MAC_Addresses.MAC_Address_Type) is
 
       use type Interfaces.C.int;
+      use type Interfaces.C.unsigned_short;
 
       Capture_Length        : Natural;
       FD                    : Interfaces.C.int;
@@ -167,6 +168,7 @@ package body Packets.Network_Devices is
       Packet_Header_Access  : Pcap.Packet_Header_Access_Type;
       Poll_File_Descriptors : Pcap.Poll_File_Descriptors_Type;
       Return_Code           : Interfaces.C.int;
+      Returned_Events       : Interfaces.C.unsigned_short;
 
    begin
 
@@ -196,33 +198,49 @@ package body Packets.Network_Devices is
 
       end if;
 
-      Return_Code := Pcap.Receive_Packet (P             => Self.Handle,
-                                          Packet_Header => Packet_Header_Access,
-                                          Packet_Data   => Packet_Data_Address);
+      Returned_Events := Interfaces.C.unsigned_short (Poll_File_Descriptors (1).Returned_Events);
 
-      if Return_Code = -1 then
-         raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Self.Handle));
+      if (Returned_Events and Pcap.POLLIN) = Pcap.POLLIN then
+
+         Return_Code := Pcap.Receive_Packet (P             => Self.Handle,
+                                             Packet_Header => Packet_Header_Access,
+                                             Packet_Data   => Packet_Data_Address);
+
+         if Return_Code = -1 then
+            raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Self.Handle));
+         end if;
+
+         --  TODO check for Return_Code = 0
+
+         Capture_Length := Natural (Packet_Header_Access.all.Capture_Length);
+
+         if Payload_Buffer'Length < Capture_Length - 14 then
+            raise Packet_Error with "Payload buffer is too small";
+         end if;
+
+         declare
+
+            Packet_Data : Octets.Octets_Type (1 .. Capture_Length)
+              with
+                Address => Packet_Data_Address;
+
+         begin
+
+            Payload_Length                       := Capture_Length - 14;
+            Payload_Buffer (1 .. Payload_Length) := Packet_Data (15 .. Capture_Length);
+            From_MAC_Address                     := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Packet_Data (7 .. 12));
+
+         end;
+
+      elsif (Returned_Events and Pcap.POLLERR) = Pcap.POLLERR then
+         raise Packet_Error with "Error condition while waiting to receive packets";
+      elsif (Returned_Events and Pcap.POLLHUP) = Pcap.POLLHUP then
+         raise Packet_Error with "Hang-up event while waiting to receive packets";
+      elsif (Returned_Events and Pcap.POLLNVAL) = Pcap.POLLNVAL then
+         raise Packet_Error with "Invalid poll request";
+      else
+         raise Packet_Error with "No packets available and no error events";
       end if;
-
-      Capture_Length := Natural (Packet_Header_Access.all.Capture_Length);
-
-      if Payload_Buffer'Length < Capture_Length - 14 then
-         raise Packet_Error with "Payload buffer is too small";
-      end if;
-
-      declare
-
-         Packet_Data : Octets.Octets_Type (1 .. Capture_Length)
-           with
-             Address => Packet_Data_Address;
-
-      begin
-
-         Payload_Length                       := Capture_Length - 14;
-         Payload_Buffer (1 .. Payload_Length) := Packet_Data (15 .. Capture_Length);
-         From_MAC_Address                     := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Packet_Data (7 .. 12));
-
-      end;
 
    end Receive;
 

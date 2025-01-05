@@ -28,6 +28,9 @@ private package Packets.Pcap is
    ERRBUF_SIZE     : constant                       := 256;
    NETMASK_UNKNOWN : constant Interfaces.C.unsigned := 16#ffffffff#;
    POLLIN          : constant                       := 1;
+   POLLERR         : constant                       := 8;
+   POLLHUP         : constant                       := 16;
+   POLLNVAL        : constant                       := 32;
 
    type BPF_Instruction_Type is
       record
