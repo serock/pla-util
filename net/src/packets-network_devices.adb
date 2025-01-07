@@ -162,11 +162,14 @@ package body Packets.Network_Devices is
       use type Interfaces.C.int;
       use type Interfaces.C.unsigned_short;
 
+      type Retry_Count_Type is range 0 .. 2;
+
       Capture_Length        : Natural;
       FD                    : Interfaces.C.int;
       Packet_Data_Address   : System.Address;
       Packet_Header_Access  : Pcap.Packet_Header_Access_Type;
       Poll_File_Descriptors : Pcap.Poll_File_Descriptors_Type;
+      Retries_Remaining     : Retry_Count_Type := 2;
       Return_Code           : Interfaces.C.int;
       Returned_Events       : Interfaces.C.unsigned_short;
 
@@ -182,65 +185,74 @@ package body Packets.Network_Devices is
                                       Requested_Events => Pcap.POLLIN,
                                       Returned_Events  => 0));
 
-      Return_Code := Pcap.Poll (File_Descriptors     => Poll_File_Descriptors,
-                                Timeout_Milliseconds => Interfaces.C.int (Config.Network_Receive_Timeout));
+      loop
 
-      if Return_Code = -1 then
-         raise Packet_Error with GNAT.OS_Lib.Errno_Message;
-      end if;
+         Return_Code := Pcap.Poll (File_Descriptors     => Poll_File_Descriptors,
+                                   Timeout_Milliseconds => Interfaces.C.int (Config.Network_Receive_Timeout));
 
-      if Return_Code = 0 then
+         if Return_Code > 0 then
+            null;
+         elsif Return_Code = -1 then
+            raise Packet_Error with GNAT.OS_Lib.Errno_Message;
+         elsif Return_Code = 0 then
 
-         Payload_Length   := 0;
-         From_MAC_Address := MAC_Addresses.Null_MAC_Address;
+            Payload_Length   := 0;
+            From_MAC_Address := MAC_Addresses.Null_MAC_Address;
 
-         return;
+            return;
 
-      end if;
-
-      Returned_Events := Interfaces.C.unsigned_short (Poll_File_Descriptors (1).Returned_Events);
-
-      if (Returned_Events and Pcap.POLLIN) = Pcap.POLLIN then
-
-         Return_Code := Pcap.Receive_Packet (P             => Self.Handle,
-                                             Packet_Header => Packet_Header_Access,
-                                             Packet_Data   => Packet_Data_Address);
-
-         if Return_Code = -1 then
-            raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Self.Handle));
          end if;
 
-         --  TODO check for Return_Code = 0
+         Returned_Events := Interfaces.C.unsigned_short (Poll_File_Descriptors (1).Returned_Events);
 
-         Capture_Length := Natural (Packet_Header_Access.all.Capture_Length);
+         if (Returned_Events and Pcap.POLLIN) = Pcap.POLLIN then
 
-         if Payload_Buffer'Length < Capture_Length - 14 then
-            raise Packet_Error with "Payload buffer is too small";
+            Return_Code := Pcap.Receive_Packet (P             => Self.Handle,
+                                                Packet_Header => Packet_Header_Access,
+                                                Packet_Data   => Packet_Data_Address);
+
+            exit when Return_Code = 1;
+
+            if Return_Code = -1 then
+               raise Packet_Error with Interfaces.C.Strings.Value (Item => Pcap.Get_Error_Text (P => Self.Handle));
+            elsif Return_Code = 0 then
+               if Retries_Remaining = 0 then
+                  raise Packet_Error with "All three attempts to read a packet failed";
+               end if;
+               Retries_Remaining := Retries_Remaining - 1;
+            end if;
+
+         elsif (Returned_Events and Pcap.POLLERR) = Pcap.POLLERR then
+            raise Packet_Error with "Error condition while waiting to receive packets";
+         elsif (Returned_Events and Pcap.POLLHUP) = Pcap.POLLHUP then
+            raise Packet_Error with "Hang-up event while waiting to receive packets";
+         elsif (Returned_Events and Pcap.POLLNVAL) = Pcap.POLLNVAL then
+            raise Packet_Error with "Invalid poll request";
+         else
+            raise Packet_Error with "No packets available and no error events";
          end if;
 
-         declare
+      end loop;
 
-            Packet_Data : Octets.Octets_Type (1 .. Capture_Length)
-              with
-                Address => Packet_Data_Address;
+      Capture_Length := Natural (Packet_Header_Access.all.Capture_Length);
 
-         begin
-
-            Payload_Length                       := Capture_Length - 14;
-            Payload_Buffer (1 .. Payload_Length) := Packet_Data (15 .. Capture_Length);
-            From_MAC_Address                     := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Packet_Data (7 .. 12));
-
-         end;
-
-      elsif (Returned_Events and Pcap.POLLERR) = Pcap.POLLERR then
-         raise Packet_Error with "Error condition while waiting to receive packets";
-      elsif (Returned_Events and Pcap.POLLHUP) = Pcap.POLLHUP then
-         raise Packet_Error with "Hang-up event while waiting to receive packets";
-      elsif (Returned_Events and Pcap.POLLNVAL) = Pcap.POLLNVAL then
-         raise Packet_Error with "Invalid poll request";
-      else
-         raise Packet_Error with "No packets available and no error events";
+      if Payload_Buffer'Length < Capture_Length - 14 then
+         raise Packet_Error with "Payload buffer is too small";
       end if;
+
+      declare
+
+         Packet_Data : Octets.Octets_Type (1 .. Capture_Length)
+           with
+             Address => Packet_Data_Address;
+
+      begin
+
+         Payload_Length                       := Capture_Length - 14;
+         Payload_Buffer (1 .. Payload_Length) := Packet_Data (15 .. Capture_Length);
+         From_MAC_Address                     := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Packet_Data (7 .. 12));
+
+      end;
 
    end Receive;
 
