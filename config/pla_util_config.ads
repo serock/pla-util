@@ -5,7 +5,7 @@ pragma Style_Checks (Off);
 package Pla_Util_Config is
    pragma Pure;
 
-   Crate_Version : constant String := "2.1.2";
+   Crate_Version : constant String := "2.1.3";
    Crate_Name : constant String := "pla_util";
 
    Alire_Host_OS : constant String := "linux";

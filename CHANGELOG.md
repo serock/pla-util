@@ -1,3 +1,9 @@
+# 2.1.3 (2025-01-12)
+
+* Fix Issue [#13](https://github.com/serock/pla-util/issues/13).
+  * Check returned events for `POLLIN` event before attempting to read a packet; check for error events.
+  * Handle scenario where the libpcap `pcap_next_ex` function does not return a packet.
+
 # 2.1.2 (2023-12-31)
 
 * Update Alire manifest for compatibility with Alire 1.x.
