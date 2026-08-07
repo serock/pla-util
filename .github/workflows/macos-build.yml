@@ -13,7 +13,6 @@ jobs:
         ref: feature-macos
     - name: build pla-util
       run: alr build --release
-      working-directory: ./pla-util
     - name: test pla-util
       run: pla-util --help
-      working-directory: ./pla-util/bin
+      working-directory: ./bin
