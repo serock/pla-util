@@ -1,0 +1,19 @@
+name: macOS build
+on: workflow_dispatch
+jobs:
+  macos-26-job:
+    name: macOS 26 build job
+    runs-on: macos-26
+    steps:
+    - name: set up Alire
+      uses: alire-project/setup-alire@1ff7d9224297858cc9ecce29b08bc6109f93e49a
+    - name: check out pla-util source code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: feature-macos
+    - name: build pla-util
+      run: alr build --release
+      working-directory: ./pla-util
+    - name: test pla-util
+      run: pla-util --help
+      working-directory: ./pla-util/bin

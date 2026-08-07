@@ -11,7 +11,7 @@ project-files = ["pla_util.gpr"]
 executables = ["pla-util"]
 
 [available."case(os)"]
-"linux" = true
+"linux|macos" = true
 "..." = false
 
 [[depends-on]]
