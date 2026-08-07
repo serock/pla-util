@@ -12,7 +12,6 @@ jobs:
       with:
         ref: feature-macos
     - name: build pla-util
-      run: alr build --release
+      run: ${GITHUB_WORKSPACE}/alire_install/bin/alr build --release
     - name: test pla-util
-      run: pla-util --help
-      working-directory: ./bin
+      run: ${GITHUB_WORKSPACE}/bin/pla-util --help
