@@ -15,7 +15,11 @@ jobs:
       run: alr build --release
     - name: inspect pla-util
       run: |
-        otool -L ${GITHUB_WORKSPACE}/bin/pla-util
-        otool -l ${GITHUB_WORKSPACE}/bin/pla-util
+        otool -L ./bin/pla-util
+        otool -l ./bin/pla-util
+    - name: copy libraries
+      run: |
+        mkdir ./lib
+        find ../../../.local/ -name 'libgcc_s.1.1.dylib' -o -name 'libgnat-16.dylib' -exec cp {} ./lib/ \;
     - name: test pla-util
-      run: ${GITHUB_WORKSPACE}/bin/pla-util --help
+      run: ./bin/pla-util --help
