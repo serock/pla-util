@@ -12,6 +12,10 @@ jobs:
     - name: set up Alire
       uses: alire-project/setup-alire@1ff7d9224297858cc9ecce29b08bc6109f93e49a
     - name: build pla-util
-      run: ${GITHUB_WORKSPACE}/alire_install/bin/alr build --release
+      run: alr build --release
+    - name: inspect pla-util
+      run: |
+        otool -L ${GITHUB_WORKSPACE}/bin/pla-util
+        otool -l ${GITHUB_WORKSPACE}/bin/pla-util
     - name: test pla-util
       run: ${GITHUB_WORKSPACE}/bin/pla-util --help
