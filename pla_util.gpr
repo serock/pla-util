@@ -59,7 +59,7 @@ project Pla_Util is
                External_As_List("LDLIBS", " ");
          when "macos" =>
             for Switches ("Ada") use
-               ("-Wl,-dead_strip", "-Wl,rpath,@executable_path/../lib", "-lpcap");
+               ("-Wl,-dead_strip", "-Wl,-rpath", "-Wl,@executable_path/../lib", "-lpcap");
       end case;
    end Linker;
 
