@@ -14,7 +14,7 @@ jobs:
     - name: set up Alire
       uses: alire-project/setup-alire@1ff7d9224297858cc9ecce29b08bc6109f93e49a
       with:
-        msys: false
+        msys2: false
         toolchain: gnat_native^15 gprbuild
     - name: build pla-util
       run: alr build --release
