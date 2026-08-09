@@ -15,6 +15,7 @@ executables = ["pla-util"]
 "..." = false
 
 [[depends-on]]
+gnat = "^15.3.0"
 libpcap = "^1.8.1"
 
 [configuration]
