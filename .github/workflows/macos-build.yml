@@ -20,6 +20,6 @@ jobs:
     - name: copy libraries
       run: |
         mkdir ./lib
-        find ../../../.local/ -name 'libgcc_s.1.1.dylib' -o -name 'libgnat-16.dylib' -exec cp {} ./lib/ \;
+        find ../../../.local/ -name 'libgcc_s.1.1.dylib' -o -name 'libgnat-15.dylib' -exec cp {} ./lib/ \;
     - name: test pla-util
       run: ./bin/pla-util --help
