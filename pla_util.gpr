@@ -33,8 +33,14 @@ project Pla_Util is
    for Source_Dirs use ("cli/src", "pla/src", "net/src", "common/src", "config");
 
    package Binder is
-      for Switches ("Ada") use
-         Split(External("GNATBINDFLAGS", "-Es -shared"), " ");
+      case OS is
+         when "linux" =>
+            for Switches ("Ada") use
+               Split(External("GNATBINDFLAGS", "-Es -shared"), " ");
+         when "macos" =>
+            for Switches ("Ada") use
+               Split(External("GNATBINDFLAGS", "-Es -static"), " ");
+      end case;
    end Binder;
 
    package Builder is
@@ -59,7 +65,7 @@ project Pla_Util is
                External_As_List("LDLIBS", " ");
          when "macos" =>
             for Switches ("Ada") use
-               ("-Wl,-dead_strip", "-Wl,-rpath", "-Wl,@executable_path/../lib", "-lpcap");
+               ("-Wl,-dead_strip", "-lpcap");
       end case;
    end Linker;
 
