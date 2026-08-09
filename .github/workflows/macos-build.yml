@@ -1,8 +1,10 @@
 name: macOS build
 on: workflow_dispatch
+permissions:
+  contents: read
 jobs:
-  macos-26-job:
-    name: macOS 26 build job
+  macos-26-build:
+    name: macOS 26 build
     runs-on: macos-26
     steps:
     - name: check out pla-util source code
@@ -11,11 +13,27 @@ jobs:
         ref: feature-macos
     - name: set up Alire
       uses: alire-project/setup-alire@1ff7d9224297858cc9ecce29b08bc6109f93e49a
+      with:
+        msys: false
+        toolchain: gnat_native^15 gprbuild
     - name: build pla-util
       run: alr build --release
     - name: inspect pla-util
       run: |
+        ls -l ./bin/
         otool -L ./bin/pla-util
         otool -l ./bin/pla-util
     - name: test pla-util
       run: ./bin/pla-util --help
+    - name: upload artifact
+      id: upload
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      with:
+        name: pla-util-2.1.3-macos-26-arm64.zip
+        path: |
+          LICENSE
+          bin/pla-util
+    - name: show artifact info
+      run: |
+        echo "The artifact URL is:    ${{ steps.upload.outputs.artifact-url }}"
+        echo "The artifact digest is: ${{ steps.upload.outputs.artifact-digest }}"
