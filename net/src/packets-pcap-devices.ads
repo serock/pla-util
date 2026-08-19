@@ -18,22 +18,9 @@
 --  You should have received a copy of the GNU General Public License
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
+with Packets.Pcap.Link_Layer_Addresses;
+
 package Packets.Pcap.Devices is
-
-   type Socket_Address_Type is
-      record
-         SA_Family             : aliased Interfaces.C.unsigned_short;
-         SLL_Protocol          : aliased Interfaces.C.unsigned_short;
-         SLL_Interface_Index   : aliased Interfaces.C.int;
-         SLL_ARP_Hardware_Kind : aliased Interfaces.C.unsigned_short;
-         SLL_Packet_Kind       : aliased Interfaces.C.unsigned_char;
-         SLL_Address_Length    : aliased Interfaces.C.unsigned_char;
-         SLL_Address           : aliased Octets.Octets_Type (1 .. 8);
-      end record
-     with
-       Convention => C_Pass_By_Copy;
-
-   type Socket_Address_Access_Type is access Socket_Address_Type;
 
    type Interface_Type;
    type Interface_Access_Type is access Interface_Type;
@@ -55,10 +42,10 @@ package Packets.Pcap.Devices is
    type Address_Type is
       record
          Next                : Address_Access_Type;
-         Socket_Address      : Socket_Address_Access_Type;
-         Netmask             : Socket_Address_Access_Type;
-         Broadcast_Address   : Socket_Address_Access_Type;
-         Destination_Address : Socket_Address_Access_Type;
+         Socket_Address      : Packets.Pcap.Link_Layer_Addresses.Socket_Link_Layer_Address_Access_Type;
+         Netmask             : Packets.Pcap.Link_Layer_Addresses.Socket_Link_Layer_Address_Access_Type;
+         Broadcast_Address   : Packets.Pcap.Link_Layer_Addresses.Socket_Link_Layer_Address_Access_Type;
+         Destination_Address : Packets.Pcap.Link_Layer_Addresses.Socket_Link_Layer_Address_Access_Type;
       end record
      with
        Convention => C_Pass_By_Copy;
@@ -80,28 +67,21 @@ package Packets.Pcap.Devices is
 
    function Is_Loopback (Network_Device : Interface_Access_Type) return Boolean;
 
-   function Is_Not_Packet_Address (Socket_Address : Socket_Address_Access_Type) return Boolean;
-
    function Is_Not_Running (Network_Device : Interface_Access_Type) return Boolean;
 
 private
 
    use type Interfaces.C.unsigned;
-   use type Interfaces.C.unsigned_short;
 
-   AF_PACKET   : constant Interfaces.C.unsigned_short := 17;
-   IF_LOOPBACK : constant Interfaces.C.unsigned       := 16#0000_0001#;
-   IF_UP       : constant Interfaces.C.unsigned       := 16#0000_0002#;
-   IF_RUNNING  : constant Interfaces.C.unsigned       := 16#0000_0004#;
+   IF_LOOPBACK : constant Interfaces.C.unsigned := 16#0000_0001#;
+   IF_UP       : constant Interfaces.C.unsigned := 16#0000_0002#;
+   IF_RUNNING  : constant Interfaces.C.unsigned := 16#0000_0004#;
 
    function Is_Down (Network_Device : Interface_Access_Type) return Boolean is
      ((Network_Device.all.Flags and IF_UP) = 0);
 
    function Is_Loopback (Network_Device : Interface_Access_Type) return Boolean is
      ((Network_Device.all.Flags and IF_LOOPBACK) /= 0);
-
-   function Is_Not_Packet_Address (Socket_Address : Socket_Address_Access_Type) return Boolean is
-     (Socket_Address.all.SA_Family /= AF_PACKET);
 
    function Is_Not_Running (Network_Device : Interface_Access_Type) return Boolean is
      ((Network_Device.all.Flags and IF_RUNNING) = 0);
