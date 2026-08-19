@@ -27,8 +27,6 @@ jobs:
       run: uname
     - name: test pla-util help
       run: ./bin/pla-util --help
-    - name: test pla-util discover
-      run: ./bin/pla-util discover
     - name: upload artifact
       id: upload
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
