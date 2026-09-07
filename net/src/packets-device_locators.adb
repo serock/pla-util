@@ -19,6 +19,7 @@
 --  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------
 with Interfaces.C.Strings;
+with Packets.Pcap.Link_Layer_Addresses;
 
 package body Packets.Device_Locators is
 
@@ -67,9 +68,10 @@ package body Packets.Device_Locators is
 
       use type Pcap.Devices.Address_Access_Type;
 
-      Address_Access   : Pcap.Devices.Address_Access_Type   := null;
-      Device_Access    : Pcap.Devices.Interface_Access_Type := null;
-      Search_Algorithm : constant Search_Type'Class         := (if Device_Name = "" then Create else Create (Device_Name => Device_Name));
+      Address_Access     : Pcap.Devices.Address_Access_Type   := null;
+      Device_Access      : Pcap.Devices.Interface_Access_Type := null;
+      MAC_Address_Octets : Octets.Octets_Type (1 .. 6)        := (others => 0);
+      Search_Algorithm   : constant Search_Type'Class         := (if Device_Name = "" then Create else Create (Device_Name => Device_Name));
 
    begin
 
@@ -77,7 +79,7 @@ package body Packets.Device_Locators is
       Interface_Name := Interface_Name_Strings.To_Bounded_String (Source => Interfaces.C.Strings.Value (Item => Device_Access.all.Name));
       Address_Access := Device_Access.all.Addresses;
 
-      while Address_Access /= null and then Pcap.Devices.Is_Not_Packet_Address (Socket_Address => Address_Access.all.Socket_Address) loop
+      while Address_Access /= null and then Pcap.Link_Layer_Addresses.Is_Not_Link_Layer_Address (Socket_Link_Layer_Address => Address_Access.all.Socket_Address.all) loop
          Address_Access := Address_Access.all.Next;
       end loop;
 
@@ -85,7 +87,8 @@ package body Packets.Device_Locators is
          raise Packet_Error with "MAC address of device " & Interface_Name_Strings.To_String (Source => Interface_Name) & " not found";
       end if;
 
-      Interface_Address := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => Address_Access.all.Socket_Address.all.SLL_Address (1 .. 6));
+      MAC_Address_Octets := Packets.Pcap.Link_Layer_Addresses.MAC_Address_Octets (Socket_Link_Layer_Address => Address_Access.all.Socket_Address.all);
+      Interface_Address  := MAC_Addresses.Create_MAC_Address (MAC_Address_Octets => MAC_Address_Octets);
 
    end Find;
 

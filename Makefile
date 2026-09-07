@@ -18,13 +18,24 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------
-SHELL = /bin/sh
+SHELL ::= /bin/sh
+UNAME ::= $(shell uname)
+ifeq ($(UNAME), Linux)
+	OS ::= linux
+else ifeq ($(UNAME), Darwin)
+	OS :: = macos
+endif
+
 GCC ?= gcc
 GNATMAKE ?= gnatmake
 GNATBIND ?= gnatbind
 GNATLINK ?= gnatlink
 GNATMAKEFLAGS ?= -v
-GNATBINDFLAGS ?= -v -Es -shared
+ifeq ($(OS), linux)
+	GNATBINDFLAGS ?= -v -Es -shared
+else ifeq ($(OS), macos)
+	GNATBINDFLAGS ?= -v -Es -static
+endif
 GNATLINKFLAGS ?= -v
 ADAFLAGS ?= -g -gnateE -gnato -O3 -gnatn
 LDFLAGS ?= -v
@@ -44,9 +55,13 @@ gnatlinkflags = -R
 adaflags = -gnat12 -gnatW8 -gnateu -gnata \
 	   -fPIE -fstack-check -fstack-protector-strong
 ldlibs = -lpcap
+ifeq ($(OS), linux)
 ldflags = -pie -z relro -z now
+else ifeq ($(OS), macos)
+ldflags = -dead_strip
+endif
 
-export ADA_INCLUDE_PATH = ./cli/src:./pla/src:./net/src:./common/src:./config
+export ADA_INCLUDE_PATH = ./cli/src:./pla/src:./net/src:./net/src/$(OS):./common/src:./config
 
 .SUFFIXES:
 .SUFFIXES: .adb .ads .ali .o

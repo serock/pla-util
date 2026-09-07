@@ -20,6 +20,13 @@ libpcap = "^1.8.1"
 [configuration]
 generate_c = false
 
+[gpr-externals]
+OS = ["linux", "macos"]
+
+[gpr-set-externals.'case(os)']
+linux = { OS = "linux" }
+macos = { OS = "macos" }
+
 [build-switches]
 "*".ada_version = "ada12"
 "*".debug_info = ["-g", "-gnateE"]

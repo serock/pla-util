@@ -21,17 +21,26 @@
 with "config/pla_util_config.gpr";
 project Pla_Util is
 
+   type OS_Type is ("linux", "macos");
+   OS : OS_Type := external("OS", "linux");
+
    for Languages use ("Ada");
    for Main use ("pla_util.adb");
 
    for Create_Missing_Dirs use "true";
    for Exec_Dir use "bin";
    for Object_Dir use "obj";
-   for Source_Dirs use ("cli/src", "pla/src", "net/src", "common/src", "config");
+   for Source_Dirs use ("cli/src", "pla/src", "net/src", "net/src/" & OS, "common/src", "config");
 
    package Binder is
-      for Switches ("Ada") use
-         Split(External("GNATBINDFLAGS", "-Es -shared"), " ");
+      case OS is
+         when "linux" =>
+            for Switches ("Ada") use
+               Split(External("GNATBINDFLAGS", "-Es -shared"), " ");
+         when "macos" =>
+            for Switches ("Ada") use
+               Split(External("GNATBINDFLAGS", "-Es -static"), " ");
+      end case;
    end Binder;
 
    package Builder is
@@ -47,11 +56,17 @@ project Pla_Util is
    end Compiler;
 
    package Linker is
-      for Switches ("Ada") use
-         ("-pie", "-Wl,-z,relro,-z,now") &
-         External_As_List("LDFLAGS", " ") &
-         ("-lpcap") &
-         External_As_List("LDLIBS", " ");
+      case OS is
+         when "linux" =>
+            for Switches ("Ada") use
+               ("-pie", "-Wl,-z,relro,-z,now") &
+               External_As_List("LDFLAGS", " ") &
+               ("-lpcap") &
+               External_As_List("LDLIBS", " ");
+         when "macos" =>
+            for Switches ("Ada") use
+               ("-Wl,-dead_strip", "-lpcap");
+      end case;
    end Linker;
 
    package Install is
