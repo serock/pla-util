@@ -5,7 +5,7 @@
 A power line adapter utility
 
 ## Overview
-The purpose of this program is to allow Linux users to manage HomePlug AV2 compliant power line adapters that use a Broadcom system-on-a-chip (SoC) such as the BCM60500 or BCM60333.
+The purpose of this program is to allow Linux and macOS users to manage HomePlug AV2 compliant power line adapters that use a Broadcom system-on-a-chip (SoC) such as the BCM60500 or BCM60333.
 
 ### Compatible Power Line Adapters
 The following power line adapters have been used with `pla-util`:
@@ -17,11 +17,21 @@ The following power line adapters have been used with `pla-util`:
 * TP-Link TL-PA7017 (uses BCM60355)
 * TP-Link TL-PA9020 (uses BCM60500)
 
-## Binary Packages
+## Linux Binary Packages
 Binary packages and repositories for the latest `pla-util` release are available for multiple Linux distributions and architectures.
 Instructions for adding repositories and installing binary packages can be found on the [download](https://software.opensuse.org/download.html?project=home%3Aserock&package=pla-util) page.
 
 For additional information, see the [Binary Packages](../../wiki/Binary-Packages) page on the wiki.
+
+## macOS Binary Packages
+Binary packages in the form of `.tar.gz` files will be available in the [Releases](https://github.com/serock/pla-util/releases).
+
+macOS marks programs downloaded outside of the App Store with a quarantine flag that may prevent the program from running.
+If the program was extracted to `~/Desktop/bin/pla-util`, the quarantine flag can be removed with the following command:
+
+```
+xattr -dr com.apple.quarantine ~/Desktop/bin/pla-util
+```
 
 ## Development Environment
 The following software is being used to develop `pla-util` on [openSUSE Leap](https://www.opensuse.org/):
@@ -88,20 +98,25 @@ For example,
 docker run -i -t --network=host pla-util
 ```
 
-## How to Grant the Program Permission to use Packet Sockets
-If you do not intend to run `pla-util` as root, then before you can use the program, you will need to grant `pla-util` permission to use packet sockets.
-Otherwise, you may see the following error message when you run the program:
+## Permissions for Sending or Receiving Packets
+When attempting to run `pla-util`, you may see the following error message:
 
 ```
 pla-util: You don't have permission to capture on that device
 ```
 
-Use the `filecap` command to set the `net_raw` capability on `pla-util`. 
+Although running `pla-util` as root will avoid the error, it is preferable to update permissions for regular users.
+
+### How to Grant the Permissions on Linux
+To grant the program permission to use Packet Sockets on Linux, use the `filecap` command to set the `net_raw` capability on `pla-util`. 
 If `pla-util` was installed in `/usr/bin`, you can use the following command:
 
 ```
 sudo filecap /usr/bin/pla-util net_raw
 ```
+
+### How to Grant Permissions on macOS
+To grant users permissions to use Berkeley Packet Filter (BPF) devices, you can install and use [chmod-bpf](https://github.com/shellrow/chmod-bpf).
 
 ## How to Run the Program
 Running `pla-util --help` displays the following information:
