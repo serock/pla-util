@@ -1,3 +1,8 @@
+# 2.1.4 (2026-09-27)
+
+* Add Debian packaging files (Issue [#14](https://github.com/serock/pla-util/issues/14)).
+* Add support for macOS (Issue [#16](https://github.com/serock/pla-util/issues/16)).
+
 # 2.1.3 (2025-01-12)
 
 * Fix Issue [#13](https://github.com/serock/pla-util/issues/13).
