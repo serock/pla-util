@@ -82,13 +82,7 @@ jobs:
           echo "RELEASE_NUMBER=${TAG_NAME#v}" >> "$GITHUB_ENV"
       - name: Create release with binary build artifacts
         run: |
-          gh release create "$RELEASE_NUMBER" --draft --title "$RELEASE_NUMBER"
-          pushd target
-          for file in *.tgz ; do
-            [ -f "$file" ] || continue
-            gh release upload "$RELEASE_NUMBER" "$file"
-          done
-          popd
+          gh release create "$RELEASE_NUMBER" ./target/*.tgz --draft --title "$RELEASE_NUMBER"
           # gh release edit "$RELEASE_NUMBER" --draft=false
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
