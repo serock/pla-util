@@ -2,7 +2,7 @@ name: release
 on:
   push:
     tags:
-      - 2.[0-9]+.[0-9]+
+      - '2.[0-9]+.[0-9]+'
   workflow_dispatch:
     inputs:
       tag:
@@ -66,9 +66,9 @@ jobs:
     needs: macos-build
     runs-on: ubuntu-latest
     steps:
-      - name: Check out source code
+      - name: check out source code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Download build artifacts
+      - name: download build artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           path: target
@@ -82,7 +82,7 @@ jobs:
             TAG_NAME="$GITHUB_REF_NAME"
           fi
           echo "RELEASE_NUMBER=${TAG_NAME#v}" >> "$GITHUB_ENV"
-      - name: Create release with binary build artifacts
+      - name: create release with binary build artifacts
         run: |
           gh release create "$RELEASE_NUMBER" ./target/*.tgz --draft --title "$RELEASE_NUMBER"
           # gh release edit "$RELEASE_NUMBER" --draft=false
