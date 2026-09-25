@@ -38,13 +38,12 @@ jobs:
           fi
           echo "RELEASE_NUMBER=${TAG_NAME#v}" >> "$GITHUB_ENV"
       - name: create archive
-        run: tar -czf pla-util-$RELEASE_NUMBER-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz LICENSE bin/pla-util
+        run: tar -czf pla-util-${RELEASE_NUMBER}-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz LICENSE bin/pla-util
       - name: upload artifact
-        id: upload
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: pla-util-$RELEASE_NUMBER-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz
-          path: pla-util-$RELEASE_NUMBER-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz
+          name: pla-util-${{ env.RELEASE_NUMBER }}-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz
+          path: pla-util-${{ env.RELEASE_NUMBER }}-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz
           retention-days: 1
           overwrite: true
           archive: false
