@@ -1,0 +1,95 @@
+name: release
+on:
+  push:
+    tags:
+      - 2.[0-9]+.[0-9]+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing git tag'
+        required: true
+        type: string
+permissions:
+  contents: read
+env:
+  INPUT_TAG: ${{ inputs.tag }}
+jobs:
+  macos-build:
+    name: Build on ${{ matrix.machine.workflow-label }}
+    runs-on: ${{ matrix.machine.workflow-label }}
+    steps:
+      - name: check out pla-util source code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: set up Alire
+        uses: alire-project/setup-alire@1ff7d9224297858cc9ecce29b08bc6109f93e49a
+        with:
+          msys2: false
+          toolchain: gnat_native^15 gprbuild
+      - name: build pla-util
+        run: alr build --release
+      - name: test pla-util help
+        run: ./bin/pla-util --help
+      - name: get release number
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            TAG_NAME="$INPUT_TAG"
+          else
+            TAG_NAME="$GITHUB_REF_NAME"
+          fi
+          echo "RELEASE_NUMBER=${TAG_NAME#v}" >> "$GITHUB_ENV"
+      - name: create archive
+        run: tar -czf pla-util-$RELEASE_NUMBER-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz LICENSE bin/pla-util
+      - name: upload artifact
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: pla-util-$RELEASE_NUMBER-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz
+          path: pla-util-$RELEASE_NUMBER-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz
+          retention-days: 1
+          overwrite: true
+          archive: false
+    strategy:
+      matrix:
+        machine:
+          - workflow-label: macos-26
+            os: macos-26
+            arch: arm64
+          - workflow-label: macos-26-intel
+            os: macos-26
+            arch: x64
+          - workflow-label: xcode-27
+            os: macos-27
+            arch: arm64
+  release:
+    name: Release
+    permissions:
+      contents: write
+    needs: macos-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Download build artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          path: target
+      - name: get release number
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            TAG_NAME="$INPUT_TAG"
+          else
+            TAG_NAME="$GITHUB_REF_NAME"
+          fi
+          echo "RELEASE_NUMBER=${TAG_NAME#v}" >> "$GITHUB_ENV"
+      - name: Create release with binary build artifacts
+        run: |
+          gh release create "$RELEASE_NUMBER" --draft --title "$RELEASE_NUMBER"
+          pushd target
+          for file in *.tgz ; do
+            [ -f "$file" ] || continue
+            gh release upload "$RELEASE_NUMBER" "$file"
+          done
+          popd
+          # gh release edit "$RELEASE_NUMBER" --draft=false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
