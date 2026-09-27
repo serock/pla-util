@@ -24,7 +24,7 @@ Instructions for adding repositories and installing binary packages can be found
 For additional information, see the [Binary Packages](../../wiki/Binary-Packages) page on the wiki.
 
 ## macOS Binary Packages
-Binary packages in the form of `.tar.gz` files will be available in the [Releases](https://github.com/serock/pla-util/releases).
+Binary packages in the form of `.tgz` files are available in the [Releases](https://github.com/serock/pla-util/releases).
 
 macOS marks programs downloaded outside of the App Store with a quarantine flag that may prevent the program from running.
 If the program was extracted to `~/Desktop/bin/pla-util`, the quarantine flag can be removed with the following command:
