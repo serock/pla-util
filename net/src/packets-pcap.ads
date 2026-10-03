@@ -21,6 +21,7 @@
 with Interfaces.C.Strings;
 with Octets;
 with System;
+with Time_Value;
 
 private package Packets.Pcap is
 
@@ -61,17 +62,9 @@ private package Packets.Pcap is
      with
        Convention => C;
 
-   type Time_Value_Type is
-      record
-         Seconds      : aliased Interfaces.C.long;
-         Microseconds : aliased Interfaces.C.long;
-      end record
-     with
-       Convention => C_Pass_By_Copy;
-
    type Packet_Header_Type is
       record
-         Timestamp      : aliased Time_Value_Type;
+         Timestamp      : aliased Time_Value.Time_Value_Type;
          Capture_Length : aliased Interfaces.C.unsigned;
          Packet_Length  : aliased Interfaces.C.unsigned;
       end record
