@@ -122,7 +122,7 @@ To grant users permissions to use Berkeley Packet Filter (BPF) devices, you can 
 Running `pla-util --help` displays the following information:
 
 ```
-pla-util 2.1.4
+pla-util 3.0.0
 A utility for power line adapters with Broadcom chipsets
 
 Usage:

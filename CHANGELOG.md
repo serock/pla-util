@@ -1,3 +1,8 @@
+# 3.0.0 (2026-10-18)
+
+* Use 64-bit time on 32-bit ARM platforms.
+* Use 32-bit microseconds on macOS.
+
 # 2.1.4 (2026-09-27)
 
 * Add Debian packaging files (Issue [#14](https://github.com/serock/pla-util/issues/14)).
