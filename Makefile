@@ -61,7 +61,7 @@ else ifeq ($(OS), macos)
 ldflags = -dead_strip
 endif
 
-export ADA_INCLUDE_PATH = ./cli/src:./pla/src:./net/src:./net/src/$(OS):./common/src:./config
+export ADA_INCLUDE_PATH = ./cli/src:./pla/src:./net/src:./net/src/$(OS):./common/src:./common/src/$(OS):./config
 
 .SUFFIXES:
 .SUFFIXES: .adb .ads .ali .o
