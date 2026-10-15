@@ -7,6 +7,11 @@ A power line adapter utility
 ## Overview
 The purpose of this program is to allow Linux and macOS users to manage HomePlug AV2 compliant power line adapters that use a Broadcom system-on-a-chip (SoC) such as the BCM60500 or BCM60333.
 
+:information_source: **Note:**
+
+* Beginning with the 3.0.0 release, `pla-util` expects the operating system to use 64-bit time.
+  For additional information, see the [Release 3.0.0 and 64‐bit time](../../wiki/Release-3.0.0-and-64‐bit-time) page on the wiki.
+
 ### Compatible Power Line Adapters
 The following power line adapters have been used with `pla-util`:
 
@@ -32,6 +37,9 @@ If the program was extracted to `~/Desktop/bin/pla-util`, the quarantine flag ca
 ```
 xattr -dr com.apple.quarantine ~/Desktop/bin/pla-util
 ```
+
+## OpenWrt
+See the [pla‐util on OpenWrt](../../wiki/pla‐util-on-OpenWrt) page on the wiki for information on how to run `pla-util` on OpenWrt.
 
 ## Development Environment
 The following software is being used to develop `pla-util` on [openSUSE Leap](https://www.opensuse.org/):
