@@ -97,7 +97,7 @@ If the build is successful, the `pla-util` executable will be in the `bin` subdi
 ## How to Build a Docker Image
 1. Use git to clone this repository.
 2. In a terminal, go to the working directory (the newly created `pla-util` directory with the `pla-util.gpr` file).
-3. Run `docker build -t pla-util .`.
+3. Run the following command: `docker build --network=host -t pla-util .`
 
 If the build is successful, the new `pla-util` minimal runtime image can be run with Docker.
 For example,
