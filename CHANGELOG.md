@@ -1,4 +1,4 @@
-# 3.0.0 (2026-10-18)
+# 3.0.0 (2026-10-25)
 
 * Use 64-bit time on 32-bit ARM platforms.
 * Use 32-bit microseconds on macOS.
