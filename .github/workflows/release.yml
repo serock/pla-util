@@ -38,12 +38,12 @@ jobs:
           fi
           echo "RELEASE_NUMBER=${TAG_NAME#v}" >> "$GITHUB_ENV"
       - name: create archive
-        run: tar -czf pla-util-${RELEASE_NUMBER}-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz LICENSE bin/pla-util
+        run: tar -czf pla-util-${RELEASE_NUMBER}-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tar.gz LICENSE bin/pla-util
       - name: upload artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
-          name: pla-util-${{ env.RELEASE_NUMBER }}-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz
-          path: pla-util-${{ env.RELEASE_NUMBER }}-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tgz
+          name: pla-util-${{ env.RELEASE_NUMBER }}-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tar.gz
+          path: pla-util-${{ env.RELEASE_NUMBER }}-${{ matrix.machine.os }}-${{ matrix.machine.arch }}.tar.gz
           retention-days: 1
           overwrite: true
           archive: false
@@ -69,7 +69,7 @@ jobs:
       - name: check out source code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: download build artifacts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           path: target
           merge-multiple: true
@@ -84,7 +84,6 @@ jobs:
           echo "RELEASE_NUMBER=${TAG_NAME#v}" >> "$GITHUB_ENV"
       - name: create release with binary build artifacts
         run: |
-          gh release create "$RELEASE_NUMBER" ./target/*.tgz --draft --title "$RELEASE_NUMBER"
-          # gh release edit "$RELEASE_NUMBER" --draft=false
+          gh release create "$RELEASE_NUMBER" ./target/*.tar.gz --title "$RELEASE_NUMBER" --fail-on-no-commits --verify-tag
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
