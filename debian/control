@@ -1,0 +1,28 @@
+Source: pla-util
+Section: contrib/misc
+Priority: optional
+Maintainer: John Serock <john.serock@gmail.com>
+Rules-Requires-Root: binary-targets
+Build-Depends:
+ debhelper-compat (= 13),
+ debhelper,
+ gprbuild,
+ gnat,
+ libpcap-dev,
+ bash-completion
+Standards-Version: 4.7.2
+Homepage: https://github.com/serock/pla-util
+Vcs-Browser: https://github.com/serock/pla-util
+Vcs-Git: https://github.com/serock/pla-util.git -b debian/13-trixie
+
+Package: pla-util
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends}
+Recommends:
+ libcap-ng-utils
+Suggests:
+ bash-completion
+Description: A power line adapter utility
+ Allow Linux users to manage HomePlug AV2 compliant power line adapters that use a Broadcom system-on-a-chip (SoC) such as the BCM60500 or BCM60333.
